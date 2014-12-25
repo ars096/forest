@@ -11,3 +11,5 @@ from loatt_tools import lo_att
 from switch_tools import switch
 
 from slider_tools import slider
+
+from rx_rotator_tools import rx_rotator
