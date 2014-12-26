@@ -73,7 +73,7 @@ class dewar_temp(object):
          [-1.1, -1.3, -1.2, -1.3, -0.1, -0.1, -0.1, -0.1]]
         """
         sens = self.tm.sensor_units_reading_query(0)
-        sens = [_s[i-1] for i, _s in zip(self.ch, sens)]
+        sens = [sens[i-1] for i in self.ch]
         kel = [_s2k(_s) for _s2k, _s in zip(self._s2k, sens)]
         return kel, sens
         
