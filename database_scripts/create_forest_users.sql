@@ -7,12 +7,12 @@
 
 GRANT SELECT
       ON forest.* 
-      TO "forest_reader"
-      IDENTIFIED "forest";
+      TO forest_reader
+      IDENTIFIED BY "forest";
 
 GRANT SELECT,UPDATE,INSERT 
       ON forest.* 
-      TO "forest_writer"
-      IDENTIFIED "forestroot";
+      TO forest_writer
+      IDENTIFIED BY "forestroot";
 
 
