@@ -21,6 +21,7 @@ if not os.path.exists('/home/forest/data'): os.mkdir('/home/forest/data')
 
 # forest
 # ------
+print('checking forest tools...')
 if not os.path.exists('/home/forest/git/forest'):
     os.system('git clone https://github.com/ars096/forest.git /home/forest/git/forest/')
 else:
@@ -30,6 +31,7 @@ else:
 
 # pymeasure2
 # ----------
+print('checking pymeasure2 module...')
 if not os.path.exists('/home/forest/git/pymeasure2'):
     os.system('git clone https://github.com/ars096/pymeasure2.git /home/forest/git/pymeasure2/')
 else:
@@ -39,6 +41,7 @@ else:
 
 # pyinterface
 # -----------
+print('checking pyinterface module...')
 if not os.path.exists('/home/forest/git/pyinterface'):
     os.system('git clone https://github.com/ars096/pyinterface.git /home/forest/git/pyinterface/')
 else:
