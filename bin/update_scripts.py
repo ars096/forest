@@ -5,6 +5,8 @@ import urllib2
 
 # Initialize
 # ==========
+print('directories check')
+print('=================')
 
 # Create directories
 # ------------------
@@ -15,9 +17,14 @@ if not os.path.exists('/home/forest/database'): os.mkdir('/home/forest/database'
 if not os.path.exists('/home/forest/database/scripts'): os.mkdir('/home/forest/database/scripts')
 if not os.path.exists('/home/forest/data'): os.mkdir('/home/forest/data')
 
+print('>>> OK')
+print('')
+
 
 # Download Latest Python Modules
 # ===============================
+print('download latest files')
+print('=====================')
 
 print('checking the Internet connection...'),
 try:
@@ -35,6 +42,7 @@ try:
         os.chdir('/home/forest/git/forest')
         os.system('git pull')
         pass
+    print('')
         
     # pymeasure2
     # ----------
@@ -46,6 +54,7 @@ try:
         os.chdir('/home/forest/git/pymeasure2')
         os.system('git pull')
         pass
+    print('')
 
     # pyinterface
     # -----------
@@ -57,17 +66,22 @@ try:
         os.chdir('/home/forest/git/pyinterface')
         os.system('git pull')
         pass
+    print('')
 
 except:
     print(' NG')
     print('>> MODE: off-line')
+    print('')
     pass
 
 # Update Modules and Scripts
 # ==========================
-    
+print('overwrite files')
+print('===============')
+
 # forest
 # ------
+print('forest...')
 os.system('cp -r /home/forest/git/forest/forest /home/forest/python/')
 os.system('cp /home/forest/git/forest/bin/* /home/forest/bin/')
 os.system('cp /home/forest/git/forest/database_scripts/* /home/forest/database/scripts/')
@@ -76,10 +90,12 @@ os.system('chmod 755 /home/forest/database/scripts/*')
 
 # pymeasure2
 # ----------
+print('pymeasure2...')
 os.system('cp -r /home/forest/git/pymeasure2/pymeasure /home/forest/python/')
 
 # pyinterface
 # -----------
+print('pyinterface...')
 os.system('cp -r /home/forest/git/pyinterface/pyinterface /home/forest/python/')
 
 
