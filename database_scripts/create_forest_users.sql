@@ -8,7 +8,7 @@
 CREATE USER forest_reader;
 CREATE USER forest_writer;
 
-GRANT SELECT ON forest.* TO forest_reader@%;
-GRANT SELECT,UPDATE,INSERT ON forest.* TO forest_writer@%;
+GRANT SELECT ON forest.* TO forest_reader;
+GRANT SELECT,UPDATE,INSERT ON forest.* TO forest_writer;
 
 
