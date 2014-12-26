@@ -24,8 +24,8 @@ class dewar_temp(object):
         pass
         
     def initialize_diode_type(self):
-        self.tm_input_type_set('A', self.input_types[0])
-        self.tm_input_type_set('B', self.input_types[1])
+        self.tm.input_type_set('A', self.input_types[0])
+        self.tm.input_type_set('B', self.input_types[1])
         return
             
     def initialize_temp_curves(self):
