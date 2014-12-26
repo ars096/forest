@@ -18,4 +18,5 @@ GRANT SELECT,UPDATE,INSERT
       TO forest_writer
       IDENTIFIED BY 'forestroot';
 
+FLUSH PRIVILEGES;
 
