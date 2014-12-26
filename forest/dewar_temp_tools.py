@@ -23,17 +23,19 @@ class dewar_temp(object):
         self.tm = pymeasure.Lakeshore.model218(com)
         
         if initialize:
-            self.initialize_diode_type()
-            self.initialize_temp_curves()
+            self.set_diode_type()
+            self.set_temp_curves()
             pass
+        
+        self.init_curve_fit_params()
         pass
         
-    def initialize_diode_type(self):
+    def set_diode_type(self):
         self.tm.input_type_set('A', self.input_types[0])
         self.tm.input_type_set('B', self.input_types[1])
         return
             
-    def initialize_temp_curves(self):
+    def set_temp_curves(self):
         for i,_c in enumerate(self.ch):
             print('set temp curve ch=%d'%_c)
             path = self.curve_file%(_c)
@@ -43,6 +45,16 @@ class dewar_temp(object):
                                      self.curve_format[i], 300.0, 1)
             self.tm.input_curve_set(i, 20+i)
             
+            self._curve.append([temp, unit])
+            self._s2k.append(scipy.interpolate.interp1d(unit, temp,
+                                                        bounds_error=False,
+                                                        fill_value=0.0))
+            continue
+        return
+        
+    def init_curve_fit_params(self):
+        for i,_c in enumerate(self.ch):
+            temp, unit = numpy.loadtxt(path, delimiter=',', unpack=True)
             self._curve.append([temp, unit])
             self._s2k.append(scipy.interpolate.interp1d(unit, temp,
                                                         bounds_error=False,
