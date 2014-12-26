@@ -5,6 +5,9 @@
 # Create users for forest project.
 #
 
+DROP USER forest_reader;
+DROP USER forest_writer;
+
 GRANT SELECT
       ON forest.* 
       TO forest_reader
