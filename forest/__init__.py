@@ -26,6 +26,9 @@ from slider_tools import slider
 # ----------
 from rx_rotator_tools import rx_rotator
 
+# Dewar Temperature
+# -----------------
+from dewar_temp_tools import dewar_temp
 
 # MySQL Tools
 # -----------
