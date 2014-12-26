@@ -1,4 +1,5 @@
 
+import time
 import mysql.connector
 
 class db_writer(object):
@@ -13,7 +14,7 @@ class db_writer(object):
         self.cursor = cursor
         self.table = table
         
-        keylist = [k[0] for k in self.desc if k!='id']
+        keylist = [k[0] for k in self.desc if not k in ['id', 'timestamp']]
         self.keylist = keylist
         pass
         
@@ -25,10 +26,11 @@ class db_writer(object):
         
         self.keycheck(keys)
         
+        ts = time.strftime('%Y-%m-%d %H:%M:%S')
         key = ','.join(keys)
         value = str(values)
                 
-        sql = 'INSERT INTO %s(%s) VALUES(%s);'%(self.table, key, value)
+        sql = "INSERT INTO %s(timestamp,%s) VALUES('%s',%s);"%(self.table, key, ts, value)
         self.cursor.execute(sql)
         return
         
