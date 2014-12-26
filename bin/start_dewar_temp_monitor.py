@@ -25,10 +25,11 @@ def printlog(k):
 ch = tm.ch
 name = ['%s, %s'%(_n, _sn) for _n, _sn in zip(tm.curve_name, tm.curve_sn)]
 
-t0 = time.time()
 
 try:
     while True:
+        t0 = time.time()
+        
         k, su = tm.temperature_query()
         
         keydict = {}
@@ -45,7 +46,6 @@ try:
         dt = t1 - t0
         print(dt, t1, t0)
         if dt < 1: time.sleep(1 - dt)
-        t0 = time.time()
         continue
 
 except KeyboardInterrupt:
