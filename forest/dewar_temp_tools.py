@@ -1,11 +1,14 @@
 
+import os
 import numpy
 import scipy.interpolate
 import pymeasure
 
+dirname = os.path.dirname(__file__) 
+
 class dewar_temp(object):
     ch = [1, 2, 3, 4, 5, 6]
-    curve_file = 'temp_curve/model218_ch%d.csv'
+    curve_file = os.path.join(dirname, 'temp_curve/model218_ch%d.csv')
     curve_name = ['DT-670', 'DT-670', 'DT-670', 'DT-670', 'DT-670', 'DT-670']
     curve_sn = ['D6032982', 'D6033864', 'D6033865', 'D6034038', 'D6034069',
                 'D6034276']
