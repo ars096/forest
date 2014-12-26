@@ -34,12 +34,12 @@ class dewar_temp(object):
         return
             
     def initialize_temp_curves(self):
-        for i in self.ch:
+        for i,_c in enumerate(self.ch):
             print('set temp curve ch=%d'%i)
             path = self.curve_file%(i)
             temp, unit = numpy.loadtxt(path, delimiter=',', unpack=True)
-            self.tm.curve_point_set_line(20+i, unit, temp)
-            self.tm.curve_header_set(20+i, self.curve_name[i], self.curve_sn[i],
+            self.tm.curve_point_set_line(20+_c, unit, temp)
+            self.tm.curve_header_set(20+_c, self.curve_name[i], self.curve_sn[i],
                                      self.curve_format[i], 300.0, 1)
             self.tm.input_curve_set(i, 20+i)
             
