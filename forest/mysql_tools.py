@@ -31,7 +31,7 @@ class db_writer(object):
         value = str(values).strip('()[]')
         
         sql = "INSERT INTO %s(timestamp,%s) VALUES('%s',%s);"%(self.table, key, ts, value)
-        print(sql)
+        #print(sql)
         self.cursor.execute(sql)
         return
         

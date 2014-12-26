@@ -16,7 +16,7 @@ sql = forest.db_writer('dewar_temp')
 
 def printlog(k):
     ts = time.strftime('%Y/%m/%d.%H:%M:%S')
-    temp = ['%.2f K'%(_k) for _k in k]
+    temp = ', '.join(['%.2f K'%(_k) for _k in k])
     print('[%s] %s'%(ts, temp))
     return
 
@@ -38,7 +38,6 @@ try:
             keydict['SU%d'%_c] = _s
             continue
         
-        print(keydict)
         sql.insert(keydict=keydict)
         printlog(k)
         
