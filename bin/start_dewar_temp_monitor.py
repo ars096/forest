@@ -44,7 +44,6 @@ try:
         
         t1 = time.time()
         dt = t1 - t0
-        print(dt, t1, t0)
         if dt < 1: time.sleep(1 - dt)
         continue
 
