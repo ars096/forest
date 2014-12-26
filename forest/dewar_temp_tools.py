@@ -54,6 +54,7 @@ class dewar_temp(object):
         
     def init_curve_fit_params(self):
         for i,_c in enumerate(self.ch):
+            path = self.curve_file%(_c)
             temp, unit = numpy.loadtxt(path, delimiter=',', unpack=True)
             self._curve.append([temp, unit])
             self._s2k.append(scipy.interpolate.interp1d(unit, temp,
