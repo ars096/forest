@@ -18,12 +18,14 @@ class dewar_temp(object):
     _curve = []
     _s2k = []
     
-    def __init__(self):
+    def __init__(self, initialize=False):
         com = pymeasure.gpib_prologix('192.168.40.33', 30)
         self.tm = pymeasure.Lakeshore.model218(com)
         
-        self.initialize_diode_type()
-        self.initialize_temp_curves()
+        if initialize:
+            self.initialize_diode_type()
+            self.initialize_temp_curves()
+            pass
         pass
         
     def initialize_diode_type(self):
