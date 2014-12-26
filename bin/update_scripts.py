@@ -36,6 +36,7 @@ try:
     urllib2.urlopen('http://www.google.com/', timeout=3)
     
     print(' OK')
+    print('')
     
     # forest
     # ------
