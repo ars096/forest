@@ -28,7 +28,7 @@ class db_writer(object):
         
         ts = time.strftime('%Y-%m-%d %H:%M:%S')
         key = ','.join(keys)
-        value = str(values)
+        value = str(values).strip('()[]')
         
         sql = "INSERT INTO %s(timestamp,%s) VALUES('%s',%s);"%(self.table, key, ts, value)
         print(sql)
