@@ -59,6 +59,7 @@ os.system('cp -r /home/forest/git/forest/forest /home/forest/python/')
 os.system('cp /home/forest/git/forest/bin/* /home/forest/bin/')
 os.system('cp /home/forest/git/forest/database_scripts/* /home/forest/database/scripts/')
 os.system('chmod 755 /home/forest/bin/*')
+os.system('chmod 755 /home/forest/database/scripts/*')
 
 # pymeasure2
 # ----------
