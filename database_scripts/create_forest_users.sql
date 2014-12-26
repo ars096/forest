@@ -5,6 +5,8 @@
 # Create users for forest project.
 #
 
+DELETE FROM mysql.user WHERE user = '';
+
 DROP USER forest_reader;
 DROP USER forest_writer;
 
