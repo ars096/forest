@@ -3,6 +3,11 @@
 import os
 import urllib2
 
+print('==============')
+print('update_scripts')
+print('==============')
+
+
 # Initialize
 # ==========
 print('directories check')
@@ -99,6 +104,5 @@ print('pyinterface...')
 os.system('cp -r /home/forest/git/pyinterface/pyinterface /home/forest/python/')
 
 
+print('')
 print('done.')
-
-
