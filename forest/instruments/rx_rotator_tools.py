@@ -5,7 +5,7 @@ import threading
 import pyinterface
 
 class rx_rotator(object):
-    deg2count = 15000
+    deg2count = 15000.
     
     move_speed = 20000
     move_low_speed = 200
@@ -16,8 +16,8 @@ class rx_rotator(object):
     tracking_stop = False
     tracking_stopped = False
     tracking_low_speed = 10
-    tracking_acc = 100
-    tracking_dec = 100
+    tracking_acc = 50
+    tracking_dec = 50
     tracking_proc_freq = 0.5 # sec
     tracking_P = 1
     tracking_moving = False
@@ -29,10 +29,10 @@ class rx_rotator(object):
     cosmos_running = False
     cosmos_stop = False
     cosmos_stopped = False
-    err_thresh = 30
+    err_thresh = 0.3
     
     def __init__(self):
-        self.mtr = pyinterface.create_gpg7204(1)
+        self.mtr = pyinterface.create_gpg7204(2)
         pass
         
     def move_org(self):
@@ -79,6 +79,9 @@ class rx_rotator(object):
         self.tracking_moving = False
         self.mtr.ctrl.print_log = False
         
+        self.current_vel = 0
+        self.current_vel_deg = self.count_to_deg(0)
+        
         direc0 = +1
         while True:
             if self.tracking_stop: break
@@ -88,6 +91,7 @@ class rx_rotator(object):
             self.current_position = p0
             self.current_position_deg = self.count_to_deg(p0)
             self.current_diff = dp
+            self.current_diff_deg = self.count_to_deg(dp)
             self.current_timestamp = time.strftime('%y%m%d%H%M%S') + '.%03d'%(int((time.time() - int(time.time()))*1000))
             count = int(dp * self.tracking_P)
             if count < 0: direc = -1
@@ -169,6 +173,7 @@ class rx_rotator(object):
                 if self.cosmos_stop: break
                 continue
             
+            track_duration = 0
             while True:
                 if self.cosmos_stop: break                
                 
@@ -176,32 +181,45 @@ class rx_rotator(object):
                     ret = client.recv(24)
                 except socket.timeout:
                     continue
+                except socket.error, e:
+                    print(e.errno, e.message, e.strerror)
+                    print('BREAK')
+                    break
                 
-                if ret == '': breaak
-
+                print('RECV: %s'%(repr(ret)))
+                if ret == '': break
                 
-                ret = ret.split('\t')
+                
+                ret = ret.strip('\0').split('\t')
                 operate = int(ret[0])
                 return_flag = int(ret[1])
                 timestamp = ret[2]
                 target = float(ret[3])
                 self.cosmos_latest_recv = [operate, return_flag, timestamp, target]
                 
-                print('[%s] op=%s ret=%s t=%s prog=%s real=%+06.1f vel=%+06.1f'% \
+                if abs(self.current_diff_deg) < self.err_thresh:
+                    if track_duration > 3: is_tracking = 1
+                    else: is_tracking = 0
+                    track_duration += 1
+                else: 
+                    is_tracking = 0
+                    track_duration = 0
+                    pass
+                
+                print('[%s] op=%s ret=%s t=%s prog=%s real=%+06.1f diff=%.1f vel=%+06.1f track=%d'% \
                       (time.strftime('%Y/%m/%d %H:%M:%S'), ret[0], ret[1], ret[2], ret[3],
-                       self.current_position_deg, self.current_vel_deg))
+                       self.current_position_deg, self.current_diff_deg, self.current_vel_deg, track_duration))
                 
                 if operate == 1: 
                     self.set_target_position(target)
                     pass
                     
                 if return_flag == 1:
-                    if abs(self.current_diff) < self.err_thresh: is_tracking = 1
-                    else: is_tracking = 0
                     err_no = 0
                     err_msg = ''
                     msg = '%d\t%s\t%+06.1f\t%02d\t%50s\0'%(is_tracking, self.current_timestamp,
                                                            self.current_position_deg, err_no, err_msg)
+                    print('SEND: %s'%(repr(msg)))
                     client.send(msg)
                     pass
                     
