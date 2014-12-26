@@ -38,6 +38,7 @@ try:
             keydict['SU%d'%_c] = _s
             continue
         
+        print(keydict)
         sql.insert(keydict=keydict)
         printlog(k)
         
