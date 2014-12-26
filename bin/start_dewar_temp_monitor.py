@@ -45,7 +45,7 @@ try:
         dt = t1 - t0
         print(dt, t1, t0)
         if dt < 1: time.sleep(1 - dt)
-        t0 = t1
+        t0 = time.time()
         continue
 
 except KeyboardInterrupt:
