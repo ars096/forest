@@ -46,7 +46,7 @@ class dewar_temp(object):
             self._curve.append([temp, unit])
             self._s2k.append(scipy.interpolate.interp1d(unit, temp,
                                                         bounds_error=False,
-                                                        fill_value=0))
+                                                        fill_value=0.0))
             continue
         return
         
