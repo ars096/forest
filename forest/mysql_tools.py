@@ -14,7 +14,7 @@ class db_writer(object):
         self.cursor = cursor
         self.table = table
         
-        keylist = [k[0] for k in self.desc if not k in ['id', 'timestamp']]
+        keylist = [k[0] for k in self.desc() if not k in ['id', 'timestamp']]
         self.keylist = keylist
         pass
         
