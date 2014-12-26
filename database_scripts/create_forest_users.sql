@@ -11,11 +11,11 @@ DROP USER forest_writer;
 GRANT SELECT
       ON forest.* 
       TO forest_reader
-      IDENTIFIED BY "forest";
+      IDENTIFIED BY 'forest';
 
 GRANT SELECT,UPDATE,INSERT 
       ON forest.* 
       TO forest_writer
-      IDENTIFIED BY "forestroot";
+      IDENTIFIED BY 'forestroot';
 
 
