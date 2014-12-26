@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import os
-import urllibg2
+import urllib2
 
 # Initialize
 # ==========
