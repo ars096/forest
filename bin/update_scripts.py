@@ -6,7 +6,7 @@ import urllib2
 print('==============')
 print('update_scripts')
 print('==============')
-
+print('')
 
 # Initialize
 # ==========
