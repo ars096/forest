@@ -5,10 +5,20 @@
 # Create users for forest project.
 #
 
-CREATE USER forest_reader;
-CREATE USER forest_writer;
+DELETE FROM mysql.user WHERE user = '';
 
-GRANT SELECT ON forest.* TO forest_reader@%;
-GRANT SELECT,UPDATE,INSERT ON forest.* TO forest_writer@%;
+DROP USER forest_reader;
+DROP USER forest_writer;
 
+GRANT SELECT
+      ON forest.* 
+      TO forest_reader
+      IDENTIFIED BY 'forest';
+
+GRANT SELECT,UPDATE,INSERT 
+      ON forest.* 
+      TO forest_writer
+      IDENTIFIED BY 'forestroot';
+
+FLUSH PRIVILEGES;
 
