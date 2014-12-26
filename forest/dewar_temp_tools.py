@@ -19,8 +19,8 @@ class dewar_temp(object):
         com = pymeasure.gpib_prologix('192.168.40.33', 30)
         self.tm = pymeasure.Lakeshore.model218(com)
         
-        self.initalize_diode_type()
-        self.intialize_temp_curves()
+        self.initialize_diode_type()
+        self.initialize_temp_curves()
         pass
         
     def initialize_diode_type(self):
