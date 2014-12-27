@@ -36,19 +36,21 @@ class dewar_temp(object):
         return
             
     def set_temp_curves(self):
-        for i,_c in enumerate(self.ch):
-            print('set temp curve ch=%d'%_c)
-            path = self.curve_file%(_c)
-            temp, unit = numpy.loadtxt(path, delimiter=',', unpack=True)
-            self.tm.curve_point_set_line(20+_c, unit, temp)
-            self.tm.curve_header_set(20+_c, self.curve_name[i], self.curve_sn[i],
-                                     self.curve_format[i], 300.0, 1)
-            self.tm.input_curve_set(i, 20+i)
-            
-            self._curve.append([temp, unit])
-            self._s2k.append(scipy.interpolate.interp1d(unit, temp,
-                                                        bounds_error=False,
-                                                        fill_value=0.0))
+        print('set temperature cureves')
+        for _c in range(1, 9):
+            if _c in self.ch:
+                i = self.ch.index(_c)
+                print('ch=%d: %s %s'%(_c, self.curve_name[i], self.curve_sn[i]))
+                path = self.curve_file%(_c)
+                temp, unit = numpy.loadtxt(path, delimiter=',', unpack=True)
+                self.tm.curve_point_set_line(20+_c, unit, temp)
+                self.tm.curve_header_set(20+_c, self.curve_name[i], self.curve_sn[i],
+                                         self.curve_format[i], 300.0, 1)
+                self.tm.input_curve_set(_c, 20+_c)
+            else:
+                print('ch=%d: disabled'%_c)
+                self.tm.input_control_set(_c, 0)
+                pass
             continue
         return
         
