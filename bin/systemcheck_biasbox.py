@@ -13,7 +13,7 @@ import forest
 
 fp = forest.filepath_generator(name)
 
-biasbox = instruments.biasbox()
+biasbox = forest.biasbox()
 
 data = numpy.linspace(0, 1, 101)
 v, i = biasbox.bias_sweep(data)
@@ -21,7 +21,7 @@ biasbox.bias_set(0)
 
 # --
 
-ch = instruments.biasbox_tools.biasbox_ch_mapper()
+ch = forest.biasbox_tools.biasbox_ch_mapper()
 
 pylab.rcParams['font.size'] = 8
 
