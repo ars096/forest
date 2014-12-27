@@ -39,5 +39,5 @@ for _ax, _n, _box, _ch, _beam, _pol, _unit \
     continue
 
 fig.suptitle('systemcheck_biasbox :: %s'%(time.strftime('%Y/%m/%d %H:%M:%S')))
-fig.savefig(fp('fig.bias.%s.png')
+fig.savefig(fp('fig.bias.%s.png'))
 
