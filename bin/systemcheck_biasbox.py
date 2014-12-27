@@ -1,10 +1,19 @@
+#! /usr/bin/env python
+
+
+name = 'systemcheck_biasbox'
+
+
+# -----
 
 import time
 import numpy
 import pylab
-import instruments
+import forest
 
-biasbox = instruments.biasbox()
+fp = forest.filepath_generator(name)
+
+biasbox = forest.biasbox()
 
 data = numpy.linspace(0, 1, 101)
 v, i = biasbox.bias_sweep(data)
@@ -12,7 +21,7 @@ biasbox.bias_set(0)
 
 # --
 
-ch = instruments.biasbox_tools.biasbox_ch_mapper()
+ch = forest.biasbox_tools.biasbox_ch_mapper()
 
 pylab.rcParams['font.size'] = 8
 
@@ -29,6 +38,6 @@ for _ax, _n, _box, _ch, _beam, _pol, _unit \
     _ax.set_ylabel('Bias Current (mA)')
     continue
 
-fig.suptitle('systemcheck_biasbox.py :: %s'%(time.strftime('%Y/%m/%d %H:%M:%S')))
-fig.savefig('systemcheck_biasbox.%s.png'%(time.strftime('%Y%m%d.%H%M%S')))
+fig.suptitle('systemcheck_biasbox :: %s'%(time.strftime('%Y/%m/%d %H:%M:%S')))
+fig.savefig(fp('fig.bias.%s.png'))
 
