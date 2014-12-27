@@ -43,6 +43,7 @@ class dewar_temp(object):
                 print('ch=%d: %s %s'%(_c, self.curve_name[i], self.curve_sn[i]))
                 path = self.curve_file%(_c)
                 temp, unit = numpy.loadtxt(path, delimiter=',', unpack=True)
+                self.tm.curve_delete(20+_c)
                 self.tm.curve_point_set_line(20+_c, unit, temp)
                 self.tm.curve_header_set(20+_c, self.curve_name[i], self.curve_sn[i],
                                          self.curve_format[i], 300.0, 1)
