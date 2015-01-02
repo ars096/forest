@@ -16,12 +16,21 @@ print('=================')
 
 # Create directories
 # ------------------
-if not os.path.exists('/home/forest/git'): os.mkdir('/home/forest/git')
-if not os.path.exists('/home/forest/python'): os.mkdir('/home/forest/python')
-if not os.path.exists('/home/forest/bin'): os.mkdir('/home/forest/bin')
-if not os.path.exists('/home/forest/database'): os.mkdir('/home/forest/database')
-if not os.path.exists('/home/forest/database/scripts'): os.mkdir('/home/forest/database/scripts')
-if not os.path.exists('/home/forest/data'): os.mkdir('/home/forest/data')
+def mkdir(path):
+    if not os.path.exists(path):
+        os.mkdir(path)
+        print('mkdir %s'%(path))
+        pass
+    return
+
+mkdir('/home/forest/git')
+mkdir('/home/forest/python')
+mkdir('/home/forest/bin')
+mkdir('/home/forest/database')
+mkdir('/home/forest/database/scripts')
+mkdir('/home/forest/data')
+mkdir('/home/forest/tuning_parameters')
+mkdir('/home/forest/tuning_parameters/mixer_unit_data')
 
 print('>>> OK')
 print('')
@@ -111,6 +120,11 @@ os.system('cp -r /home/forest/git/pymeasure2/pymeasure /home/forest/python/')
 # -----------
 print('pyinterface...')
 os.system('cp -r /home/forest/git/pyinterface/pyinterface /home/forest/python/')
+
+# tuning parameters
+# -----------------
+print('tuning_parameters...')
+os.system('cp -r /home/forest/git/forest/tuning_parameters /home/forest/tuning_parameters/')
 
 
 print('')
