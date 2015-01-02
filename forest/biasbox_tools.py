@@ -2,14 +2,18 @@
 import itertools
 import numpy
 import pyinterface
+import pyinterface.server_client_wrapper
 
-class biasbox(object):
+class biasbox_controller(object):
+    _latest_bias = []
+    
     def __init__(self):
         ai = pyinterface.create_gpg3100(1)
         ao = pyinterface.create_gpg3300(1)
         ai.set_range('AD_5V')
         ao.set_range('DA_5V')
         self.daq = pyinterface.create_daq(ai, ao)
+        self.bias_get()
         pass
     
     def bias_set(self, bias, **kwargs):
@@ -82,7 +86,7 @@ class biasbox(object):
         >>> b.bias_set(0.234, beam=3, pol='H', dsbunit=2)
         """
         bias = sis_bias_value(bias)
-        bias = bias_voltage_changer(sis=bias)
+        bias = bias_voltage_output_changer(sis=bias)
         argc = len(kwargs)
         if argc==0:
             self.daq.analog_output(bias.box)
@@ -99,6 +103,7 @@ class biasbox(object):
                 pass
             self.daq.analog_output(bias.box, sisch.vout)
             pass
+        self.bias_get()
         return
         
     def bias_get(self, **kwargs):
@@ -211,15 +216,24 @@ class biasbox(object):
                 pass
             pass
         ret = self.daq.analog_input()
-        vin= numpy.array(ret)[sisch.vin]
+        self._set_latest_bias(ret)
+        vin = numpy.array(ret)[sisch.vin]
         vin = bias_voltage_changer(box=vin)
-        iin= numpy.array(ret)[sisch.iin]
+        iin = numpy.array(ret)[sisch.iin]
         iin = bias_current_changer(box=iin)
         return vin.sis, iin.sis
         
+    def _set_latest_bias(self, retdata):
+        retdata = numpy.array(retdata)
+        sischall = biasbox_ch_mapper()
+        v = retdata[sischall.vin]
+        i = retdata[sischall.iin]
+        self._latest_bias = (v, i)
+        return
+                                
     def bias_sweep(self, sweep_values, **kwargs):
         bias = sis_bias_array(sweep_values)
-        bias = bias_voltage_changer(sis=bias)
+        bias = bias_voltage_output_changer(sis=bias)
         argc = len(kwargs)
         if argc==0:
             sisch = biasbox_ch_mapper()
@@ -241,8 +255,26 @@ class biasbox(object):
         iin = numpy.array(ret)[:,sisch.iin]
         iin = bias_current_changer(box=iin)
         return vin.sis, iin.sis
+        
+    def read_bias(self):
+        return self._latest_bias
 
+def biasbox():
+    client = pyinterface.server_client_wrapper.control_client_wrapper(
+        biasbox_controller, '192.168.40.13', 4001)
+    return client
 
+def biasbox_monitor():
+    client = pyinterface.server_client_wrapper.monitor_client_wrapper(
+        biasbox_controller, '192.168.40.13', 4101)
+    return client
+
+def start_biasbox_server():
+    biasbox = biasbox_controller()
+    server = pyinterface.server_client_wrapper.server_wrapper(biasbox,
+                                                              '', 4001, 4101)
+    server.start()
+    return server
 
 
 # ==============
@@ -418,14 +450,14 @@ class array_container(value_checker_base):
 # Values 
 # ------
 class sis_bias_value(float_container):
-    required_min = 0.0
-    requred_max = 1.0
-    error_msg = 'SIS bias should be in 0.0 - 1.0 mV'
+    required_min = -16.0
+    required_max = 16.0
+    error_msg = 'SIS bias should be in -16.0 -- 16.0 mV'
 
 class sis_bias_array(array_container):
-    required_min = 0.0
-    requred_max = 1.0
-    error_msg = 'SIS bias should be in 0.0 - 1.0 mV'
+    required_min = -16.0
+    required_max = 16.0
+    error_msg = 'SIS bias should be in -16.0 -- 16.0 mV'
 
 class biasbox_num(int_container):
     required = [1, 2, 3, 4]
@@ -463,11 +495,14 @@ class bias_changer(object):
             pass
         pass
 
+class bias_voltage_output_changer(bias_changer):
+    sis_to_box_conversion_factor = 1./0.94/3.
+
 class bias_voltage_changer(bias_changer):
-    sis_to_box_conversion_factor = 1.
+    sis_to_box_conversion_factor = 1/5.
 
 class bias_current_changer(bias_changer):
-    sis_to_box_conversion_factor = 1.
+    sis_to_box_conversion_factor = 1/500.
 
 
 # Bias CH Changer

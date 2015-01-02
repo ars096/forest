@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import os
+import sys
 import urllib2
 
 print('==============')
@@ -27,56 +28,61 @@ print('')
 # ===============================
 print('download latest files')
 print('=====================')
-
 print('checking the Internet connection...'),
-try:
-    urllib2.urlopen('http://www.google.com/', timeout=3)
-    
-    print(' OK')
-    print('')
-    
-    # forest
-    # ------
-    print('checking forest tools...')
-    print('------------------------')
-    if not os.path.exists('/home/forestroot/git/forest'):
-        os.system('git clone https://github.com/ars096/forest.git /home/forestroot/git/forest/')
-    else:
-        os.chdir('/home/forestroot/git/forest')
-        os.system('git pull')
-        pass
-    print('')
+
+if sys.argv[-1]!='-skip':    
+    try:
+        urllib2.urlopen('http://www.google.com/', timeout=2)
         
-    # pymeasure2
-    # ----------
-    print('checking pymeasure2 module...')
-    print('-----------------------------')
-    if not os.path.exists('/home/forestroot/git/pymeasure2'):
-        os.system('git clone https://github.com/ars096/pymeasure2.git /home/forestroot/git/pymeasure2/')
-    else:
-        os.chdir('/home/forestroot/git/pymeasure2')
-        os.system('git pull')
+        print(' OK')
+        print('')
+    
+        # forest
+        # ------
+        print('checking forest tools...')
+        print('------------------------')
+        if not os.path.exists('/home/forestroot/git/forest'):
+            os.system('git clone https://github.com/ars096/forest.git /home/forestroot/git/forest/')
+        else:
+            os.chdir('/home/forestroot/git/forest')
+            os.system('git pull')
+            pass
+        print('')
+            
+        # pymeasure2
+        # ----------
+        print('checking pymeasure2 module...')
+        print('-----------------------------')
+        if not os.path.exists('/home/forestroot/git/pymeasure2'):
+            os.system('git clone https://github.com/ars096/pymeasure2.git /home/forestroot/git/pymeasure2/')
+        else:
+            os.chdir('/home/forestroot/git/pymeasure2')
+            os.system('git pull')
+            pass
+        print('')
+        
+        # pyinterface
+        # -----------
+        print('checking pyinterface module...')
+        print('------------------------------')
+        if not os.path.exists('/home/forestroot/git/pyinterface'):
+            os.system('git clone https://github.com/ars096/pyinterface.git /home/forestroot/git/pyinterface/')
+        else:
+            os.chdir('/home/forestroot/git/pyinterface')
+            os.system('git pull')
+            pass
+        print('')
+        
+    except:
+        print(' NG')
+        print('>> MODE: off-line')
+        print('')
         pass
-    print('')
-
-    # pyinterface
-    # -----------
-    print('checking pyinterface module...')
-    print('------------------------------')
-    if not os.path.exists('/home/forestroot/git/pyinterface'):
-        os.system('git clone https://github.com/ars096/pyinterface.git /home/forestroot/git/pyinterface/')
-    else:
-        os.chdir('/home/forestroot/git/pyinterface')
-        os.system('git pull')
-        pass
-    print('')
-
-except:
-    print(' NG')
-    print('>> MODE: off-line')
+else:
+    print('passed')
     print('')
     pass
-
+    
 # Update Modules and Scripts
 # ==========================
 print('overwrite files')
