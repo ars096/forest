@@ -1,0 +1,24 @@
+[info]
+mixer_id: 2SB-2012-001-N
+unit_id: 6
+L_block_id: 5L
+R_block_id: 6R
+L_sis_id: I17-Ad-4J-42
+R_sis_id: I17-Ad-4J-8D
+
+default: 105 GHz
+
+[105 GHz]
+date: 2014/11/19
+report_id: 2-2
+bias1: 9.4
+bias2: 8.9
+lo_att: 875
+
+[108 GHz]
+date: 2014/11/19
+report_id: 2-2
+bias1: 9.4
+bias2: 8.9
+lo_att: 850
+
