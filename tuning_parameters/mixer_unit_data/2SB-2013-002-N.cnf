@@ -1,0 +1,22 @@
+[info]
+mixer_id: 2SB-2013-002-N
+unit_id: 5
+L_block_id: 8L
+R_block_id: 5R
+L_sis_id: I16-Bc-3J-3C
+R_sis_id: I16-bc-3J-3E
+
+[105 GHz]
+date: 2014/10/18
+report_id: 1
+bias1: 7.2
+bias2: 6.8
+lo_att: 950
+
+[108 GHz]
+date: 2014/10/18
+report_id: 1
+bias1: 7.2
+bias2: 6.7
+lo_att: 950
+

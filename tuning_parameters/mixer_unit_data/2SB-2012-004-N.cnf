@@ -1,0 +1,22 @@
+[info]
+mixer_id: 2SB-2012-004-N
+unit_id: 9
+L_block_id: 9L
+R_block_id: 11L
+L_sis_id: I17-Bc-3J-36
+R_sis_id: I17-Cb-3J-33
+
+[105 GHz]
+date: 2014/11/07
+report_id: 7
+bias1: 7.2
+bias2: 6.6
+lo_att: 1000
+
+[108 GHz]
+date: 2014/11/07
+report_id: 7
+bias1: 7.2
+bias2: 6.6
+lo_att: 975
+

@@ -1,0 +1,22 @@
+[info]
+mixer_id: 2SB-2013-003-O
+unit_id: 4
+L_block_id: 4L
+R_block_id: 4R
+L_sis_id: I12-Db-4J-41
+R_sis_id: I12-Dd-4J-41
+
+[105 GHz]
+date: 2014/10/29
+report_id: 4
+bias1: 9.6
+bias2: 8.9
+lo_att: 900
+
+[108 GHz]
+date: 2014/10/29
+report_id: 4
+bias1: 9.6
+bias2: 8.9
+lo_att: 900
+
