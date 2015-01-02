@@ -105,7 +105,7 @@ print('')
 
 print('lo_att...'),
 sys.stdout.flush()
-loatt = forest.lo_att()
+loatt = forest.loatt()
 print('')
 
 print('')
@@ -145,7 +145,5 @@ forest.print_bias(bias_results)
 
 print('LO Att.')
 print('-------')
-print('(soon...)')
-print('\n\n')
-# loatt_results = loatt.bias_get()
-# forest.print_loatt(loatt_results)
+loatt_results = loatt.bias_get()
+forest.print_loatt(loatt_results)
