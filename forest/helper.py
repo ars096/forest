@@ -31,10 +31,10 @@ def print_bias(bias):
     v = bias[0]
     i = bias[1]
      
-    v1 = 'V(mV): ' + ', '.join(['%.2f'%_v for _v in v[:8]]) + '\n'
-    v2 = 'V(mV): ' + ', '.join(['%.2f'%_v for _v in v[:8]]) + '\n'
-    i1 = 'I(uA): ' + ', '.join(['%.2f'%_i for _i in i[8:]]) + '\n'
-    i2 = 'I(uA): ' + ', '.join(['%.2f'%_i for _i in i[8:]]) + '\n'
+    v1 = 'V(mV): ' + ', '.join(['%5.2f'%_v for _v in v[:8]]) + '\n'
+    v2 = 'V(mV): ' + ', '.join(['%5.2f'%_v for _v in v[:8]]) + '\n'
+    i1 = 'I(uA): ' + ', '.join(['%5.1f'%_i for _i in i[8:]]) + '\n'
+    i2 = 'I(uA): ' + ', '.join(['%5.1f'%_i for _i in i[8:]]) + '\n'
     sep = '-' * (len(v1)) + '\n'
     
     beam1 = '%5s | %8s %s %8s | %8s %s %8s  |\n'%('', '', 'Beam 1', '', 
