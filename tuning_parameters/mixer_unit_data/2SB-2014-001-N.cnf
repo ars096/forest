@@ -6,6 +6,8 @@ R_block_id: 24
 L_sis_id: I17-Bc-3J-31
 R_sis_id: I16-Dc-3J-3D
 
+default: 105 GHz
+
 [105 GHz]
 date: 2014/12/11
 report_id: 12

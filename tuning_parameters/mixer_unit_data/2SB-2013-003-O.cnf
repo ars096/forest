@@ -6,6 +6,8 @@ R_block_id: 4R
 L_sis_id: I12-Db-4J-41
 R_sis_id: I12-Dd-4J-41
 
+default: 105 GHz
+
 [105 GHz]
 date: 2014/10/29
 report_id: 4

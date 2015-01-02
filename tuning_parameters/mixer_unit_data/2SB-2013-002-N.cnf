@@ -6,6 +6,8 @@ R_block_id: 5R
 L_sis_id: I16-Bc-3J-3C
 R_sis_id: I16-bc-3J-3E
 
+default: 105 GHz
+
 [105 GHz]
 date: 2014/10/18
 report_id: 1

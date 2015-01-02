@@ -6,6 +6,8 @@ R_block_id: 12R
 L_sis_id: I17-Cb-3J-34
 R_sis_id: I17-Cb-3J-35
 
+default: 105 GHz
+
 [105 GHz]
 date: 2014/11/14
 report_id: 6-2

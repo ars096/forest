@@ -6,6 +6,8 @@ R_block_id: 8R
 L_sis_id: I12-Bd-4J-42
 R_sis_id: I12-Bd-4J-43
 
+default: 105 GHz
+
 [105 GHz]
 date: 2014/11/10
 report_id: 8
