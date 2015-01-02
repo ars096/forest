@@ -6,6 +6,8 @@ R_block_id: 2R
 L_sis_id: I17-Ad-3J-39
 R_sis_id: I17-Ad-3J-38
 
+default: 105 GHz
+
 [105 GHz]
 date: 2014/10/27
 report_id: 3

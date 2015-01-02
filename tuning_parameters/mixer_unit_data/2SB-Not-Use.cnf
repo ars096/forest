@@ -1,0 +1,22 @@
+[info]
+mixer_id: 2SB-Not-Use
+unit_id: 0
+L_block_id: 0
+R_block_id: 0
+L_sis_id: 0
+R_sis_id: 0
+
+[105 GHz]
+date: 2015/01/03
+report_id: 0
+bias1: 0
+bias2: 0
+lo_att: 0
+
+[108 GHz]
+date: 2015/01/03
+report_id: 0
+bias1: 0
+bias2: 0
+lo_att: 0
+
