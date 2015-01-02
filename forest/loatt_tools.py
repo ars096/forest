@@ -3,10 +3,14 @@ import itertools
 import time
 import numpy
 import pymeasure
+import pyinterface.server_client_wrapper
 
-class lo_att(object):
+class loatt_controller(object):
+    _latest_bias = []
+    
     def __init__(self):
-        com1 = pymeasure.ethernet('192.168.40.32', 1234)
+        com1 = pymeasure.ethernet('192.168.40.31', 1234)
+        com2 = pymeasure.ethernet('192.168.40.32', 1234)
         
         elva100 = pymeasure.ELVA1.GPDVC15_100
         elva200 = pymeasure.ELVA1.GPDVC15_200
@@ -15,16 +19,19 @@ class lo_att(object):
                (elva100, com1, 9),
                (elva100, com1, 10),
                (elva100, com1, 11),
-               (elva100, com1, 12),
-               (elva100, com1, 13),
-               (elva100, com1, 14),
-               (elva100, com1, 15)]
+               (elva100, com2, 12),
+               (elva100, com2, 13),
+               (elva100, com2, 14),
+               (elva100, com2, 15),]
         
         self.att = []
         for _att, _host, _gpib in att:
             gpib = pymeasure.gpib_prologix(_host, _gpib)
             self.att.append(_att(gpib))
             continue
+            
+        self.bias_set(0)
+        self.bias_get()
         pass
     
     def bias_set(self, bias, **kwargs):
@@ -97,13 +104,14 @@ class lo_att(object):
                 pass
             pass
         self._bias_set(bias, target.ind)
+        self.bias_get()
         return
     
     def _bias_set(self, bias, targets):
         for t in targets:
             self.att[t].com.use_gpibport()
             self.att[t].output_set(bias)
-            time.sleep(0.2)
+            time.sleep(0.1)
             continue
         return
 
@@ -195,14 +203,37 @@ class lo_att(object):
         return ret
         
     def _bias_get(self, targets):
+        retall = []
         ret = []
+        for i in range(len(self.att)):
+            retall.append(self.att[i].output_get())
+            continue
+        self._latest_bias = retall
+        
         for t in targets:
-            ret.append(self.att[t].output_get())
-            time.sleep(0.2)
+            ret.append(retall[t])
             continue
         return ret
         
+    def read_bias(self):
+        return self._latest_bias
 
+def loatt():
+    client = pyinterface.server_client_wrapper.control_client_wrapper(
+        loatt_controller, '192.168.40.13', 4002)
+    return client
+
+def loatt_monitor():
+    client = pyinterface.server_client_wrapper.monitor_client_wrapper(
+        loatt_controller, '192.168.40.13', 4102)
+    return client
+
+def start_loatt_server():
+    loatt = loatt_controller()
+    server = pyinterface.server_client_wrapper.server_wrapper(loatt,
+                                                              '', 4002, 4102)
+    server.start()
+    return server
 
 
 

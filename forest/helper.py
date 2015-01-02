@@ -63,3 +63,20 @@ def print_bias(bias):
     
     print(msg)
     return
+
+def print_loatt(bias):
+    v = ' ' + ', '.join(['%4d'%_v for _v in bias]) + '\n'
+    sep = '-' * (len(v)) + '\n'
+    beam = '|   Beam 1  |   Beam 2  |   Beam 3  |   Beam 4  |\n'
+    pol =  '|   H   V   |   H   V   |   H   V   |   H   V   |\n'
+
+    msg = ''
+    msg += sep
+    msg += beam
+    msg += pol
+    msg += sep
+    msg += v
+    msg += sep
+    
+    print(msg)
+    return

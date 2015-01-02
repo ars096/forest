@@ -50,5 +50,22 @@ print('*** Results ***')
 sisbias = biasbox.bias_get()
 forest.print_bias(sisbias) 
 
+# loatt
+# -----
+print('LO Att')
+print('======')
+print('opening ...'),
+sys.stdout.flush()
+loatt = forest.loatt()
+print('OK')
+print('set 0 ...'),
+sys.stdout.flush()
+loatt.bias_set(0)
+print('OK')
+
+print('*** Results ***')
+loattbias = loatt.bias_get()
+forest.print_loatt(loattbias) 
+
 # 
 # 
