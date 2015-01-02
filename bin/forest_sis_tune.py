@@ -15,6 +15,7 @@ mixer_data_dir = 'mixer_unit_data'
 # ======
 
 import os
+import sys
 import argparse
 import ConfigParser
 import forest
@@ -34,13 +35,13 @@ args = p.parse_args()
 # main
 # ====
 
-print('========================')
+print('~~~~~~~~~~~~~~~~~~~~~~~~')
 print('FOREST : Tune SIS mixers')
-print('========================')
+print('~~~~~~~~~~~~~~~~~~~~~~~~')
 forest.print_timestamp()
 print('')
 
-print('INFO: Tune to LO_Freq. = %d GHz.')
+print('INFO: Tune to LO_Freq. = %d GHz.'%(args.lo_freq))
 print('')
 
 
@@ -52,6 +53,9 @@ conf = ConfigParser.SafeConfigParser()
 conf.read(confpath)
 
 params = {}
+
+print('Parameters')
+print('==========')
 
 for unit in conf.options('combination'):
     unitname = conf.get('combination', unit)
@@ -76,23 +80,45 @@ for unit in conf.options('combination'):
             raise('ERROR: %s has no parameters for %d GHz.'%(unitname, lo_freq))
         pass
     
-    bias1 = unitconf.get(section, 'bias1')
-    bias2 = unitconf.get(section, 'bias2')
-    lo_att = unitconf.get(section, 'lo_att')
+    bias1 = float(unitconf.get(section, 'bias1'))
+    bias2 = float(unitconf.get(section, 'bias2'))
+    lo_att = float(unitconf.get(section, 'lo_att'))
     
+    print('%s: bias1 = %f,  bias2 = %f,  lo_att = %f'%(unit, bias1, bias2,
+                                                       lo_att))
     params[unit] = {'bias1': bias1, 'bias2': bias2, 'lo_att': lo_att}
     continue
-        
+
+print('')
+
 
 # set tuning parameters
 # ---------------------
+
+print('open devices')
+print('============')
+
+print('biasbox...'),
+sys.stdout.flush()
 biasbox = forest.biasbox()
+print('')
+
+print('lo_att...'),
+sys.stdout.flush()
 loatt = forest.lo_att()
+print('')
+
+print('')
 
 unitlist = ['beam1_hpol', 'beam1_vpol', 'beam2_hpol', 'beam2_vpol', 
             'beam3_hpol', 'beam3_vpol', 'beam4_hpol', 'beam4_vpol']
 
+print('set parameters')
+print('==============')
+
 for unit in unitlist:
+    print(unit+','), 
+    sys.stdout.flush()
     p = params[unit]
     beam = int(unit.strip('beam_hvpol'))
     pol = unit.strip('beam1234_pol').upper()
@@ -102,9 +128,24 @@ for unit in unitlist:
     loatt.bias_set(p['lo_att'], beam=beam, pol=pol)
     continue
 
+print('done.')
+print('')
+
+
+# Show results
+# ------------
+
+print('Results')
+print('=======')
 
 bias_results = biasbox.bias_get()
+print('Bias Box')
+print('--------')
 forest.print_bias(bias_results) 
 
+print('LO Att.')
+print('-------')
+print('(soon...)')
+print('\n\n')
 # loatt_results = loatt.bias_get()
 # forest.print_loatt(loatt_results)

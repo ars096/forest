@@ -124,7 +124,7 @@ os.system('cp -r /home/forest/git/pyinterface/pyinterface /home/forest/python/')
 # tuning parameters
 # -----------------
 print('tuning_parameters...')
-os.system('cp -r /home/forest/git/forest/tuning_parameters /home/forest/tuning_parameters/')
+os.system('cp -r /home/forest/git/forest/tuning_parameters /home/forest/')
 
 
 print('')

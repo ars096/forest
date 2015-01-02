@@ -226,8 +226,8 @@ class biasbox_controller(object):
     def _set_latest_bias(self, retdata):
         retdata = numpy.array(retdata)
         sischall = biasbox_ch_mapper()
-        v = retdata[sischall.vin]
-        i = retdata[sischall.iin]
+        v = bias_voltage_changer(box=retdata[sischall.vin]).sis
+        i = bias_current_changer(box=retdata[sischall.iin]).sis
         self._latest_bias = (v, i)
         return
                                 
