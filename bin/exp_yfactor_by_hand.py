@@ -8,7 +8,7 @@
 f_start = 0  # GHz
 f_stop = 12  # GHz
 resbw = 3    # MHz  (10Hz - 3MHz)
-average = 11 
+average = 5 
 
 eval_ch = [1, 2, 3, 4]
 
@@ -26,6 +26,7 @@ import sys
 import time
 import argparse
 import numpy
+import pylab
 import forest
 
 
@@ -35,17 +36,17 @@ import forest
 desc = 'Y-factor by hand.'
 
 p = argparse.ArgumentParser(description=desc)
-p.add_argument('--start', nargs=1, type=float,
+p.add_argument('--start', type=float,
                help='Start freq. in GHz. default is %.2f GHz'%(f_start))
-p.add_argument('--stop', nargs=1, type=float,
+p.add_argument('--stop', type=float,
                help='Stop freq. in GHz. default is %.2f GHz'%(f_stop))
-p.add_argument('--resbw', nargs=1, type=float,
+p.add_argument('--resbw', type=float,
                help='Resolution BW in MHz. default is %.2f MHz'%(resbw))
-p.add_argument('--average', nargs=1, type=float,
+p.add_argument('--average', type=int,
                help='Average num to acqumerate. default is %d.'%(average))
-p.add_argument('--ch', nargs=1, type=str,
+p.add_argument('--ch',  type=str,
                help='Ch numbers to be evalulated. default is %s.'%(eval_ch))
-p.add_argument('--thot', nargs=1, type=float,
+p.add_argument('--thot', type=float,
                help='Hot temperature in K. default is %.1f'%(thot))
 
 args = p.parse_args()
@@ -86,6 +87,7 @@ params += 'ch = %s\n'%(str(eval_ch))
 params += 'thot = %f\n'%(thot)
 open(fp('log.params.%s.txt'), 'w').writelines(params)
 
+print('')
 
 # open devices
 # ------------
@@ -138,6 +140,9 @@ print('')
 dcold = []
 dhot = []
 
+freq = sp.sp[0].gen_xaxis()
+numpy.save(fp('freq.%s.npy'), freq)
+
 
 # get cold
 # --------
@@ -154,9 +159,11 @@ for i in eval_ch:
     dcold.append(_d)
     continue
 
+print('save: %s'%fp('data.cold.%s.npy'))
 dcold = numpy.array(dcold)
 numpy.save(fp('data.cold.%s.npy'), dcold)
 
+print('')
 
 # get hot
 # -------
@@ -173,12 +180,16 @@ for i in eval_ch:
     dhot.append(_d)
     continue
     
-dhot = numpy.array(dcold)
+print('save: %s'%fp('data.hot.%s.npy'))
+dhot = numpy.array(dhot)
 numpy.save(fp('data.hot.%s.npy'), dhot)
+
+print('')
 
 print('INFO: switch set ch 1')
 sw.ch_set_all(1)
 
+print('')
 
 # calc y-factor
 # -------------
@@ -187,6 +198,45 @@ tsys = forest.rsky_dB(dhot, dcold, thot)
 numpy.save(fp('data.tsys.%s.npy'), tsys)
 
 
-
 # plot part
 # ---------
+
+ax_x = 4
+ax_y = len(eval_ch)
+ax_num = ax_x * ax_y
+
+dhot = dhot.reshape([ax_num, -1])
+dcold = dcold.reshape([ax_num, -1])
+tsys = tsys.reshape([ax_num, -1])
+
+g_freq = freq * 1e-9
+
+speana = ['SP:1', 'SP:2', 'SP:3', 'SP:4'] * ax_y 
+switch = ['SW:%d'%_ch for i in range(ax_x) for _ch in eval_ch]
+label = ['%s, %s'%(_sw, _sp) for _sw, _sp in zip(switch, speana)]
+
+if numpy.nanmax(tsys) < 300: tsys_max = 300
+elif numpy.nanmax(tsys) < 500: tsys_max = 500
+else: tsys_max = 1000
+
+pylab.rcParams['font.size'] = 7
+
+fig = pylab.figure()
+fig.suptitle('y-factor : %s'%(time.strftime('%Y/%m/%d %H:%M:%S')), fontsize=12)
+ax = [fig.add_subplot(ax_y, ax_x, i+1) for i in range(ax_num)]
+ax2 = [_a.twinx() for _a in ax]
+[_a.plot(g_freq, _hot, 'r-') for _a, _hot in zip(ax, dhot)]
+[_a.plot(g_freq, _cold, 'b-') for _a, _cold in zip(ax, dcold)]
+[_a.plot(g_freq, _tsys, 'k-') for _a, _tsys in zip(ax2, tsys)]
+[_a.text(0.1, 0.8, _l, transform=_a.transAxes, fontsize=12)
+ for _a, _l in zip(ax, label)]
+[_a.set_xlim(g_freq.min(), g_freq.max()) for _a in ax]
+[_a.set_xlim(g_freq.min(), g_freq.max()) for _a in ax2]
+[_a.set_ylim(0, tsys_max) for _a in ax2]
+[_a.set_xlabel('Frequency (GHz)') for i, _a in enumerate(ax) if i/4>=(ax_y-1)]
+[_a.set_ylabel('Power (dBm)') for i, _a in enumerate(ax) if i%4==0]
+[_a.set_yticklabels('') for i, _a in enumerate(ax) if i%4!=0]
+[_a.set_ylabel('Tsys (K)') for i, _a in enumerate(ax2) if i%4==3]
+[_a.set_yticklabels('') for i, _a in enumerate(ax2) if i%4!=3]
+[_a.grid(True) for _a in ax]
+fig.savefig(fp('yfactor.results.%s.png'))
