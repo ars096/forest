@@ -439,11 +439,12 @@ class array_container(value_checker_base):
         if val is None:
             self.val = val
         else:
+            val = numpy.array(val)
             _min = self.required_min
             _max = self.required_max
             if not(((_min <= val) & (val <= _max)).all()):
                 raise ValueError(self.error_msg + ' (val=%f)'%(val))
-            self.val = numpy.array(val)
+            self.val = val
             pass
         pass
 

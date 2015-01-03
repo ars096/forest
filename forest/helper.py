@@ -15,7 +15,7 @@ def filepath_generator(name):
     savedir = os.path.join(fdir, name, ts)
     mkdirs(savedir)
     def filepath(fname):
-        if fname.find('%s'): fname = fname%(ts)
+        if fname.find('%s')!=-1: fname = fname%(ts)
         return os.path.join(savedir, fname)
     return filepath
 
