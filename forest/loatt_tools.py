@@ -15,14 +15,14 @@ class loatt_controller(object):
         elva100 = pymeasure.ELVA1.GPDVC15_100
         elva200 = pymeasure.ELVA1.GPDVC15_200
         
-        att = [(elva100, com1, 4),
-               (elva100, com1, 5),
+        att = [(elva100, com2, 8),
+               (elva100, com2, 9),
                (elva200, com1, 6),
                (elva200, com1, 7),
-               (elva100, com2, 5),
-               (elva100, com2, 2),
-               (elva100, com2, 3),
-               (elva100, com2, 8),]
+               (elva100, com1, 5),
+               (elva100, com1, 5),
+               (elva100, com2, 10),
+               (elva100, com2, 11),]
         
         self.att = []
         for _att, _host, _gpib in att:

@@ -110,6 +110,13 @@ print('done.')
 v = numpy.array(v)
 i = numpy.array(i)
 
+print('')
+
+print('INFO: SIS bias set to 0 mV.')
+bb.bias_set(0)
+
+print('')
+
 # save data
 # - - - - - 
 print('save data...')
