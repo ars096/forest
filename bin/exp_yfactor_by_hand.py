@@ -45,7 +45,7 @@ p.add_argument('--average', nargs=1, type=float,
                help='Average num to acqumerate. default is %d.'%(average))
 p.add_argument('--ch', nargs=1, type=str,
                help='Ch numbers to be evalulated. default is %s.'%(eval_ch))
-p.add_argument('--Thot', nargs=1, type=float,
+p.add_argument('--thot', nargs=1, type=float,
                help='Hot temperature in K. default is %.1f'%(thot))
 
 args = p.parse_args()
@@ -73,8 +73,8 @@ if args.stop is not None: f_stop = args.stop
 if args.resbw is not None: resbw = args.resbw
 if args.average is not None: average = args.average
 if args.ch is not None:
-    if args.ch.find('[') != -1: ch = eval(args.ch)
-    else: ch = int(args.ch)
+    if args.ch.find('[') != -1: eval_ch = eval(args.ch)
+    else: eval_ch = int(args.ch)
     pass
 if args.thot is not None: thot = args.thot
 
@@ -82,7 +82,7 @@ params = 'f_start = %f\n'%(f_start)
 params += 'f_stop = %f\n'%(f_stop)
 params += 'resbw = %f\n'%(resbw)
 params += 'average = %d\n'%(average)
-params += 'ch = %s\n'%(str(ch))
+params += 'ch = %s\n'%(str(eval_ch))
 params += 'thot = %f\n'%(thot)
 open(fp('log.params.%s.txt'), 'w').writelines(params)
 
@@ -95,6 +95,7 @@ print('============')
 print('spectrum analyzers...'),
 sys.stdout.flush()
 sp = forest.speana()
+time.sleep(1)
 print('')
 
 print('IF switches...'),
@@ -126,7 +127,7 @@ sweeptime = sp.sweep_time_query()[0]
 acquiretime = sweeptime * average
 print('INFO: acquiretime = %f sec.'%(acquiretime))
 
-print('INFO: set ch 1')
+print('INFO: switch set ch 1')
 sw.ch_set_all(1)
 
 print('')
@@ -145,6 +146,8 @@ print('')
 
 for i in eval_ch:
     print('acquire ch%d, waittime=%.1f'%(i, acquiretime))
+    sw.ch_set_all(i)
+    time.sleep(0.2)
     sp.average_restart()
     time.sleep(acquiretime)
     _d = sp.trace_data_query()
@@ -162,6 +165,8 @@ print('')
 
 for i in eval_ch:
     print('acquire ch%d, waittime=%.1f'%(i, acquiretime))
+    sw.ch_set_all(i)
+    time.sleep(0.2)
     sp.average_restart()
     time.sleep(acquiretime)
     _d = sp.trace_data_query()
@@ -170,6 +175,9 @@ for i in eval_ch:
     
 dhot = numpy.array(dcold)
 numpy.save(fp('data.hot.%s.npy'), dhot)
+
+print('INFO: switch set ch 1')
+sw.ch_set_all(1)
 
 
 # calc y-factor
