@@ -58,9 +58,9 @@ print('opening ...'),
 sys.stdout.flush()
 loatt = forest.loatt()
 print('OK')
-print('set 0 ...'),
+print('set 200 ...'),
 sys.stdout.flush()
-loatt.bias_set(0)
+loatt.bias_set(200)
 print('OK')
 
 print('*** Results ***')
