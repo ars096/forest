@@ -5,7 +5,7 @@
 
 # default values
 # --------------
-f_start = 0  # GHz
+f_start = 4  # GHz
 f_stop = 12  # GHz
 resbw = 3    # MHz  (10Hz - 3MHz)
 average = 5 
@@ -215,8 +215,8 @@ speana = ['SP:1', 'SP:2', 'SP:3', 'SP:4'] * ax_y
 switch = ['SW:%d'%_ch for i in range(ax_x) for _ch in eval_ch]
 label = ['%s, %s'%(_sw, _sp) for _sw, _sp in zip(switch, speana)]
 
-if numpy.nanmax(tsys) < 300: tsys_max = 300
-elif numpy.nanmax(tsys) < 500: tsys_max = 500
+if numpy.nanmin(tsys) < 200: tsys_max = 300
+elif numpy.nanmax(tsys) < 400: tsys_max = 500
 else: tsys_max = 1000
 
 pylab.rcParams['font.size'] = 7
@@ -227,7 +227,7 @@ ax = [fig.add_subplot(ax_y, ax_x, i+1) for i in range(ax_num)]
 ax2 = [_a.twinx() for _a in ax]
 [_a.plot(g_freq, _hot, 'r-') for _a, _hot in zip(ax, dhot)]
 [_a.plot(g_freq, _cold, 'b-') for _a, _cold in zip(ax, dcold)]
-[_a.plot(g_freq, _tsys, 'k-') for _a, _tsys in zip(ax2, tsys)]
+[_a.plot(g_freq, _tsys, 'k+') for _a, _tsys in zip(ax2, tsys)]
 [_a.text(0.1, 0.8, _l, transform=_a.transAxes, fontsize=12)
  for _a, _l in zip(ax, label)]
 [_a.set_xlim(g_freq.min(), g_freq.max()) for _a in ax]
