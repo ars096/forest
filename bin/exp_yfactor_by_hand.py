@@ -218,6 +218,8 @@ label = ['%s, %s'%(_sw, _sp) for _sw, _sp in zip(switch, speana)]
 if numpy.nanmin(tsys) < 200: tsys_max = 300
 elif numpy.nanmax(tsys) < 400: tsys_max = 500
 else: tsys_max = 1000
+db_min = numpy.nanmin(dcold)
+db_max = numpy.nanmax(dhot)
 
 pylab.rcParams['font.size'] = 7
 
@@ -232,6 +234,7 @@ ax2 = [_a.twinx() for _a in ax]
  for _a, _l in zip(ax, label)]
 [_a.set_xlim(g_freq.min(), g_freq.max()) for _a in ax]
 [_a.set_xlim(g_freq.min(), g_freq.max()) for _a in ax2]
+[_a.set_ylim(db_min, db_max) for _a in ax]
 [_a.set_ylim(0, tsys_max) for _a in ax2]
 [_a.set_xlabel('Frequency (GHz)') for i, _a in enumerate(ax) if i/4>=(ax_y-1)]
 [_a.set_ylabel('Power (dBm)') for i, _a in enumerate(ax) if i%4==0]
