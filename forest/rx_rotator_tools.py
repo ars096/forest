@@ -1,4 +1,10 @@
 
+
+softlimit_plus = 91.0
+softlimit_minus = -91.0
+
+# 
+
 import time
 import socket
 import threading
@@ -11,6 +17,8 @@ class rx_rotator(object):
     move_low_speed = 200
     move_acc = 1000
     move_dec = 1000
+    
+    softlimit = False
     
     tracking_running = False
     tracking_stop = False
@@ -43,19 +51,46 @@ class rx_rotator(object):
         
     def move(self, degree, lock=True):
         count = self.deg_to_count(degree)
-        if lock:
-            self.mtr.move_with_lock(self.move_speed, count,
-                                    self.move_low_speed, self.move_acc,
-                                    self.move_dec, sspeed=0)
-        else:
-            self.mtr.move(self.move_speed, count, self.move_low_speed,
-                          self.move_acc, self.move_dec, sspeed=0)
+        goto = self.get_position() + degree
+        if self.check_softlimit(goto):
+            print('softlimit')
+            return
+            
+        try:
+            if lock:
+                self.mtr.move_with_lock(self.move_speed, count,
+                                        self.move_low_speed, self.move_acc,
+                                        self.move_dec, sspeed=0)
+            else:
+                self.mtr.move(self.move_speed, count, self.move_low_speed,
+                              self.move_acc, self.move_dec, sspeed=0)
+                pass
+        except:
+            self.stop()
             pass
         return
     
+    def goto(self, goto, lock=True):
+        move = goto - self.deg_position()
+        self.move(move, lock)
+        return
+        
     def stop(self):
         self.mtr.stop()
         return
+        
+    def get_position(self):
+        cnt = self.mtr.get_position()
+        deg = self.count_to_deg(cnt)
+        return deg
+        
+    def check_softlimit(self, goto=None):
+        if goto is None: goto = self.get_position()
+        if softlimit_minus < goto < softlimit_plus:
+            self.softlimit = False
+            return False
+        self.softlimit = True
+        return True
     
     def start_tracking(self):
         th = threading.Thread(target=self._tracking_proc)
@@ -85,6 +120,9 @@ class rx_rotator(object):
         direc0 = +1
         while True:
             if self.tracking_stop: break
+            if self.check_softlimit():
+                time.sleep(self.tracking_proc_freq)
+                continue
             p0 = self.mtr.get_position()
             p1 = self.target_position_count
             dp = p1 - p0
