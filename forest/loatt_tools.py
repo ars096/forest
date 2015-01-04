@@ -15,12 +15,12 @@ class loatt_controller(object):
         elva100 = pymeasure.ELVA1.GPDVC15_100
         elva200 = pymeasure.ELVA1.GPDVC15_200
         
-        att = [(elva100, com2, 8),
-               (elva100, com2, 9),
+        att = [(elva100, com1, 4),
+               (elva100, com1, 5),
                (elva200, com1, 6),
                (elva200, com1, 7),
-               (elva100, com1, 5),
-               (elva100, com1, 5),
+               (elva100, com2, 8),
+               (elva100, com2, 9),
                (elva100, com2, 10),
                (elva100, com2, 11),]
         
@@ -246,8 +246,8 @@ def start_loatt_server():
 class loatt_ch_mapper(object):
     drive_map = [None, 1, 2, 3, 4, 5, 6, 7, 8]
     
-    beam_map = {1:{'H': 1, 'V': 5},
-                2:{'H': 2, 'V': 6},
+    beam_map = {1:{'H': 5, 'V': 1},
+                2:{'H': 6, 'V': 2},
                 3:{'H': 3, 'V': 7},
                 4:{'H': 4, 'V': 8}}
     
