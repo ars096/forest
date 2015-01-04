@@ -246,8 +246,8 @@ def start_loatt_server():
 class loatt_ch_mapper(object):
     drive_map = [None, 1, 2, 3, 4, 5, 6, 7, 8]
     
-    beam_map = {1:{'H': 5, 'V': 1},
-                2:{'H': 6, 'V': 2},
+    beam_map = {1:{'H': 1, 'V': 5},
+                2:{'H': 2, 'V': 6},
                 3:{'H': 3, 'V': 7},
                 4:{'H': 4, 'V': 8}}
     
