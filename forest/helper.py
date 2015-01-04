@@ -32,8 +32,8 @@ def print_bias(bias):
     i = bias[1]
      
     v1 = 'V(mV): ' + ', '.join(['%5.2f'%_v for _v in v[:8]]) + '\n'
-    v2 = 'V(mV): ' + ', '.join(['%5.2f'%_v for _v in v[:8]]) + '\n'
-    i1 = 'I(uA): ' + ', '.join(['%5.1f'%_i for _i in i[8:]]) + '\n'
+    v2 = 'V(mV): ' + ', '.join(['%5.2f'%_v for _v in v[8:]]) + '\n'
+    i1 = 'I(uA): ' + ', '.join(['%5.1f'%_i for _i in i[:8]]) + '\n'
     i2 = 'I(uA): ' + ', '.join(['%5.1f'%_i for _i in i[8:]]) + '\n'
     sep = '-' * (len(v1)) + '\n'
     
@@ -67,8 +67,8 @@ def print_bias(bias):
 def print_loatt(bias):
     v = ' ' + ', '.join(['%4d'%_v for _v in bias]) + '\n'
     sep = '-' * (len(v)) + '\n'
-    beam = '|   Beam 1  |   Beam 2  |   Beam 3  |   Beam 4  |\n'
-    pol =  '|   H   V   |   H   V   |   H   V   |   H   V   |\n'
+    beam = '|         H Pol.        |         V Pol.        |\n'
+    pol =  '|   B1   B2   B3   B4   |   B1   B2   B3   B4   |\n'
 
     msg = ''
     msg += sep
