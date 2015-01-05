@@ -392,7 +392,7 @@ class rx_rotator_controller(object):
         self.mtr.stop()
         return
         
-    def shutdown(self):
+    def shutdown_start(self):
         self.shutdown_flag = True
         return
     
