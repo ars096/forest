@@ -1,7 +1,7 @@
 
 
-softlimit_plus = 91.0
-softlimit_minus = -91.0
+softlimit_plus = 80.0
+softlimit_minus = -90.1
 
 # 
 
@@ -44,7 +44,11 @@ class rx_rotator(object):
         pass
         
     def move_org(self):
-        pass
+        now = self.mtr.get_position()
+        move = -now
+        self.mtr.move_with_lock(self.move_speed, move, self.move_low_speed, 
+                                self.move_acc, self.move_dec, sspeed=0)
+        return
     
     def set_org(self):
         pass
@@ -112,6 +116,8 @@ class rx_rotator(object):
     def _tracking_proc(self):
         self.tracking_running = True
         self.tracking_moving = False
+        self.tracking_stop = False
+        self.tracking_stopped = False
         self.mtr.ctrl.print_log = False
         
         self.current_vel = 0
@@ -121,8 +127,10 @@ class rx_rotator(object):
         while True:
             if self.tracking_stop: break
             if self.check_softlimit():
-                time.sleep(self.tracking_proc_freq)
-                continue
+                self.stop()
+                self.tracking_running = False
+                self.tracking_moving = False
+                break
             p0 = self.mtr.get_position()
             p1 = self.target_position_count
             dp = p1 - p0
@@ -151,7 +159,10 @@ class rx_rotator(object):
                     self.tracking_moving = True
                     time.sleep(0.5)
                 else:
-                    self.mtr.change_speed(count)
+                    try:
+                        self.mtr.change_speed(count)
+                    except:
+                        print('---- ERROR ---- speed is too low.')
                     pass
                 pass
             direc0 = direc
