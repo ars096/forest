@@ -116,6 +116,8 @@ class rx_rotator(object):
     def _tracking_proc(self):
         self.tracking_running = True
         self.tracking_moving = False
+        self.tracking_stop = False
+        self.tracking_stopped = False
         self.mtr.ctrl.print_log = False
         
         self.current_vel = 0
@@ -157,7 +159,10 @@ class rx_rotator(object):
                     self.tracking_moving = True
                     time.sleep(0.5)
                 else:
-                    self.mtr.change_speed(count)
+                    try:
+                        self.mtr.change_speed(count)
+                    except:
+                        print('---- ERROR ---- speed is too low.')
                     pass
                 pass
             direc0 = direc
