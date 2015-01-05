@@ -30,7 +30,7 @@ import socket
 import threading
 import pyinterface
 
-class rx_rotator(object):
+class rx_rotator_controller(object):
     deg2count = 15000.
     
     real_angle = 0.
@@ -420,6 +420,24 @@ class rx_rotator(object):
         self.cosmos_recv = ''
         self.cosmos_send = ''
         return (recv, send)
+
+def rx_rotator():
+    client = pyinterface.server_client_wrapper.control_client_wrapper(
+        rx_rotator_controller, '192.168.40.13', 4003)
+    return client
+
+def rx_rotator_monitor():
+    client = pyinterface.server_client_wrapper.monitor_client_wrapper(
+        rx_rotator_controller, '192.168.40.13', 4103)
+    return client
+
+def start_rx_rotator_server():
+    rxrot = rx_rotator_controller()
+    server = pyinterface.server_client_wrapper.server_wrapper(rxrot,
+                                                              '', 4003, 4103)
+    server.start()
+    return server
+
 
 
 class motion_controller(object):
