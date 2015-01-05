@@ -57,6 +57,7 @@ class rx_rotator(object):
     move_acc = 50
     move_dec = 50
     
+    cosmos_flag = False
     cosmos_recv = ''
     cosmos_send = ''
         
@@ -275,6 +276,8 @@ class rx_rotator(object):
         server.listen(1)
         
         while True:
+            self.cosmos_flag = False
+            
             try:
                 client, client_address = server.accept()
                 self.print('INFO: cosmos: Accept from %s:%d'%(client, client_address))
@@ -287,6 +290,8 @@ class rx_rotator(object):
                     break
                 continue
             
+            self.cosmos_flag = True
+
             while True:
                 if self.shutdown_flag: 
                     self.print('INFO: cosmos: detect shutdown signal')
@@ -390,6 +395,31 @@ class rx_rotator(object):
     def shutdown(self):
         self.shutdown_flag = True
         return
+    
+    def read_status(self):
+        ret = {'real_angle': self.real_angle,
+               'real_vel': self.real_vel,
+               'prog_angle': self.prog_angle,
+               'cosmos_angle': self.cosmos_angle,
+               'residual': self.residual,
+               'shutdown_flag': self.shutdown_flag,
+               'softlimit1_flag': self.softlimit1_flag,
+               'softlimit2_flag': self.softlimit2_flag,
+               'cosmos_flag': self.cosmos_flag,
+               'tracking_count': self.tracking_count}
+        return ret
+        
+    def read_error(self):
+        ret = self.error
+        self.error = []
+        return ret
+        
+    def read_cosmos_log(self):
+        recv = self.cosmos_recv
+        send = self.cosmos_send
+        self.cosmos_recv = ''
+        self.cosmos_send = ''
+        return (recv, send)
 
 
 class motion_controller(object):
