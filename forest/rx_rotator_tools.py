@@ -44,7 +44,11 @@ class rx_rotator(object):
         pass
         
     def move_org(self):
-        pass
+        now = self.mtr.get_position()
+        move = -now
+        self.mtr.move_with_lock(self.move_speed, move, self.move_low_speed, 
+                                self.move_acc, self.move_dec, sspeed=0)
+        return
     
     def set_org(self):
         pass
