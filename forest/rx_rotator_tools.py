@@ -1,7 +1,7 @@
 
 
-softlimit_plus = 91.0
-softlimit_minus = -91.0
+softlimit_plus = 80.0
+softlimit_minus = -90.1
 
 # 
 
@@ -121,6 +121,8 @@ class rx_rotator(object):
         while True:
             if self.tracking_stop: break
             if self.check_softlimit():
+                self.stop()
+                self.tracking_moving = False
                 time.sleep(self.tracking_proc_freq)
                 continue
             p0 = self.mtr.get_position()
