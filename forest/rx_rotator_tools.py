@@ -126,9 +126,9 @@ class rx_rotator(object):
             if self.tracking_stop: break
             if self.check_softlimit():
                 self.stop()
+                self.tracking_running = False
                 self.tracking_moving = False
-                time.sleep(self.tracking_proc_freq)
-                continue
+                break
             p0 = self.mtr.get_position()
             p1 = self.target_position_count
             dp = p1 - p0
