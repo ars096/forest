@@ -210,7 +210,18 @@ class slider_controller(object):
         return
 
     def _cosmos_server(self):
-        pass
+        while True:
+            f = open('/mnt/45msmb/mult/mmc.dat', 'r')
+            cmd = f.readline()
+            f.close()
+            
+            if cmd[0] == '1':
+                pass
+            
+            elif cmd[0] == '3':
+                pass
+                
+            elif cmd[0] == ''
     
     """
     def _cosmos_server(self):
