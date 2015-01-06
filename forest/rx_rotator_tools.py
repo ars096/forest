@@ -253,6 +253,8 @@ class rx_rotator_controller(object):
                 break
             
             if self.softlimit1_flag:
+                self.tracking_count = 0
+                
                 if self.move_org_flag:
                     pass
                 
@@ -263,6 +265,8 @@ class rx_rotator_controller(object):
                     pass
                 
             elif not(softlimit0_minus < self.prog_angle < softlimit0_plus):
+                self.tracking_count = 0
+                
                 msg = 'PROG ANGLE IS OVER RANGE (%.1f)'%(self.prog_angle)
                 if self.softlimit0_flag == False:
                     self.print_error(msg)
