@@ -81,4 +81,6 @@ def print_loatt(bias):
     print(msg)
     return
 
-
+def print_rxrot(status):
+    print(status)
+    return
