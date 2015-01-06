@@ -372,7 +372,10 @@ class rx_rotator_controller(object):
                 target = float(ret[3])
                 self.cosmos_angle = target
                 
-                time.sleep(0.15)
+                if operate == 1: 
+                    self.move(target)
+                    time.sleep(0.15)
+                    pass
                 
                 if self.tracking_count > 4: is_tracking = 1
                 else: is_tracking = 0
@@ -384,10 +387,6 @@ class rx_rotator_controller(object):
                                                                       self.real_vel,
                                                                       self.tracking_count)
                 self.print_msg(msg)
-                
-                if operate == 1: 
-                    self.move(target)
-                    pass
                 
                 if return_flag == 1:
                     err_no = 0
