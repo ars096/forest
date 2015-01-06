@@ -5,8 +5,11 @@
 
 # software limit
 # --------------
-softlimit1_plus = 80.1
-softlimit1_minus = -90.1
+softlimit0_plus = 80.1
+softlimit0_minus = -90.1
+
+softlimit1_plus = 80.5
+softlimit1_minus = -90.5
 
 softlimit2_plus = 83.0
 softlimit2_minus = -93.0
@@ -43,6 +46,7 @@ class rx_rotator_controller(object):
     
     shutdown_flag = False
     
+    softlimit0_flag = False
     softlimit1_flag = False
     softlimit1_interval = 0.2
     softlimit2_flag = False
@@ -234,18 +238,38 @@ class rx_rotator_controller(object):
                 self.print('INFO: tracking: break')
                 break
             
-            if self.real_vel < min_speed:
-                self.tracking_count += 1
-                try:
-                    self._move_angle(self.prog_angle)
-                except Exception as e:
-                    self.print_error('%s (p0=%.1f, v0=%.1f, p1=%.1f)'%
-                                     (e.msg, self.real_angle,
-                                      self.real_vel, self.prog_angle))
+            if self.softlimit1_flag:
+                self.stop()
+                msg = 'ERROR: REAL ANGLE IS OVER SOFT-LIMIT (%.1f)'%(self.real_angle)
+                self.print(msg)
+            
+            elif not(softlimit0_minus < self.prog_angle < softlimit0_plus):
+                msg = 'PROG ANGLE IS OVER RANGE (%.1f)'%(self.prog_angle)
+                if self.softlimit0_flag == False:
+                    self.print_error(msg)
+                else:
+                    self.print('ERROR: '+msg)
                     pass
-            else:
-                self.tracking_count = 0
+                self.softlimit0_flag = True
                 pass
+            
+            else:
+                self.softlimit0_flag = False
+                
+                if self.real_vel < min_speed:
+                    self.tracking_count += 1
+                    try:
+                        self._move_angle(self.prog_angle)
+                    except Exception as e:
+                        self.print_error('%s (p0=%.1f, v0=%.1f, p1=%.1f)'%
+                                         (e.msg, self.real_angle,
+                                          self.real_vel, self.prog_angle))
+                        pass
+                else:
+                    self.tracking_count = 0
+                    pass
+                pass
+                
             
             time.sleep(self.tracking_interval)
             continue
@@ -403,6 +427,7 @@ class rx_rotator_controller(object):
                'cosmos_angle': self.cosmos_angle,
                'residual': self.residual,
                'shutdown_flag': self.shutdown_flag,
+               'softlimit0_flag': self.softlimit0_flag,
                'softlimit1_flag': self.softlimit1_flag,
                'softlimit2_flag': self.softlimit2_flag,
                'cosmos_flag': self.cosmos_flag,

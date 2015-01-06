@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS forest.rxrot_status(
        RESIDUAL FLOAT default NULL,
        TRACKING INT default NULL,
        SHUTDOWN_FLAG TINYINT default NULL,
+       SOFTLIMIT0_FLAG TINYINT default NULL,
        SOFTLIMIT1_FLAG TINYINT default NULL,
        SOFTLIMIT2_FLAG TINYINT default NULL,
        COSMOS_FLAG TINYINT default NULL,
