@@ -27,6 +27,9 @@ from switch_tools import switch
 # Sliding chopper
 # ---------------
 from slider_tools import slider
+from slider_tools import slider_monitor
+from slider_tools import slider_controller
+from slider_tools import start_slider_server
 
 # Rx Rotator
 # ----------
