@@ -15,7 +15,7 @@ try:
         time.sleep(1)
         continue
 except KeyboardInterrupt:
-    rot.shutdown_start()
+    rot.instance.shutdown()
     rot.shutdown()
     c = forest.rx_rotator()
     c.server_stop()

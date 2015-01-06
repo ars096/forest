@@ -9,10 +9,10 @@ interval = 10.0
 import time
 import forest
 
-rxrot_monitor = forest.rx_rot_monitor()
+rxrot_monitor = forest.rx_rotator_monitor()
 sql_status = forest.db_writer('rxrot_status')
 sql_error = forest.db_writer('rxrot_errors')
-sql_cosmos = forest.db_writer('rxrot_cosmos')
+sql_cosmos = forest.db_writer('rxrot_cosmos_log')
 
 # --
 
@@ -24,6 +24,8 @@ def printlog(status):
 
 try:
     while True:
+        forest.print_timestamp()
+        
         t0 = time.time()
         
         status = rxrot_monitor.read_status()

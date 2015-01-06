@@ -16,7 +16,7 @@ softlimit2_minus = -93.0
 
 # speed
 # -----
-max_speed = 1.4   # deg sec-1
+max_speed = 2.0   # deg sec-1
 min_speed = 0.05   # deg sec-1
 
 #
@@ -52,6 +52,8 @@ class rx_rotator_controller(object):
     softlimit2_flag = False
     softlimit2_interval = 0.1
     
+    move_org_flag = False
+    
     position_interval = 0.1
     
     tracking_count = 0
@@ -75,13 +77,13 @@ class rx_rotator_controller(object):
         self.start_cosmos_server()
         pass
     
-    def print(self, msg):
+    def print_msg(self, msg):
         print(msg)
         return
         
     def print_error(self, msg):
         self.error.append(msg)
-        self.print('!!!! ERROR !!!! ' + msg)
+        self.print_msg('!!!! ERROR !!!! ' + msg)
         return
     
     def start_logger(self):
@@ -95,39 +97,39 @@ class rx_rotator_controller(object):
         return
         
     def _start_softlimit_proc2(self):
-        self.print('INFO: start software limit 2')
-        self.print('INFO: softlimit2 = %.2f, %.2f'%(softlimit2_minus,
+        self.print_msg('INFO: start software limit 2')
+        self.print_msg('INFO: softlimit2 = %.2f, %.2f'%(softlimit2_minus,
                                                     softlimit2_plus))
         while True:
             try:
                 self._softlimit_proc2()
             except Exception as e:
-                self.print('**********************************************')
+                self.print_msg('**********************************************')
                 self.print_error('software limit 2 except error: %s'%(e.msg))
-                self.print('**********************************************')
-                self.print('INFO: restart softlimit_proc2')
+                self.print_msg('**********************************************')
+                self.print_msg('INFO: restart softlimit_proc2')
                 continue
             break
-        self.print('INFO: stop software limit 2')
+        self.print_msg('INFO: stop software limit 2')
         return
         
     def _softlimit_proc2(self):
         self.softlimit2_flag = False
         while True:
             if self.shutdown_flag:
-                self.print('INFO: softlimit2: detect shutdown signal')
-                self.print('INFO: softlimit2: break')
+                self.print_msg('INFO: softlimit2: detect shutdown signal')
+                self.print_msg('INFO: softlimit2: break')
                 break
             
             if softlimit2_minus < self.real_angle < softlimit2_plus:
                 time.sleep(self.softlimit2_interval)
                 continue
             
-            self.print('**********************************************')
-            self.print('**********************************************')
+            self.print_msg('**********************************************')
+            self.print_msg('**********************************************')
             self.print_error('SOFTLIMIT2 TRIGGERED : SYSTEM HALT')
-            self.print('**********************************************')
-            self.print('**********************************************')
+            self.print_msg('**********************************************')
+            self.print_msg('**********************************************')
             
             self.mtr.stop()
             self.mtr.ctrl.close()
@@ -139,28 +141,28 @@ class rx_rotator_controller(object):
         return
         
     def _start_softlimit_proc1(self):
-        self.print('INFO: start software limit 1')
-        self.print('INFO: softlimit1 = %.2f, %.2f'%(softlimit1_minus,
-                                                    softlimit1_plus))
+        self.print_msg('INFO: start software limit 1')
+        self.print_msg('INFO: softlimit1 = %.2f, %.2f'%(softlimit1_minus,
+                                                        softlimit1_plus))
         while True:
             try:
                 self._softlimit_proc1()
             except Exception as e:
-                self.print('**********************************************')
+                self.print_msg('**********************************************')
                 self.print_error('software limit 1 except error: %s'%(e.msg))
-                self.print('**********************************************')
-                self.print('INFO: restart softlimit_proc1')
+                self.print_msg('**********************************************')
+                self.print_msg('INFO: restart softlimit_proc1')
                 continue
             break
-        self.print('INFO: stop software limit 1')
+        self.print_msg('INFO: stop software limit 1')
         return
         
     def _softlimit_proc1(self):
         self.softlimit1_flag = False
         while True:
             if self.shutdown_flag: 
-                self.print('INFO: softlimit1: detect shutdown signal')
-                self.print('INFO: softlimit1: break')
+                self.print_msg('INFO: softlimit1: detect shutdown signal')
+                self.print_msg('INFO: softlimit1: break')
                 break
             
             if softlimit1_minus < self.real_angle < softlimit1_plus:
@@ -169,39 +171,44 @@ class rx_rotator_controller(object):
                 continue
             
             if self.softlimit1_flag == False:
-                self.print('**********************************************')
-                self.print('**********************************************')
+                self.print_msg('**********************************************')
+                self.print_msg('**********************************************')
                 self.print_error('SOFTLIMIT1 TRIGGERED : SYSTEM LOCK')
-                self.print('**********************************************')
-                self.print('**********************************************')
+                self.print_msg('**********************************************')
+                self.print_msg('**********************************************')
                 self.softlimit1_flag = True
                 pass
                 
             time.sleep(self.softlimit1_interval)
-            break
+            continue
         return
     
     def start_position_reader(self):
-        self.print('INFO: start position reader')
+        pr = threading.Thread(target=self._start_position_reader)
+        pr.start()
+        return
+        
+    def _start_position_reader(self):
+        self.print_msg('INFO: start position reader')
         
         while True:
             try:
                 self._position_proc()
             except Exception as e:
-                self.print('**********************************************')
+                self.print_msg('**********************************************')
                 self.print_error('position reader except error: %s'%(e.msg))
-                self.print('**********************************************')
-                self.print('INFO: restart position_reader')
+                self.print_msg('**********************************************')
+                self.print_msg('INFO: restart position_reader')
                 continue
             break
-        self.print('INFO: stop position reader')
+        self.print_msg('INFO: stop position reader')
         return
     
     def _position_proc(self):
         while True:
             if self.shutdown_flag: 
-                self.print('INFO: position: detect shutdown signal')
-                self.print('INFO: position: break')
+                self.print_msg('INFO: position: detect shutdown signal')
+                self.print_msg('INFO: position: break')
                 break
             
             p0 = self.real_angle
@@ -216,47 +223,60 @@ class rx_rotator_controller(object):
         return
     
     def start_tracking_proc(self):
-        self.print('INFO: start tracking proc')
+        tp = threading.Thread(target=self._start_tracking_proc)
+        tp.start()
+        return
+        
+    def _start_tracking_proc(self):
+        self.print_msg('INFO: start tracking proc')
+        self.print_msg('INFO: softlimit0 = %.2f, %.2f'%(softlimit0_minus,
+                                                        softlimit0_plus))
         
         while True:
             try:
-                self._position_proc()
+                self._tracking_proc()
             except Exception as e:
-                self.print('**********************************************')
+                self.print_msg('**********************************************')
                 self.print_error('tracking proc except error: %s'%(e.msg))
-                self.print('**********************************************')
-                self.print('INFO: restart tracking_proc')
+                self.print_msg('**********************************************')
+                self.print_msg('INFO: restart tracking_proc')
                 continue
             break
-        self.print('INFO: stop tracking proc')
+        self.print_msg('INFO: stop tracking proc')
         return
         
     def _tracking_proc(self):
         while True:
             if self.shutdown_flag: 
-                self.print('INFO: tracking: detect shutdown signal')
-                self.print('INFO: tracking: break')
+                self.print_msg('INFO: tracking: detect shutdown signal')
+                self.print_msg('INFO: tracking: break')
                 break
             
             if self.softlimit1_flag:
-                self.stop()
-                msg = 'ERROR: REAL ANGLE IS OVER SOFT-LIMIT (%.1f)'%(self.real_angle)
-                self.print(msg)
-            
+                if self.move_org_flag:
+                    pass
+                
+                else:
+                    self.stop()
+                    msg = 'ERROR: REAL ANGLE IS OVER SOFT-LIMIT (%.1f)'%(self.real_angle)
+                    self.print_msg(msg)
+                    pass
+                
+                """
             elif not(softlimit0_minus < self.prog_angle < softlimit0_plus):
                 msg = 'PROG ANGLE IS OVER RANGE (%.1f)'%(self.prog_angle)
                 if self.softlimit0_flag == False:
                     self.print_error(msg)
                 else:
-                    self.print('ERROR: '+msg)
+                    self.print_msg('ERROR: '+msg)
                     pass
                 self.softlimit0_flag = True
                 pass
-            
+                """            
             else:
                 self.softlimit0_flag = False
                 
-                if self.real_vel < min_speed:
+                if self.real_vel == 0.:
                     self.tracking_count += 1
                     try:
                         self._move_angle(self.prog_angle)
@@ -276,26 +296,31 @@ class rx_rotator_controller(object):
         return
     
     def start_cosmos_server(self):
-        self.print('INFO: start cosmos server')
+        cs = threading.Thread(target=self._start_cosmos_server)
+        cs.start()
+        return
+        
+    def _start_cosmos_server(self):
+        self.print_msg('INFO: start cosmos server')
         
         while True:
             try:
                 self._cosmos_server()
             except Exception as e:
-                self.print('**********************************************')
+                self.print_msg('**********************************************')
                 self.print_error('cosmos server except error: %s'%(e.msg))
-                self.print('**********************************************')
-                self.print('INFO: restart cosmos_server')
+                self.print_msg('**********************************************')
+                self.print_msg('INFO: restart cosmos_server')
                 continue
             break
-        self.print('INFO: stop cosmos server')
+        self.print_msg('INFO: stop cosmos server')
         return
         
     def _cosmos_server(self):
         server = socket.socket()
         server.settimeout(1)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.print('INFO: cosmos: (bind) %s:%s'%('', cosmos_server_port))
+        self.print_msg('INFO: cosmos: (bind) %s:%s'%('', cosmos_server_port))
         server.bind(('', cosmos_server_port))
         server.listen(1)
         
@@ -304,13 +329,13 @@ class rx_rotator_controller(object):
             
             try:
                 client, client_address = server.accept()
-                self.print('INFO: cosmos: Accept from %s:%d'%(client, client_address))
+                self.print_msg('INFO: cosmos: Accept from %s:%d'%(client, client_address))
                 client.settimeout(1)
             
             except socket.timeout:
                 if self.shutdown_flag:
-                    self.print('INFO: cosmos: detect shutdown signal')
-                    self.print('INFO: cosmos: break')
+                    self.print_msg('INFO: cosmos: detect shutdown signal')
+                    self.print_msg('INFO: cosmos: break')
                     break
                 continue
             
@@ -318,8 +343,8 @@ class rx_rotator_controller(object):
 
             while True:
                 if self.shutdown_flag: 
-                    self.print('INFO: cosmos: detect shutdown signal')
-                    self.print('INFO: cosmos: break')
+                    self.print_msg('INFO: cosmos: detect shutdown signal')
+                    self.print_msg('INFO: cosmos: break')
                     break
                 
                 try:
@@ -327,14 +352,14 @@ class rx_rotator_controller(object):
                 except socket.timeout:
                     continue
                 except socket.error, e:
-                    self.print_error('cosmos: %s'str((e.errno, e.message, e.strerror)))
-                    self.print('INFO: cosmos: connection break')
+                    self.print_error('cosmos: %s'%str((e.errno, e.message, e.strerror)))
+                    self.print_msg('INFO: cosmos: connection break')
                     break
                 
                 #print('RECV: %s'%(repr(ret)))
                 self.cosmos_recv = ret
                 if ret == '': 
-                    self.print('INFO: cosmos: connection break')
+                    self.print_msg('INFO: cosmos: connection break')
                     break
                 
                 ret = ret.strip('\0').split('\t')
@@ -352,8 +377,8 @@ class rx_rotator_controller(object):
                 msg += 'real=%+06.1f diff=%.1f vel=%+06.1f track=%d'%(self.real_angle,
                                                                       self.residual,
                                                                       self.real_vel,
-                                                                      self.tracking_count))
-                self.print(msg)
+                                                                      self.tracking_count)
+                self.print_msg(msg)
                 
                 if operate == 1: 
                     self.move(target)
@@ -378,16 +403,30 @@ class rx_rotator_controller(object):
     def count_to_deg(self, count):
         return count / self.deg2count
         
-    def get_position(self):
+    def get_position(self, printlog=False):
+        if printlog == False:
+            self.mtr.ctrl.print_log = False
+        
         cnt = self.mtr.get_position()
         deg = self.count_to_deg(cnt)
-        return deg
         
+        if printlog == False:
+            self.mtr.ctrl.print_log = True
+        
+        return deg
+    
     def move_org(self):
+        self.move_org_flag = True
+        
+        self.move(0)
+        
+        speed = self.deg_to_count(max_speed)
         now = self.mtr.get_position()
         move = -now
-        self.mtr.move_with_lock(max_speed, move, self.move_low_speed, 
+        self.mtr.move_with_lock(speed, move, self.move_low_speed, 
                                 self.move_acc, self.move_dec)
+            
+        self.move_org_flag = False
         return
     
     def _move_angle(self, deg):
@@ -400,7 +439,9 @@ class rx_rotator_controller(object):
         return
     
     def _move_count(self, count, speed=max_speed):
+        self.mtr.ctrl.print_log = False 
         now = self.mtr.get_position()
+        self.mtr.ctrl.print_log = True
         move = count - now
         
         if move == 0: return
@@ -416,7 +457,7 @@ class rx_rotator_controller(object):
         self.mtr.stop()
         return
         
-    def shutdown_start(self):
+    def shutdown(self):
         self.shutdown_flag = True
         return
     
@@ -469,13 +510,10 @@ class motion_controller(object):
     
     def calc_speed(self, p0, p1):
         delt = p1 - p0
-        v = delt
+        v = abs(delt)
         
-        if v < 0: direc = -1
-        else: direc = 1
-        
-        if abs(v) > max_speed: v = max_speed * direc
-        if abs(v) < min_speed: v = min_speed * direc
+        if abs(v) > max_speed: v = max_speed
+        if abs(v) < min_speed: v = min_speed
         
         return v
         
