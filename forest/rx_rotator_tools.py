@@ -178,7 +178,7 @@ class rx_rotator_controller(object):
                 self.print_msg('**********************************************')
                 self.softlimit1_flag = True
                 pass
-                
+            
             time.sleep(self.softlimit1_interval)
             continue
         return
@@ -262,7 +262,6 @@ class rx_rotator_controller(object):
                     self.print_msg(msg)
                     pass
                 
-                """
             elif not(softlimit0_minus < self.prog_angle < softlimit0_plus):
                 msg = 'PROG ANGLE IS OVER RANGE (%.1f)'%(self.prog_angle)
                 if self.softlimit0_flag == False:
@@ -272,7 +271,7 @@ class rx_rotator_controller(object):
                     pass
                 self.softlimit0_flag = True
                 pass
-                """            
+
             else:
                 self.softlimit0_flag = False
                 
