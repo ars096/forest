@@ -17,6 +17,9 @@ class slider_controller(object):
     
     cosmos_flag = False
     cosmos_recv = ''
+    cosmos_interval = 0.3
+    
+    shutdown_flag = False
     
     def __init__(self, move_org=True):
         self.mtr = pyinterface.create_gpg7204(1)
@@ -211,6 +214,11 @@ class slider_controller(object):
 
     def _cosmos_server(self):
         while True:
+            if self.shutdown_flag:
+                self.print_msg('INFO: cosmos: detect shutdown signal')
+                self.print_msg('INFO: cosmos: break')
+                break
+            
             f = open('/mnt/45msmb/mult/mmc.dat', 'r')
             cmd = f.readline()
             f.close()
@@ -221,7 +229,34 @@ class slider_controller(object):
             elif cmd[0] == '3':
                 pass
                 
-            elif cmd[0] == ''
+            elif cmd[0] == '2':
+                self.cosmos_recv = cmd
+                self.print_msg('INFO: cosmos: recv: %s'%(repr(cmd)))
+                
+                if cmd.find('LDM1') != -1:
+                    self.move_r()
+                    f = open('/mnt/45msmb/mult/mmc.dat', 'w')
+                    f.write('1        \n')
+                    f.close()
+                
+                elif cmd.find('SKYM1') != -1:
+                    self.move_sky()
+                    f = open('/mnt/45msmb/mult/mmc.dat', 'w')
+                    f.write('1        \n')
+                    f.close()
+                    
+                else:
+                    pass
+                
+            else:
+                pass
+                
+            time.sleep(self.cosmos_interval)
+            continue
+        
+    def shutdown(self):
+        self.shutdown_flag = True
+        return
     
     """
     def _cosmos_server(self):
