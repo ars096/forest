@@ -57,7 +57,7 @@ class rx_rotator_controller(object):
     position_interval = 0.1
     
     tracking_count = 0
-    tracking_interval = 0.5
+    tracking_interval = 0.1
     
     move_low_speed = 10
     move_acc = 50
@@ -371,6 +371,8 @@ class rx_rotator_controller(object):
                 timestamp = ret[2]
                 target = float(ret[3])
                 self.cosmos_angle = target
+                
+                time.sleep(0.15)
                 
                 if self.tracking_count > 4: is_tracking = 1
                 else: is_tracking = 0
