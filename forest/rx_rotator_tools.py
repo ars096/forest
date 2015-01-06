@@ -307,7 +307,7 @@ class rx_rotator_controller(object):
                 self._cosmos_server()
             except Exception as e:
                 self.print_msg('**********************************************')
-                self.print_error('cosmos server except error: %s'%(e.msg))
+                self.print_error('cosmos server except error: %s'%(e))
                 self.print_msg('**********************************************')
                 self.print_msg('INFO: restart cosmos_server')
                 continue
@@ -328,7 +328,7 @@ class rx_rotator_controller(object):
             
             try:
                 client, client_address = server.accept()
-                self.print_msg('INFO: cosmos: Accept from %s:%d'%(client, client_address))
+                self.print_msg('INFO: cosmos: Accept from %s'%(str(client_address)))
                 client.settimeout(1)
             
             except socket.timeout:

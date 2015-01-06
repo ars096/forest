@@ -60,6 +60,7 @@ try:
             keydict = {}
             keydict['RECV_MSG'] = cosmos[0]
             keydict['SEND_MSG'] = cosmos[1]
+            sql_cosmos.insert(keydict=keydict)
             print('COSMOS:RECV: %s'%(repr(cosmos[0])))
             print('COSMOS:SEND: %s'%(repr(cosmos[1])))
             pass
