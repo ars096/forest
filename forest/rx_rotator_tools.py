@@ -57,7 +57,7 @@ class rx_rotator_controller(object):
     position_interval = 0.1
     
     tracking_count = 0
-    tracking_interval = 0.5
+    tracking_interval = 0.1
     
     move_low_speed = 10
     move_acc = 50
@@ -253,6 +253,8 @@ class rx_rotator_controller(object):
                 break
             
             if self.softlimit1_flag:
+                self.tracking_count = 0
+                
                 if self.move_org_flag:
                     pass
                 
@@ -263,6 +265,8 @@ class rx_rotator_controller(object):
                     pass
                 
             elif not(softlimit0_minus < self.prog_angle < softlimit0_plus):
+                self.tracking_count = 0
+                
                 msg = 'PROG ANGLE IS OVER RANGE (%.1f)'%(self.prog_angle)
                 if self.softlimit0_flag == False:
                     self.print_error(msg)
@@ -368,6 +372,11 @@ class rx_rotator_controller(object):
                 target = float(ret[3])
                 self.cosmos_angle = target
                 
+                if operate == 1: 
+                    self.move(target)
+                    time.sleep(0.15)
+                    pass
+                
                 if self.tracking_count > 4: is_tracking = 1
                 else: is_tracking = 0
                 
@@ -378,10 +387,6 @@ class rx_rotator_controller(object):
                                                                       self.real_vel,
                                                                       self.tracking_count)
                 self.print_msg(msg)
-                
-                if operate == 1: 
-                    self.move(target)
-                    pass
                 
                 if return_flag == 1:
                     err_no = 0
