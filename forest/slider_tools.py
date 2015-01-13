@@ -164,7 +164,24 @@ class slider_controller(object):
         print('*'*len(msg))
         print(msg)
         print('*'*len(msg))
-        raw_input(' please ENTER to LOCK the brake... ')
+        return
+    
+    def lock_brake(self):
+        """
+        Lock the electromagnetic brake of the slider.
+        
+        Args
+        ====
+        Nothing.
+        
+        Returns
+        =======
+        Nothing.
+        
+        Examples
+        ========
+        >>> s.lock_brake()
+        """
         self.mtr.do_output(0)
         print('')
         print('')
@@ -192,7 +209,26 @@ class slider_controller(object):
         """
         self.mtr.do_output(1)
         return
-
+        
+    def clear_interlock(self):
+        """
+        Clear the interlock.
+        
+        Args
+        ====
+        Nothing.
+        
+        Returns
+        =======
+        Nothing.
+        
+        Examples
+        ========
+        >>> s.clear_interlock()
+        """
+        self.mtr.ctrl.off_inter_lock()
+        return
+    
     def start_cosmos_server(self):
         cs = threading.Thread(target=self._start_cosmos_server)
         cs.start()
