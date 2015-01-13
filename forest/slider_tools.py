@@ -4,8 +4,8 @@ import threading
 import pyinterface
 
 class slider_controller(object):
-    pos_sky = 0
-    pos_sig = 19000
+    pos_sky = -400
+    pos_sig = 25000
     pos_r = 25000
     
     speed = 50000
@@ -67,7 +67,7 @@ class slider_controller(object):
         self.get_count()
         return
 
-    def _move(self, dist, lock):
+    def move(self, dist, lock=True):
         pos = self.mtr.get_position()
         if pos == dist: return
         diff = dist - pos
@@ -99,7 +99,7 @@ class slider_controller(object):
         ========
         >>> s.move_r()
         """
-        self._move(self.pos_r, lock)
+        self.move(self.pos_r, lock)
         self.position = 'R'
         return
     
@@ -123,7 +123,7 @@ class slider_controller(object):
         ========
         >>> s.move_sky()
         """
-        self._move(self.pos_sky, lock)
+        self.move(self.pos_sky, lock)
         self.position = 'SKY'
         return
     
@@ -147,7 +147,7 @@ class slider_controller(object):
         ========
         >>> s.move_sig()
         """
-        self._move(self.pos_sig, lock)
+        self.move(self.pos_sig, lock)
         self.position = 'SIG'
         return
     
