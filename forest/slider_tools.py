@@ -4,8 +4,8 @@ import threading
 import pyinterface
 
 class slider_controller(object):
-    pos_sky = 0
-    pos_sig = 19000
+    pos_sky = -400
+    pos_sig = 25000
     pos_r = 25000
     
     speed = 50000
@@ -16,6 +16,7 @@ class slider_controller(object):
     error = []
     
     position = ''
+    count = 0
     
     cosmos_flag = False
     cosmos_recv = ''
@@ -36,6 +37,10 @@ class slider_controller(object):
     def print_error(self, msg):
         self.error.append(msg)
         self.print_msg('!!!! ERROR !!!! ' + msg)
+        return
+    
+    def get_count(self):
+        self.count = self.mtr.get_position()
         return
     
     def move_org(self):
@@ -59,9 +64,10 @@ class slider_controller(object):
         self.mtr.do_output(3)
         self.mtr.set_org()
         self.position = 'ORG'
+        self.get_count()
         return
 
-    def _move(self, dist, lock):
+    def move(self, dist, lock=True):
         pos = self.mtr.get_position()
         if pos == dist: return
         diff = dist - pos
@@ -69,6 +75,8 @@ class slider_controller(object):
                                          self.acc, self.dec)
         else: self.mtr.move(self.speed, diff, self.low_speed, self.acc,
                             self.dec)
+        
+        self.get_count()
         return
     
     def move_r(self, lock=True):
@@ -91,7 +99,7 @@ class slider_controller(object):
         ========
         >>> s.move_r()
         """
-        self._move(self.pos_r, lock)
+        self.move(self.pos_r, lock)
         self.position = 'R'
         return
     
@@ -115,7 +123,7 @@ class slider_controller(object):
         ========
         >>> s.move_sky()
         """
-        self._move(self.pos_sky, lock)
+        self.move(self.pos_sky, lock)
         self.position = 'SKY'
         return
     
@@ -139,7 +147,7 @@ class slider_controller(object):
         ========
         >>> s.move_sig()
         """
-        self._move(self.pos_sig, lock)
+        self.move(self.pos_sig, lock)
         self.position = 'SIG'
         return
     
@@ -164,8 +172,26 @@ class slider_controller(object):
         print('*'*len(msg))
         print(msg)
         print('*'*len(msg))
-        raw_input(' please ENTER to LOCK the brake... ')
+        return
+    
+    def lock_brake(self):
+        """
+        Lock the electromagnetic brake of the slider.
+        
+        Args
+        ====
+        Nothing.
+        
+        Returns
+        =======
+        Nothing.
+        
+        Examples
+        ========
+        >>> s.lock_brake()
+        """
         self.mtr.do_output(0)
+        self.get_count()
         print('')
         print('')
         print('!! CAUTION !!')
@@ -192,11 +218,36 @@ class slider_controller(object):
         """
         self.mtr.do_output(1)
         return
-
+        
+    def clear_interlock(self):
+        """
+        Clear the interlock.
+        
+        Args
+        ====
+        Nothing.
+        
+        Returns
+        =======
+        Nothing.
+        
+        Examples
+        ========
+        >>> s.clear_interlock()
+        """
+        self.mtr.ctrl.off_inter_lock()
+        return
+    
     def start_cosmos_server(self):
         cs = threading.Thread(target=self._start_cosmos_server)
         cs.start()
         return
+    
+    def read_position(self):
+        return self.position
+        
+    def read_count(self):
+        return self.count
         
     def _start_cosmos_server(self):
         self.print_msg('INFO: start cosmos server')
