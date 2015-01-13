@@ -1,4 +1,6 @@
 
+import time
+import threading
 import pyinterface
 
 class slider_controller(object):
