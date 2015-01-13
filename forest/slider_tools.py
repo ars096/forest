@@ -64,7 +64,7 @@ class slider_controller(object):
         self.mtr.do_output(3)
         self.mtr.set_org()
         self.position = 'ORG'
-        self.mtr.get_count()
+        self.get_count()
         return
 
     def _move(self, dist, lock):
