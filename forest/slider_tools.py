@@ -16,6 +16,7 @@ class slider_controller(object):
     error = []
     
     position = ''
+    count = 0
     
     cosmos_flag = False
     cosmos_recv = ''
@@ -36,6 +37,10 @@ class slider_controller(object):
     def print_error(self, msg):
         self.error.append(msg)
         self.print_msg('!!!! ERROR !!!! ' + msg)
+        return
+    
+    def get_count(self):
+        self.count = self.mtr.get_position()
         return
     
     def move_org(self):
@@ -59,6 +64,7 @@ class slider_controller(object):
         self.mtr.do_output(3)
         self.mtr.set_org()
         self.position = 'ORG'
+        self.mtr.get_count()
         return
 
     def _move(self, dist, lock):
@@ -69,6 +75,8 @@ class slider_controller(object):
                                          self.acc, self.dec)
         else: self.mtr.move(self.speed, diff, self.low_speed, self.acc,
                             self.dec)
+        
+        self.get_count()
         return
     
     def move_r(self, lock=True):
@@ -183,6 +191,7 @@ class slider_controller(object):
         >>> s.lock_brake()
         """
         self.mtr.do_output(0)
+        self.get_count()
         print('')
         print('')
         print('!! CAUTION !!')
@@ -233,6 +242,12 @@ class slider_controller(object):
         cs = threading.Thread(target=self._start_cosmos_server)
         cs.start()
         return
+    
+    def read_position(self):
+        return self.position
+        
+    def read_count(self):
+        return self.count
         
     def _start_cosmos_server(self):
         self.print_msg('INFO: start cosmos server')
