@@ -5,14 +5,14 @@
 
 # software limit
 # --------------
-softlimit0_plus = 80.1
-softlimit0_minus = -90.1
+softlimit0_plus = 100.1
+softlimit0_minus = -100.1
 
-softlimit1_plus = 80.5
-softlimit1_minus = -90.5
+softlimit1_plus = 101.0
+softlimit1_minus = -101.0
 
-softlimit2_plus = 83.0
-softlimit2_minus = -93.0
+softlimit2_plus = 103.0
+softlimit2_minus = -103.0
 
 # speed
 # -----
