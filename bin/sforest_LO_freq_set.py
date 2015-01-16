@@ -26,11 +26,10 @@ unit_list = ['GHz', 'MHz', 'kHz', 'Hz']
 import argparse
 
 p = argparse.ArgumentParser(description=description)
-p = argparse.ArgumentParser(description=desc)
 p.add_argument('--freq', type=float,
-               help='Frequency to be set. default is %d'%(freq))
+               help='Frequency to be set. default is %f.'%(freq))
 p.add_argument('--unit', type=str,
-               help='Unit of the freq. Select from %s. default is %s'%(
+               help='Unit of the freq. Select from %s. default is %s.'%(
                    str(unit_list), unit))
 
 args = p.parse_args()

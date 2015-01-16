@@ -50,6 +50,8 @@ class lo_freq_set(base.forest_script_base):
         self.stdout.write('ok')
         self.stdout.nextline()
         
+        self.stdout.nextline()
+
         # Finalization Section
         # ====================
         
