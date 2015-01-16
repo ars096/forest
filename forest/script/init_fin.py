@@ -1,9 +1,9 @@
 
 import forest
-import forest.script
+import base
 
 
-class initialize(forest.script.forest_script_base):
+class initialize(base.forest_script_base):
     method = 'initialize'
     ver = '2015.01.16'
     
@@ -107,12 +107,15 @@ class initialize(forest.script.forest_script_base):
         self.stdout.p('Close Devices')
         self.stdout.p('=============')
         
+        # TODO: implement close method.
+        """
         sis.close()
         #lo_sg.close()
         lo_att.close()
         #irr_sg.close()
         rxrot.close()
         slider.close()
+        """
         
         self.stdout.p('All devices are closed.')
         self.stdout.nextline()
