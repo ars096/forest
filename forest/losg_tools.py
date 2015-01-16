@@ -5,13 +5,13 @@ import pymeasure
 
 def losg1():
     com = pymeasure.ethernet('192.168.40.21', 7777)
-    sp = pymeasure.Agilent.E8257D(com)
-    return sp
+    sg = pymeasure.Agilent.E8257D(com)
+    return sg
 
 def losg2():
     com = pymeasure.ethernet('192.168.40.22', 7777)
-    sp = pymeasure.Agilent.E8257D(com)
-    return sp
+    sg = pymeasure.Agilent.E8257D(com)
+    return sg
 
 
 
@@ -29,7 +29,7 @@ class losg(object):
         
     def _call(self, *args, **kwargs):
         ret = [s.__getattribute__(self._call_name)(*args, **kwargs) \
-               for s in self.sp]
+               for s in self.sg]
         self._call_name = None
         return ret
         
