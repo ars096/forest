@@ -183,7 +183,7 @@ class lo_output_off(base.forest_script_base):
         
         # Operation Section
         # =================
-        self.stdout.p('Set Output Powers')
+        self.stdout.p('Set RF Output OFF')
         self.stdout.p('=================')
         
         self.stdout.write('1st LO SG : Set output off ... ')
@@ -253,8 +253,8 @@ class lo_output_on(base.forest_script_base):
         
         # Operation Section
         # =================
-        self.stdout.p('Set Output Powers')
-        self.stdout.p('=================')
+        self.stdout.p('Set RF Output ON')
+        self.stdout.p('================')
         
         self.stdout.write('1st LO SG : Set output on ... ')
         lo_sg.output_on()
