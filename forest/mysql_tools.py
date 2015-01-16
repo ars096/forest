@@ -47,3 +47,9 @@ class db_writer(object):
                 raise KeyError('%s is not a key of %s'%(k, self.table))
             continue
         return
+    
+    def get_latest_item(self):
+        sql = 'SELECT * FROM %s ORDER BY id DESC LIMIT 1'%(self.table)
+        self.cursor.execute(sql)
+        ret = self.cursor.fetchall()
+        return ret[0]
