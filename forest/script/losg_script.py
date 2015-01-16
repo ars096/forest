@@ -29,7 +29,6 @@ class lo_freq_set(base.forest_script_base):
         self.stdout.p('ver.%s'%(self.ver))
         self.stdout.nextline()
         
-        
         # Open devices
         # ------------
         self.stdout.p('Open Devices')
@@ -102,7 +101,6 @@ class lo_power_set(base.forest_script_base):
         self.stdout.p('ver.%s'%(self.ver))
         self.stdout.nextline()
         
-        
         # Open devices
         # ------------
         self.stdout.p('Open Devices')
@@ -173,7 +171,6 @@ class lo_output_off(base.forest_script_base):
         self.stdout.p('ver.%s'%(self.ver))
         self.stdout.nextline()
         
-        
         # Open devices
         # ------------
         self.stdout.p('Open Devices')
@@ -243,7 +240,6 @@ class lo_output_on(base.forest_script_base):
         self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
         self.stdout.p('ver.%s'%(self.ver))
         self.stdout.nextline()
-        
         
         # Open devices
         # ------------
