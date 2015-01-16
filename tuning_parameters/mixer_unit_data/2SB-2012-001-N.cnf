@@ -9,11 +9,11 @@ R_sis_id: I17-Ad-4J-8D
 default: 105 GHz
 
 [105 GHz]
-date: 2014/11/19
-report_id: 2-2
-bias1: 9.4
-bias2: 8.9
-lo_att: 21.36
+date: 2015/01/04
+report_id: --
+bias1: 10.00
+bias2: 9.31
+lo_att: 3.5
 
 [108 GHz]
 date: 2014/11/19

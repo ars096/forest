@@ -9,11 +9,11 @@ R_sis_id: I12-Dd-4J-41
 default: 105 GHz
 
 [105 GHz]
-date: 2014/10/29
-report_id: 4
-bias1: 9.6
-bias2: 8.9
-lo_att: 21.97
+date: 2015/01/04
+report_id: --
+bias1: 10.13
+bias2: 9.92
+lo_att: 8
 
 [108 GHz]
 date: 2014/10/29
