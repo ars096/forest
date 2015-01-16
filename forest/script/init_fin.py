@@ -53,8 +53,6 @@ class initialize(base.forest_script_base):
         self.stdout.write('ok')
         self.stdout.nextline()
         
-        # TODO: uncomment 1st LO SG
-        """
         self.stdout.write('1st LO SG : Set -130 dBm ... ')
         lo_sg.power_set(-130)
         self.stdout.write('ok')
@@ -69,7 +67,6 @@ class initialize(base.forest_script_base):
         lo_sg.output_off()
         self.stdout.write('ok')
         self.stdout.nextline()
-        """
         
         self.stdout.write('1st LO Att : Set max attenuation ... ')
         lo_att.bias_set(200)

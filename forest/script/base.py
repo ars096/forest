@@ -56,7 +56,7 @@ class forest_script_base(object):
 
     def open_lo_sg(self):
         self.stdout.write('Opening 1st LO SG ... ')
-        lo_sg = None
+        lo_sg = forest.losg()
         self.stdout.write('NG')
         self.stdout.nextline()
         return lo_sg
