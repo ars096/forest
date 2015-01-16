@@ -34,7 +34,7 @@ args = p.parse_args()
 
 import forest.script
 
-script = forest.script.slidet_move_sky()
+script = forest.script.slider_move_sky()
 script.run()
 
 

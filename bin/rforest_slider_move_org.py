@@ -35,7 +35,7 @@ args = p.parse_args()
 
 import forest.script
 
-script = forest.script.slidet_move_org()
+script = forest.script.slider_move_org()
 script.run()
 
 
