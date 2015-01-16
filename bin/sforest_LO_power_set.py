@@ -14,7 +14,7 @@ description = 'Set 1st LO SGs output powers.'
 # Default parameters
 # ------------------
 
-power = 18.0
+power = -130.0
 
 
 # Argument Parser
@@ -37,7 +37,7 @@ if args.power is not None: power = args.power
 import forest.script
 
 script = forest.script.lo_power_set()
-script.run(power, unit)
+script.run(power)
 
 
 
