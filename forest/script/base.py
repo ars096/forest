@@ -14,12 +14,12 @@ class forest_script_base(object):
         pass
     
     def check_other_operation(self):
-        latest = self.log.get_latest_item(2)
-        flag = latest[0][2]
+        latest = self.log.get_latest_item()
+        flag = latest[2]
         
         if flag != 'Done.':
-            other = latest[1][3]
-            other_ts = latest[1][2].strftime('%Y/%m/%d %H:%M:%S')
+            other = latest[3]
+            other_ts = latest[2].strftime('%Y/%m/%d %H:%M:%S')
             msg = 'Other process is now running. '
             msg += '(%s; from %s)'%(other, other_ts)
             self.stderr.p(msg + '[%s]'%(self.method))
