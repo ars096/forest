@@ -9,11 +9,11 @@ R_sis_id: I12-Bd-4J-43
 default: 105 GHz
 
 [105 GHz]
-date: 2014/11/10
-report_id: 8
-bias1: 9.7
-bias2: 9.0
-lo_att: 21.36
+date: 2015/01/04
+report_id: --
+bias1: 10.03
+bias2: 9.76
+lo_att: 6
 
 [108 GHz]
 date: 2014/11/10

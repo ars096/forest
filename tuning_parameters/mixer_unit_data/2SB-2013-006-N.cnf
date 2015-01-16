@@ -9,11 +9,11 @@ R_sis_id: I16-Dc-3J-3A
 default: 105 GHz
 
 [105 GHz]
-date: 2014/11/12
-report_id: 9
-bias1: 7.1
-bias2: 6.7
-lo_att: 23.80
+date: 2015/01/04
+report_id: --
+bias1: 7.5
+bias2: 7.28
+lo_att: 5
 
 [108 GHz]
 date: 2014/11/12
