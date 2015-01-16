@@ -10,6 +10,7 @@ class biasbox_controller(object):
     def __init__(self):
         ai = pyinterface.create_gpg3100(1)
         ao = pyinterface.create_gpg3300(1)
+        ai.use_differential()
         ai.set_range('AD_5V')
         ao.set_range('DA_5V')
         self.daq = pyinterface.create_daq(ai, ao)
@@ -500,10 +501,10 @@ class bias_voltage_output_changer(bias_changer):
     sis_to_box_conversion_factor = 1./0.94/3.
 
 class bias_voltage_changer(bias_changer):
-    sis_to_box_conversion_factor = 1/5.
+    sis_to_box_conversion_factor = -1/5.
 
 class bias_current_changer(bias_changer):
-    sis_to_box_conversion_factor = 1/500.
+    sis_to_box_conversion_factor = -1/500.
 
 
 # Bias CH Changer
@@ -520,8 +521,8 @@ class biasbox_ch_mapper(object):
                 4:{'H':{1:13, 2:14}, 'V':{1:15, 2:16}}}
     
     vout_map = [None, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    vin_map = [None, 1, 3, 5, 7, 17, 19, 21, 23, 33, 35, 37, 39, 49, 51, 53, 55]
-    iin_map = [None, 0, 2, 4, 6, 16, 18, 20, 22, 32, 34, 36, 38, 48, 50, 52, 54]
+    vin_map = [None, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]
+    iin_map = [None, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
     
     def __init__(self, box=None, ch=None, beam=None, pol=None, dsbunit=None):
         if box != None:
