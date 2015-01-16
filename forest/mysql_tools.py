@@ -48,8 +48,9 @@ class db_writer(object):
             continue
         return
     
-    def get_latest_item(self):
-        sql = 'SELECT * FROM %s ORDER BY id DESC LIMIT 1'%(self.table)
+    def get_latest_item(self, num=1):
+        sql = 'SELECT * FROM %s ORDER BY id DESC LIMIT %d'%(self.table, num)
         self.cursor.execute(sql)
         ret = self.cursor.fetchall()
-        return ret[0]
+        if num == 1: return ret[0]
+        return ret
