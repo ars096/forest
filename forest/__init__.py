@@ -13,6 +13,12 @@ from biasbox_tools import biasbox_monitor
 from biasbox_tools import biasbox_controller
 from biasbox_tools import start_biasbox_server
 
+# LO SGs
+# ------
+from losg_tools import losg1
+from losg_tools import losg2
+from losg_tools import losg
+
 # LO Attenuators
 # --------------
 from loatt_tools import loatt
