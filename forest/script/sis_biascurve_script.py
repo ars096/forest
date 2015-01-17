@@ -272,8 +272,9 @@ class get_sis_bias_curve_with_LO_att_level_sweep(base.forest_script_base):
             numpy.save(datapath + '.%04d.npy'%(count), (v, i))
             
             self.stdout.p('Plot : %s'%(figname + '.%04d.png'%(count)))
-            iv_plot(v.T, i.T, figpath + '.%04d.png'%(count), 'Bias Sweep @ att=%.2f (%s)'%(
-                abias, ts))
+            fpath = figpath + '.%04d.png'%(count)
+            plotargs = (v.T, i.T, fpath, 'Bias Sweep @ att=%.2f (%s)'%(abias, ts))
+            self.detach_process(iv_plot, plotargs)
             
             self.stdout.nextline()
             continue
