@@ -17,3 +17,11 @@ from slider_script import slider_move_r
 from slider_script import slider_move_sky
 from slider_script import slider_move_org
 from slider_script import slider_move
+
+# Expeliment
+# ----------
+from sis_biascurve_script import get_sis_bias_curve
+
+
+
+
