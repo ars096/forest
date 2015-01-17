@@ -44,8 +44,8 @@ class lo_att_set(base.forest_script_base):
         self.stdout.p('Set Attenuation Levels')
         self.stdout.p('======================')
         self.stdout.p('bias = %f'%(bias))
-        self.stdout.p('beam = %d'%(beam))
-        self.stdout.p('pol = %s'%(pol))
+        self.stdout.p('beam = %s'%(str(beam)))
+        self.stdout.p('pol = %s'%(str(pol)))
         self.stdout.nextline()
         
         self.stdout.write('1st LO Att : Set %f mA ... '%(bias))
