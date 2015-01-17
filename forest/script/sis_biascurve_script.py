@@ -54,7 +54,7 @@ class get_sis_bias_curve(base.forest_script_base):
         logpath = fpg('log.%s.txt')
         logname = os.path.basename(logpath)
         datapath = fpg('biassweep.data.%s.npy')
-        dataneme = os.path.basename(datapath)
+        dataname = os.path.basename(datapath)
         figpath = fpg('biassweep.fig.%s.png')
         figname = os.path.basename(figpath)
         ts = os.path.basename(fpg('%s'))
@@ -71,8 +71,8 @@ class get_sis_bias_curve(base.forest_script_base):
         self.stdout.p('FOREST : Get SIS Bias Curve')
         self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=')
         self.stdout.p('ver.%s'%(self.ver))
-        self.stdout.p('savedir : '%(savedir))
-        self.stdout.p('logfile : '%(logname))
+        self.stdout.p('savedir : %s'%(savedir))
+        self.stdout.p('logfile : %s'%(logname))
         self.stdout.nextline()
         
         # Open devices
@@ -96,13 +96,14 @@ class get_sis_bias_curve(base.forest_script_base):
         self.stdout.p('start = %f'%(start))
         self.stdout.p('stop = %f'%(stop))
         self.stdout.p('step = %f'%(step))
+        self.stdout.nextline()
         
         self.stdout.p('SIS Bias : Set 0 mV.')
         sis.bias_set(0)
         
         self.stdout.p('Generate input bias array ...')
-        inp = numpy.arange(v_start, v_stop+step, step)
-        self.stdout.p('  [%s %s %s ... %s %s %s]'%(
+        inp = numpy.arange(start, stop+step, step)
+        self.stdout.p('inp : [%s %s %s ... %s %s %s]'%(
             inp[0], inp[1], inp[2], inp[-3], inp[-2], inp[-1]))
         
         inp = map(float, inp)
@@ -112,10 +113,10 @@ class get_sis_bias_curve(base.forest_script_base):
         self.stdout.write('done')
         self.stdout.nextline()
         
-        self.stdout.p('v0 : [%s %s %s ... %s %s %s]'%(
+        self.stdout.p('v0 : [%.1f %.1f %.1f ... %.1f %.1f %.1f]'%(
             v[0,0], v[1,0], v[2,0], v[-3,0], v[-2,0], v[-1,0]))
         
-        self.stdout.p('i0 : [%s %s %s ... %s %s %s]'%(
+        self.stdout.p('i0 : [%.1f %.1f %.1f ... %.1f %.1f %.1f]'%(
             i[0,0], i[1,0], i[2,0], i[-3,0], i[-2,0], i[-1,0]))
         
         self.stdout.p('SIS Bias : Set 0 mV.')
@@ -124,10 +125,6 @@ class get_sis_bias_curve(base.forest_script_base):
         self.stdout.p('Save : %s'%(dataname))
         numpy.save(datapath, (v, i))
         
-        self.stdout.nextline()
-        
-        # Plot part
-        # ---------
         self.stdout.p('Plot : %s'%(figname))
         iv_plot(v.T, i.T, figpath, 'Bias Sweep (%s)'%(ts))
         

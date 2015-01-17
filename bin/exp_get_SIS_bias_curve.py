@@ -26,9 +26,9 @@ import argparse
 
 p = argparse.ArgumentParser(description=description)
 p.add_argument('--start', type=float,
-               help='Start voltage in mV. default is %.2f mV.'%(v_start))
+               help='Start voltage in mV. default is %.2f mV.'%(start))
 p.add_argument('--stop', type=float,
-               help='Stop voltage in mV. default is %.2f mV.'%(v_stop))
+               help='Stop voltage in mV. default is %.2f mV.'%(stop))
 p.add_argument('--step', type=float,
                help='Step of each bias voltage in mV. default is %.2f mV.'%(step))
 
