@@ -16,7 +16,7 @@ description = 'Get SIS bias curve with LO Att level sweep.'
 
 start = 0  # mA
 stop = 20  # mA
-step = 2 # mA
+step = 0.25 # mA
 
 sis_start = 0  # mV
 sis_stop = 15  # mV
