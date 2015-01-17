@@ -10,6 +10,7 @@ from losg_script import lo_freq_set
 from losg_script import lo_power_set
 from losg_script import lo_output_off
 from losg_script import lo_output_on
+from loatt_script import lo_att_set
 
 # Slider
 # ------

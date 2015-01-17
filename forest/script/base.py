@@ -18,6 +18,9 @@ class forest_script_base(object):
         proc = multiprocessing.Process(target=func, args=args)
         proc.start()
         return
+        
+    def detach_thread(self, func, args):
+        pass
     
     def check_other_operation(self):
         latest = self.log.get_latest_item()
