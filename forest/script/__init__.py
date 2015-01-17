@@ -25,6 +25,7 @@ from sis_biascurve_script import get_sis_bias_curve
 from sis_biascurve_script import get_sis_bias_curve_with_LO_att_level_sweep
 
 from yfactor_script import rsky_with_slider
+from yfactor_script import rsky_with_sis_bias_sweep
 
 
 

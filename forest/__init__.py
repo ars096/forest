@@ -70,3 +70,4 @@ from exp_yfactor import yfactor
 from exp_yfactor import yfactor_dB
 from exp_yfactor import rsky
 from exp_yfactor import rsky_dB
+from exp_yfactor import evaluate_rsky_from_rotating_chopper_data

@@ -233,3 +233,201 @@ class rsky_with_slider(base.forest_script_base):
         return
 
 
+class rsky_with_sis_bias_sweep(base.forest_script_base):
+    method = 'rsky_with_sis_bias_sweep'
+    ver = '2015.01.17'
+    
+    def run(self, start, stop, step, thot):
+        # Initialization Section
+        # ======================
+        
+        # Check other operation
+        # ---------------------
+        self.check_other_operation()
+        
+        # Generate file path
+        # ------------------
+        fpg = forest.filepath_generator(self.method)
+        savedir = fpg(' ')
+        logpath = fpg('log.%s.txt')
+        logname = os.path.basename(logpath)
+        hotdatapath = fpg('rsky.data.%s')
+        hotdataname = os.path.basename(datapath)
+        figpath = fpg('rsky.fig.%s.png')
+        figname = os.path.basename(figpath)
+        ts = os.path.basename(fpg('%s'))
+        
+        # Start operation
+        # ---------------
+        args = {'start': start, 'stop': stop, 'step': step, 'thot': thot}
+        argstxt = str(args)        
+        self.operation_start(argstxt, logfile=logpath)
+        
+        # Print welcome message
+        # ---------------------
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('FOREST : R-SKY with SIS Bias Sweep ')
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('ver.%s'%(self.ver))
+        self.stdout.nextline()
+        
+        # Open devices
+        # ------------
+        self.stdout.p('Open Devices')
+        self.stdout.p('============')
+        
+        sis = self.open_sis_biasbox()
+        sp = self.open_speana()
+        sw = self.open_switch()
+        
+        self.stdout.nextline()
+        
+        
+        # Operation Section
+        # =================
+        self.stdout.p('R-SKY')
+        self.stdout.p('=====')
+        self.stdout.p('start = %f'%(start))
+        self.stdout.p('stop = %f'%(stop))
+        self.stdout.p('step = %f'%(step))
+        self.stdout.p('thot = %f K'%(thot))
+        self.stdout.nextline()
+        
+        self.stdout.p('Device configurations')
+        self.stdout.p('---------------------')
+        self.stdout.p('Speana : Set center freq 8 GHz.')
+        sp.frequency_center_set(8, 'GHz')
+        
+        self.stdout.p('Speana : Set span 0 Hz.')
+        sp.frequency_span_set(0, 'Hz')
+        
+        self.stdout.p('Speana : Set Video BW 100 Hz.')
+        sp.video_bw_set(100, 'Hz')
+        
+        self.stdout.p('Speana : Set reference level -30 dBm.')
+        sp.reference_level_set(-30)
+        
+        self.stdout.p('Speana : Set scale 1 dB/div.')
+        sp.scalediv_set(1)
+        
+        self.stdout.p('Speana : Set attenuation 0 dB.')
+        sp.attenuation_set(0)
+        
+        self.stdout.p('Speana : Set average OFF.')
+        sp.average_onoff_set('OFF')
+        
+        self.stdout.p('IF Switch : Set ch 1.')
+        sw.ch_set_all(1)
+        
+        self.stdout.p('SIS Bias : Set 0 mV.')
+        sis.bias_set(0)
+        
+        self.stdout.nextline()
+        
+        
+        self.stdout.p('Get R and SKY')
+        self.stdout.p('-------------')
+        
+        spdata = []
+        rsky_info = []
+        tsys = []
+        
+        self.stdout.p('Generate input bias array ...')
+        inp = numpy.arange(start, stop+step, step)
+        self.stdout.p('inp : [%s %s %s ... %s %s %s]'%(
+            inp[0], inp[1], inp[2], inp[-3], inp[-2], inp[-1]))
+        
+        inp = map(float, inp)
+        
+        for ch in [1,2,3,4]:
+            self.stdout.p('IF Switch : Set ch %d.'%(ch))
+            sw.ch_set_all(ch)
+            time.sleep(0.05)
+            
+            for bias1 in inp:
+                for bias2 in inp:
+                    self.stdout.p('SIS Bias : Set bias1 = %.2f, bias2 = %.2f.'%(bias1, bias2))
+                    sis.bias_set(bias1)
+                    sis.bias_set(bias2, beam=1, pol='H', dsbunit=2)
+                    sis.bias_set(bias2, beam=1, pol='V', dsbunit=2)
+                    sis.bias_set(bias2, beam=2, pol='H', dsbunit=2)
+                    sis.bias_set(bias2, beam=2, pol='V', dsbunit=2)
+                    sis.bias_set(bias2, beam=3, pol='H', dsbunit=2)
+                    sis.bias_set(bias2, beam=3, pol='V', dsbunit=2)
+                    sis.bias_set(bias2, beam=4, pol='H', dsbunit=2)
+                    sis.bias_set(bias2, beam=4, pol='V', dsbunit=2)
+                    time.sleep(0.2)
+                    
+                    self.stdout.p('Speana : Aquire.')
+                    d = sp.trace_data_query()
+                    spdata.append(d[0])
+                    spdata.append(d[1])
+                    spdata.append(d[2])
+                    spdata.append(d[3])
+                    
+                    self.stdout.p('Calc Tsys ...')
+                    _tsys1, _info1 = forest.evaluate_rsky_from_rotating_chopper_data(d[1], thot)
+                    _tsys2, _info2 = forest.evaluate_rsky_from_rotating_chopper_data(d[2], thot)
+                    _tsys3, _info3 = forest.evaluate_rsky_from_rotating_chopper_data(d[3], thot)
+                    _tsys4, _info4 = forest.evaluate_rsky_from_rotating_chopper_data(d[4], thot)
+                    tsys.append(_tsys1)
+                    tsys.append(_tsys2)
+                    tsys.append(_tsys3)
+                    tsys.append(_tsys4)
+                    rsky_info.append(_info1)
+                    rsky_info.append(_info2)
+                    rsky_info.append(_info3)
+                    rsky_info.append(_info4)
+                    continue
+                continue            
+            continue
+        
+        spdata = numpy.array(spdata)
+        tsys = numpy.array(tsys)
+        rsky_info = numpy.array(rsky_info)
+        
+        self.stdout.p('Save : %s'%(dataname + '.spdata.npy'))
+        numpy.save(dataname + '.spdata.npy', spdata)
+        
+        self.stdout.p('Save : %s'%(dataname + '.tsys.npy'))
+        numpy.save(dataname + '.tsys.npy', tsys)
+        
+        self.stdout.p('Save : %s'%(dataname + '.info.npy'))
+        numpy.save(dataname + '.info.npy', rsky_info)
+
+        self.stdout.nextline()
+        
+        #
+        # Plotting part
+        #
+        
+        
+        # Finalization Section
+        # ====================
+        
+        # Close devices
+        # -------------
+        self.stdout.p('Close Devices')
+        self.stdout.p('=============')
+        
+        # TODO: implement close method.
+        """
+        sis.close()
+        #lo_sg.close()
+        lo_att.close()
+        #irr_sg.close()
+        rxrot.close()
+        slider.close()
+        """
+        
+        self.stdout.p('All devices are closed.')
+        self.stdout.nextline()
+        
+        # Stop operation
+        # --------------
+        self.stdout.p('//// Operation is done. ////')
+        self.operation_done()
+        
+        return
+
+
