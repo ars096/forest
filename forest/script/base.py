@@ -98,6 +98,20 @@ class forest_script_base(object):
         self.stdout.nextline()
         return slider
     
+    def open_speana(self):
+        self.stdout.write('Opening Spectrum Analyzer ... ')
+        speana = forest.speana()
+        self.stdout.write('ok')
+        self.stdout.nextline()
+        return speana
+        
+    def open_switch(self):
+        self.stdout.write('Opening IF Switch ... ')
+        sw = forest.switch()
+        self.stdout.write('ok')
+        self.stdout.nextline()
+        return sw
+        
         
         
     def run(self, *args, **kwargs):

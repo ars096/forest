@@ -10,7 +10,6 @@ import pylab
 
 def iv_plot(v, i, save, suptitle):
     ch = forest.biasbox_tools.biasbox_ch_mapper()
-
     l_box = ['BOX:%d'%(_i) for _i in ch.box]
     l_ch = ['CH:%d'%(_i) for _i in ch.ch]
     l_beam = ['BEAM:%d'%(_i) for _i in ch.beam]
