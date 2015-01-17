@@ -21,6 +21,7 @@ from slider_script import slider_move
 # Expeliment
 # ----------
 from sis_biascurve_script import get_sis_bias_curve
+from sis_biascurve_script import get_sis_bias_curve_with_LO_att_level_sweep
 
 
 

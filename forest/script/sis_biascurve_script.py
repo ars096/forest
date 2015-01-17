@@ -158,3 +158,150 @@ class get_sis_bias_curve(base.forest_script_base):
         self.operation_done()
         
         return
+
+
+class get_sis_bias_curve_with_LO_att_level_sweep(base.forest_script_base):
+    method = 'get_sis_bias_curve_with_LO_att_level_sweep'
+    ver = '2015.01.17'
+    
+    def run(self, att_start, att_stop, att_step, sis_start, sis_stop, sis_step):
+        # Initialization Section
+        # ======================
+        
+        # Check other operation
+        # ---------------------
+        self.check_other_operation()
+        
+        # Generate file path
+        # ------------------
+        fpg = forest.filepath_generator(self.method)
+        savedir = fpg(' ')
+        logpath = fpg('log.%s.txt')
+        logname = os.path.basename(logpath)
+        datapath = fpg('biassweep.data.%s')
+        dataname = os.path.basename(datapath)
+        figpath = fpg('biassweep.fig.%s')
+        figname = os.path.basename(figpath)
+        ts = os.path.basename(fpg('%s'))
+        
+        # Start operation
+        # ---------------
+        args = {'att_start': att_start, 'att_stop': att_stop, 'att_step': att_step,
+                'sis_start': sis_start, 'sis_stop': sis_stop, 'sis_step': sis_step}
+        argstxt = str(args)        
+        self.operation_start(argstxt, logfile=logpath)
+        
+        # Print welcome message
+        # ---------------------
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('FOREST : Get SIS Bias Curve with LO Att Sweep')
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('ver.%s'%(self.ver))
+        self.stdout.p('savedir : %s'%(savedir))
+        self.stdout.p('logfile : %s'%(logname))
+        self.stdout.nextline()
+        
+        # Open devices
+        # ------------
+        self.stdout.p('Open Devices')
+        self.stdout.p('============')
+        
+        sis = self.open_sis_biasbox()
+        lo_att = self.open_lo_att()
+        
+        self.stdout.nextline()
+        
+        
+        # Operation Section
+        # =================
+        
+        # Operation part
+        # --------------
+        self.stdout.p('Get SIS Bias Curve')
+        self.stdout.p('==================')
+        self.stdout.p('att_start = %f'%(att_start))
+        self.stdout.p('att_stop = %f'%(att_stop))
+        self.stdout.p('att_step = %f'%(att_step))
+        self.stdout.p('sis_start = %f'%(sis_start))
+        self.stdout.p('sis_stop = %f'%(sis_stop))
+        self.stdout.p('sis_step = %f'%(sis_step))
+        self.stdout.nextline()
+        
+        self.stdout.p('1st LO Att : Set  0 mA.')
+        lo_att.bias_set(0)
+
+        self.stdout.p('SIS Bias : Set 0 mV.')
+        sis.bias_set(0)
+        
+        self.stdout.p('Generate input Att bias array ...')
+        att_inp = numpy.arange(att_start, att_stop+att_step, att_step)
+        self.stdout.p('att_inp : [%s %s %s ... %s %s %s]'%(
+            att_inp[0], att_inp[1], att_inp[2], att_inp[-3], att_inp[-2], att_inp[-1]))
+        
+        self.stdout.p('Generate input SIS bias array ...')
+        sis_inp = numpy.arange(sis_start, sis_stop+sis_step, sis_step)
+        self.stdout.p('sis_inp : [%s %s %s ... %s %s %s]'%(
+            sis_inp[0], sis_inp[1], sis_inp[2], sis_inp[-3], sis_inp[-2], sis_inp[-1]))
+        
+        att_inp = map(float, att_inp)
+        sis_inp = map(float, sis_inp)
+
+        self.stdout.nextline()
+        
+        for count, abias in enumerate(att_inp):
+            self.stdout.p('1st LO Att : Set  %f mA.')
+            lo_att.bias_set(abias)
+            
+            time.sleep(0.01)
+            
+            self.stdout.write('SIS Bias : Sweep start ... ')
+            v, i = sis.bias_sweep(sis_inp)
+            self.stdout.write('done')
+            self.stdout.nextline()
+            
+            self.stdout.p('v0 : [%.1f %.1f %.1f ... %.1f %.1f %.1f]'%(
+                v[0,0], v[1,0], v[2,0], v[-3,0], v[-2,0], v[-1,0]))
+        
+            self.stdout.p('i0 : [%.1f %.1f %.1f ... %.1f %.1f %.1f]'%(
+                i[0,0], i[1,0], i[2,0], i[-3,0], i[-2,0], i[-1,0]))
+            
+            self.stdout.p('SIS Bias : Set 0 mV.')
+            sis.bias_set(0)
+        
+            self.stdout.p('Save : %s'%(dataname + '.%04d.npy'%(count)))
+            numpy.save(datapath + '.%04d.npy'%(count), (v, i))
+            
+            self.stdout.p('Plot : %s'%(figname + '.%04d.png'%(count)))
+            iv_plot(v.T, i.T, figpath + '.%04d.png'%(count), 'Bias Sweep @ att=%.2f (%s)'%(
+                abias, ts))
+            
+            self.stdout.nextline()
+            continue
+        
+        # Finalization Section
+        # ====================
+        
+        # Close devices
+        # -------------
+        self.stdout.p('Close Devices')
+        self.stdout.p('=============')
+        
+        # TODO: implement close method.
+        """
+        sis.close()
+        #lo_sg.close()
+        lo_att.close()
+        #irr_sg.close()
+        rxrot.close()
+        slider.close()
+        """
+        
+        self.stdout.p('All devices are closed.')
+        self.stdout.nextline()
+        
+        # Stop operation
+        # --------------
+        self.stdout.p('//// Operation is done. ////')
+        self.operation_done()
+        
+        return
