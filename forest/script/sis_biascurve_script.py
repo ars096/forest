@@ -249,7 +249,7 @@ class get_sis_bias_curve_with_LO_att_level_sweep(base.forest_script_base):
         self.stdout.nextline()
         
         for count, abias in enumerate(att_inp):
-            self.stdout.p('1st LO Att : Set  %f mA. (%d/%d)'%(abias, count+1, len(att_inp)))
+            self.stdout.p('1st LO Att : Set %f mA. (%d/%d)'%(abias, count+1, len(att_inp)))
             lo_att.bias_set(abias)
             
             time.sleep(0.01)
@@ -279,7 +279,7 @@ class get_sis_bias_curve_with_LO_att_level_sweep(base.forest_script_base):
             self.stdout.nextline()
             continue
 
-        self.stdout.p('1st LO Att : Set  200 mA.')
+        self.stdout.p('1st LO Att : Set 200 mA.')
         lo_att.bias_set(200)
 
         self.stdout.p('SIS Bias : Set 0 mV.')
