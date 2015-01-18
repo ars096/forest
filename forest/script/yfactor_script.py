@@ -1,4 +1,6 @@
 
+import os
+import time
 import numpy
 import pylab
 
@@ -61,8 +63,8 @@ class rsky_with_slider(base.forest_script_base):
         savedir = fpg(' ')
         logpath = fpg('log.%s.txt')
         logname = os.path.basename(logpath)
-        hotdatapath = fpg('rsky.data.%s')
-        hotdataname = os.path.basename(datapath)
+        datapath = fpg('rsky.data.%s')
+        dataname = os.path.basename(datapath)
         figpath = fpg('rsky.fig.%s.png')
         figname = os.path.basename(figpath)
         ts = os.path.basename(fpg('%s'))
@@ -251,8 +253,8 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         savedir = fpg(' ')
         logpath = fpg('log.%s.txt')
         logname = os.path.basename(logpath)
-        hotdatapath = fpg('rsky.data.%s')
-        hotdataname = os.path.basename(datapath)
+        datapath = fpg('rsky.data.%s')
+        dataname = os.path.basename(datapath)
         figpath = fpg('rsky.fig.%s.png')
         figname = os.path.basename(figpath)
         ts = os.path.basename(fpg('%s'))
@@ -295,6 +297,9 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         
         self.stdout.p('Device configurations')
         self.stdout.p('---------------------')
+        self.stdout.p('Speana : Preset.')
+        sp.scpi_reset()
+
         self.stdout.p('Speana : Set center freq 8 GHz.')
         sp.frequency_center_set(8, 'GHz')
         
@@ -304,14 +309,17 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         self.stdout.p('Speana : Set Video BW 100 Hz.')
         sp.video_bw_set(100, 'Hz')
         
-        self.stdout.p('Speana : Set reference level -30 dBm.')
-        sp.reference_level_set(-30)
+        self.stdout.p('Speana : Set reference level -55 dBm.')
+        sp.reference_level_set(-55)
         
         self.stdout.p('Speana : Set scale 1 dB/div.')
         sp.scalediv_set(1)
         
         self.stdout.p('Speana : Set attenuation 0 dB.')
         sp.attenuation_set(0)
+        
+        self.stdout.p('Speana : Set sweep time 0.15 sec.')
+        sp.sweep_time_set(0.15)
         
         self.stdout.p('Speana : Set average OFF.')
         sp.average_onoff_set('OFF')
@@ -342,7 +350,7 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         for ch in [1,2,3,4]:
             self.stdout.p('IF Switch : Set ch %d.'%(ch))
             sw.ch_set_all(ch)
-            time.sleep(0.05)
+            time.sleep(0.1)
             
             for bias1 in inp:
                 for bias2 in inp:
@@ -356,7 +364,7 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
                     sis.bias_set(bias2, beam=3, pol='V', dsbunit=2)
                     sis.bias_set(bias2, beam=4, pol='H', dsbunit=2)
                     sis.bias_set(bias2, beam=4, pol='V', dsbunit=2)
-                    time.sleep(0.2)
+                    time.sleep(0.15)
                     
                     self.stdout.p('Speana : Aquire.')
                     d = sp.trace_data_query()
@@ -366,10 +374,10 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
                     spdata.append(d[3])
                     
                     self.stdout.p('Calc Tsys ...')
-                    _tsys1, _info1 = forest.evaluate_rsky_from_rotating_chopper_data(d[1], thot)
-                    _tsys2, _info2 = forest.evaluate_rsky_from_rotating_chopper_data(d[2], thot)
-                    _tsys3, _info3 = forest.evaluate_rsky_from_rotating_chopper_data(d[3], thot)
-                    _tsys4, _info4 = forest.evaluate_rsky_from_rotating_chopper_data(d[4], thot)
+                    _tsys1, _info1 = forest.evaluate_rsky_from_rotating_chopper_data(d[0], thot)
+                    _tsys2, _info2 = forest.evaluate_rsky_from_rotating_chopper_data(d[1], thot)
+                    _tsys3, _info3 = forest.evaluate_rsky_from_rotating_chopper_data(d[2], thot)
+                    _tsys4, _info4 = forest.evaluate_rsky_from_rotating_chopper_data(d[3], thot)
                     tsys.append(_tsys1)
                     tsys.append(_tsys2)
                     tsys.append(_tsys3)
@@ -384,16 +392,16 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         
         spdata = numpy.array(spdata)
         tsys = numpy.array(tsys)
-        rsky_info = numpy.array(rsky_info)
+        rsky_info = numpy.array(rsky_info, dtype=object)
         
         self.stdout.p('Save : %s'%(dataname + '.spdata.npy'))
-        numpy.save(dataname + '.spdata.npy', spdata)
+        numpy.save(datapath + '.spdata.npy', spdata)
         
         self.stdout.p('Save : %s'%(dataname + '.tsys.npy'))
-        numpy.save(dataname + '.tsys.npy', tsys)
+        numpy.save(datapath + '.tsys.npy', tsys)
         
         self.stdout.p('Save : %s'%(dataname + '.info.npy'))
-        numpy.save(dataname + '.info.npy', rsky_info)
+        numpy.save(datapath + '.info.npy', rsky_info)
 
         self.stdout.nextline()
         
