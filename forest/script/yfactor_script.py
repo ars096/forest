@@ -335,8 +335,10 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
 
         self.stdout.p('Prepare Sweep Bias Set')
         self.stdout.p('----------------------')
-        bias_3j = [float(_d) for _d in numpy.arange(6.0, 8.01, 0.05)]
-        bias_4j = [float(_d) for _d in numpy.arange(8.0, 10.01, 0.05)]
+        #bias_3j = [float(_d) for _d in numpy.arange(6.0, 8.01, 0.05)]
+        #bias_4j = [float(_d) for _d in numpy.arange(8.0, 10.01, 0.05)]
+        bias_3j = [float(_d) for _d in numpy.arange(6.0, 8.01, 1)]   # for test 
+        bias_4j = [float(_d) for _d in numpy.arange(8.0, 10.01, 1)]  # for test
         biasx_num = len(bias_3j)
         
         bias_3j1 = [_x for _x in bias_3j for _y in bias_3j] 
