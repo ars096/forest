@@ -58,6 +58,7 @@ from mysql_tools import db_writer
 # -------------
 from helper import mkdirs
 from helper import filepath_generator
+from helper import load_sis_config
 from helper import print_timestamp
 from helper import print_bias
 from helper import print_loatt
