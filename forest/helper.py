@@ -21,7 +21,7 @@ def filepath_generator(name):
     return filepath
 
 
-def load_sis_config(lo_freq, config_file_name='FOREST2014.cnf'):
+def load_sis_config(lo_freq=105, config_file_name='FOREST2014.cnf'):
     config_file_dir = '/home/forest/tuning_parameters'
     mixer_data_dir = 'mixer_unit_data'
     confpath = os.path.join(config_file_dir, config_file_name)
@@ -57,10 +57,14 @@ def load_sis_config(lo_freq, config_file_name='FOREST2014.cnf'):
         bias2 = float(unitconf.get(section, 'bias2'))
         lo_att = float(unitconf.get(section, 'lo_att'))
         j_type = unitconf.get('info', 'L_sis_id').split('-')[2]
+        beam = int(unit.strip('Beam_HVpol'))
+        pol = unit.strip('Beam1234_pol')
+        
         
         print('%s: bias1 = %f,  bias2 = %f,  lo_att = %f'%(unit, bias1, bias2,
                                                            lo_att))
-        params[unit] = {'bias1': bias1, 'bias2': bias2, 'lo_att': lo_att, 'J-type': j_type}
+        params[unit] = {'bias1': bias1, 'bias2': bias2, 'lo_att': lo_att, 'J-type': j_type
+                        'beam': beam, 'pol': pol}
         continue
         
     return params

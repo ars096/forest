@@ -239,7 +239,7 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
     method = 'rsky_with_sis_bias_sweep'
     ver = '2015.01.17'
     
-    def run(self, start, stop, step, thot):
+    def run(self, thot):
         # Initialization Section
         # ======================
         
@@ -255,13 +255,13 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         logname = os.path.basename(logpath)
         datapath = fpg('rsky.data.%s')
         dataname = os.path.basename(datapath)
-        figpath = fpg('rsky.fig.%s.png')
+        figpath = fpg('rsky.fig.%s')
         figname = os.path.basename(figpath)
         ts = os.path.basename(fpg('%s'))
         
         # Start operation
         # ---------------
-        args = {'start': start, 'stop': stop, 'step': step, 'thot': thot}
+        args = {'thot': thot}
         argstxt = str(args)        
         self.operation_start(argstxt, logfile=logpath)
         
@@ -331,71 +331,143 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         sis.bias_set(0)
         
         self.stdout.nextline()
+
+
+        self.stdout.p('Prepare Sweep Bias Set')
+        self.stdout.p('----------------------')
+        bias_3j = [float(_d) for _d in numpy.arange(6.0, 8.01, 0.05)]
+        bias_4j = [float(_d) for _d in numpy.arange(8.0, 10.01, 0.05)]
+        biasx_num = len(bias_3j)
         
+        bias_3j1 = [_x for _x in bias_3j for _y in bias_3j] 
+        bias_3j2 = [_y for _x in bias_3j for _y in bias_3j] 
+        bias_4j1 = [_x for _x in bias_4j for _y in bias_4j] 
+        bias_4j2 = [_y for _x in bias_4j for _y in bias_4j] 
+        bias_num = len(bias_3j1)
+        
+        sisp = forest.load_sis_config()
+        j_type = []
+        sweep_data = []
+        beam_pol = []
+        for unit in sorted(sisp.keys()):
+            _j_type = sisp[unit]['J-type']
+            j_type.append(_j_type)
+            beam = sisp[unit]['beam']
+            pol = sisp[unit]['pol']
+            self.stdout.p('Junction Type of %s is %s.'%(unit, _j_type))
+            if _j_type == '3J':
+                sweep_data.append([bias_3j1, bias_3j2])
+            elif _j_type == '4J':
+                sweep_data.append([bias_4j1, bias_4j2])
+            else: 
+                sweep_data.append([bias_3j1, bias_3j2])
+                pass
+            beam_pol.append([beam, pol])
+            continue
+            
+        self.stdout.p('Sorting sweep data by ch.')
+        biasch = forest.biasbox_ch_mapper()
+        sweep_data_ch = biasch.sort_sweep_data_by_ch(sweep_data, beam_pol)
+        
+        self.stdout.p('SIS Bias : Set sweep data.')
+        sis.bias_series_set(sweep_data_ch)
+        
+        self.stdout.nextline()
+
         
         self.stdout.p('Get R and SKY')
         self.stdout.p('-------------')
         
         spdata = []
+        bias_ret = []
         rsky_info = []
         tsys = []
-        
-        self.stdout.p('Generate input bias array ...')
-        inp = numpy.arange(start, stop+step, step)
-        self.stdout.p('inp : [%s %s %s ... %s %s %s]'%(
-            inp[0], inp[1], inp[2], inp[-3], inp[-2], inp[-1]))
-        
-        inp = map(float, inp)
         
         for ch in [1,2,3,4]:
             self.stdout.p('IF Switch : Set ch %d.'%(ch))
             sw.ch_set_all(ch)
             time.sleep(0.1)
             
-            for bias1 in inp:
-                for bias2 in inp:
-                    self.stdout.p('SIS Bias : Set bias1 = %.2f, bias2 = %.2f.'%(bias1, bias2))
-                    sis.bias_set(bias1)
-                    sis.bias_set(bias2, beam=1, pol='H', dsbunit=2)
-                    sis.bias_set(bias2, beam=1, pol='V', dsbunit=2)
-                    sis.bias_set(bias2, beam=2, pol='H', dsbunit=2)
-                    sis.bias_set(bias2, beam=2, pol='V', dsbunit=2)
-                    sis.bias_set(bias2, beam=3, pol='H', dsbunit=2)
-                    sis.bias_set(bias2, beam=3, pol='V', dsbunit=2)
-                    sis.bias_set(bias2, beam=4, pol='H', dsbunit=2)
-                    sis.bias_set(bias2, beam=4, pol='V', dsbunit=2)
-                    time.sleep(0.15)
-                    
-                    self.stdout.p('Speana : Aquire.')
-                    d = sp.trace_data_query()
-                    spdata.append(d[0])
-                    spdata.append(d[1])
-                    spdata.append(d[2])
-                    spdata.append(d[3])
-                    
-                    self.stdout.p('Calc Tsys ...')
-                    _tsys1, _info1 = forest.evaluate_rsky_from_rotating_chopper_data(d[0], thot)
-                    _tsys2, _info2 = forest.evaluate_rsky_from_rotating_chopper_data(d[1], thot)
-                    _tsys3, _info3 = forest.evaluate_rsky_from_rotating_chopper_data(d[2], thot)
-                    _tsys4, _info4 = forest.evaluate_rsky_from_rotating_chopper_data(d[3], thot)
-                    tsys.append(_tsys1)
-                    tsys.append(_tsys2)
-                    tsys.append(_tsys3)
-                    tsys.append(_tsys4)
-                    rsky_info.append(_info1)
-                    rsky_info.append(_info2)
-                    rsky_info.append(_info3)
-                    rsky_info.append(_info4)
-                    continue
+            for i, (b31, b32, b41, b42) for enumerate(zip(bias_3j1, bias_3j2, bias_4j1, bias_4j2)):
+                #
+                t0 = time.time()
+                #
+                
+                self.stdout.p('SIS Bias : Set bias1 = %.2f (3J), %.2f (4J); bias2 = %.2f (3J), %.2f (4J). [%d/%d]'%(
+                    b31, b32, b41, b42, i, bias_num))
+                sis.bias_series_output_next()
+                
+                #
+                t1 = time.time() - t0
+                #
+                
+                self.stdout.p('Wait 0.15 sec.')
+                time.sleep(0.15)
+                
+                #
+                t2 = time.time() - t0
+                #
+                
+                self.stdout.p('SIS Bias : Get biases.')
+                sis_vi = sis.bias_get()
+                bias_ret.append(sis_vi)
+                
+                #
+                t3 = time.time() - t0
+                #
+                
+                self.stdout.p('Speana : Get spectra.')
+                d = sp.trace_data_query()
+                spdata.append(d[0])
+                spdata.append(d[1])
+                spdata.append(d[2])
+                spdata.append(d[3])
+                
+                #
+                t4 = time.time() - t0
+                #
+                
+                self.stdout.p('Calc Tsys ...')
+                _tsys1, _info1 = forest.evaluate_rsky_from_rotating_chopper_data(d[0], thot)
+                _tsys2, _info2 = forest.evaluate_rsky_from_rotating_chopper_data(d[1], thot)
+                _tsys3, _info3 = forest.evaluate_rsky_from_rotating_chopper_data(d[2], thot)
+                _tsys4, _info4 = forest.evaluate_rsky_from_rotating_chopper_data(d[3], thot)
+                tsys.append(_tsys1)
+                tsys.append(_tsys2)
+                tsys.append(_tsys3)
+                tsys.append(_tsys4)
+                rsky_info.append(_info1)
+                rsky_info.append(_info2)
+                rsky_info.append(_info3)
+                rsky_info.append(_info4)
+                
+                #
+                t5 = time.time() - t0
+                #
+                
+                #
+                self.stdout.p('<<< DEBUG >>>')
+                self.stdout.p('t1: %.2f'%(t1 * 1000))
+                self.stdout.p('t2: %.2f'%(t2 * 1000))
+                self.stdout.p('t3: %.2f'%(t3 * 1000))
+                self.stdout.p('t4: %.2f'%(t4 * 1000))
+                self.stdout.p('t5: %.2f'%(t5 * 1000))
+                self.stdout.p('<<< ------------ >>>')
+                #
+                
                 continue            
             continue
         
         spdata = numpy.array(spdata)
+        bias_ret = numpy.array(bias_ret)
         tsys = numpy.array(tsys)
         rsky_info = numpy.array(rsky_info, dtype=object)
         
         self.stdout.p('Save : %s'%(dataname + '.spdata.npy'))
         numpy.save(datapath + '.spdata.npy', spdata)
+        
+        self.stdout.p('Save : %s'%(dataname + '.bias.npy'))
+        numpy.save(datapath + '.bias.npy', bias_ret)
         
         self.stdout.p('Save : %s'%(dataname + '.tsys.npy'))
         numpy.save(datapath + '.tsys.npy', tsys)
@@ -405,9 +477,72 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
 
         self.stdout.nextline()
         
-        #
-        # Plotting part
-        #
+        
+        # 
+        # ---------
+        self.stdout.p('Plot')
+        self.stdout.p('----')
+        
+        pylab.rcParams['image.interpolation'] = 'none'
+        pylab.rcParams['font.size'] = 8
+        
+        # --
+        
+        tshape = (4, biasx_num, biasx_num, 4)
+        tsys_reshape = tsys.reshape(tshape)
+        tsys_swap = numpy.swapaxes(tsys_reshape, 1, 3)
+        tsys_plot = tsys_swap.reshape([16, biasx_num, biasx_num])
+        
+        
+        delt3 = (bias_3j[1] - bias_3j[0]) / 2.
+        ext3 = [bias_3j[0] - delt3, bias_3j[-1] + delt3, bias_3j[0] - delt3, bias_3j[-1] + delt3]
+        
+        delt4 = (bias_4j[1] - bias_4j[0]) / 2.
+        ext4 = [bias_4j[0] - delt4, bias_4j[-1] + delt4, bias_4j[0] - delt4, bias_4j[-1] + delt4]
+        
+        extentions = []
+        for _jt in j_type:
+            if _jt == '3J' : extentions.append(ext3)
+            elif _jt == '4J': extentions.append(ext4)
+            else: extentions.append(ext3)
+            continue
+        
+            
+        cbarticks = range(100, 1001, 100)
+
+        self.stdout.p('Plot : %s.tsysmap.png'%(figname))
+        
+        fig = pylab.figure()
+        ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
+        im = [_a.imshow(_t, extent=_ex,  vmin=150, vmax=500) for _a, _t, _ex in zip(ax, tsys_plot, extentions)]
+        [fig.colorbar(_im, ax=_a, ticks=[]) for i, (_im, _a) in enumerate(zip(im, ax)) if i%4 != 3]
+        [fig.colorbar(_im, ax=_a, ticks=cbarticks) for i, (_im, _a) in enumerate(zip(im, ax)) if i%4 == 3]
+        [_a.set_xlabel('Bias1 (mV)') for i, _a in enumerate(ax) if i/4 > 2]
+        [_a.set_ylabel('Bias2 (mV)') for i, _a in enumerate(ax) if i%4 == 0]
+        [_a.set_ylabel('Bias2 (mV)') for i, _a in enumerate(ax) if i%4 == 0]
+        fig.savefig(figpath + '.tsysmap.png')
+        pylab.close(fig)        
+        
+        
+        # --
+        
+        sshape = (4, biasx_num, biasx_num, 4, -1)
+        spdata_reshape = spdata.reshape(sshape)
+        spdata_swap = numpy.swapaxes(spdata_reshape, 1, 3)
+        spdata_plot = spdata_swap.reshape((16, biasx_num * biasx_num, -1))
+        
+        
+        for ch, d in enumerate(spdata_plot):
+            self.stdout.p('Plot : %s.speana.%02d.png'%(figname, ch))
+            
+            fig = pylab.figure()
+            ax = [fig.add_subplot(biasx_num, bias_xnum, i+1) for i in range(biasx_num * biasx_num)]
+            [_a.plot(_d) for _a, _d in zip(ax, d)]
+            fig.savefig(figpath + '.speana.%02d.png'%(ch))
+            pylab.close(fig)
+            continue
+
+        self.stdout.nextline()
         
         
         # Finalization Section

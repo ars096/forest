@@ -12,6 +12,7 @@ from biasbox_tools import biasbox
 from biasbox_tools import biasbox_monitor
 from biasbox_tools import biasbox_controller
 from biasbox_tools import start_biasbox_server
+from biasbox_tools import biasbox_ch_mapper
 
 # LO SGs
 # ------
