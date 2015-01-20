@@ -5,7 +5,9 @@ import numpy
 import pymeasure
 import pyinterface.server_client_wrapper
 
-class irratt_controller(pymeasure.loatt_controller):
+import forest
+
+class irratt_controller(forest.loatt_controller):
     _latest_bias = []
     
     def __init__(self):
@@ -25,6 +27,22 @@ class irratt_controller(pymeasure.loatt_controller):
         self.bias_set(0)
         self.bias_get()
         pass
+
+    def _bias_set(self, bias, targets):
+        self.att[0].com.use_gpibport()
+        self.att[0].output_set(bias)
+        time.sleep(0.1)
+        return
+        
+    def _bias_get(self, targets):
+        retall = []
+        ret = []
+        retall.append(self.att[0].output_get())
+
+        self._latest_bias = retall
+        
+        return retall
+        
     
 
 def irratt():

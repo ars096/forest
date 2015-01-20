@@ -74,7 +74,7 @@ class initialize(base.forest_script_base):
         self.stdout.nextline()
         
         self.stdout.write('IRR SG : Set output off ... ')
-        irr_sg.output_off()
+        #irr_sg.output_off()
         self.stdout.write('ok')
         self.stdout.nextline()
         
@@ -217,7 +217,7 @@ class finalize(base.forest_script_base):
         self.stdout.nextline()
         
         self.stdout.write('IRR SG : Set output off ... ')
-        irr_sg.output_off()
+        #irr_sg.output_off()
         self.stdout.write('ok')
         self.stdout.nextline()
         

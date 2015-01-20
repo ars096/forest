@@ -387,14 +387,14 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
             sw.ch_set_all(ch)
             time.sleep(0.1)
             
-            for i, (b31, b32, b41, b42) for enumerate(zip(bias_3j1, bias_3j2, bias_4j1, bias_4j2)):
+            for i, (b31, b32, b41, b42) in enumerate(zip(bias_3j1, bias_3j2, bias_4j1, bias_4j2)):
                 #
                 t0 = time.time()
                 #
                 
                 self.stdout.p('SIS Bias : Set bias1 = %.2f (3J), %.2f (4J); bias2 = %.2f (3J), %.2f (4J). [%d/%d]'%(
                     b31, b32, b41, b42, i, bias_num))
-                sis.bias_series_output_next()
+                sis.bias_series_next()
                 
                 #
                 t1 = time.time() - t0
@@ -501,9 +501,16 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         
         extentions = []
         for _jt in j_type:
-            if _jt == '3J' : extentions.append(ext3)
-            elif _jt == '4J': extentions.append(ext4)
-            else: extentions.append(ext3)
+            if _jt == '3J' :
+                extentions.append(ext3)
+                extentions.append(ext3)
+            elif _jt == '4J':
+                extentions.append(ext4)
+                extentions.append(ext4)
+            else:
+                extentions.append(ext3)
+                extentions.append(ext3)
+                pass
             continue
         
             
@@ -535,7 +542,7 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
             self.stdout.p('Plot : %s.speana.%02d.png'%(figname, ch))
             
             fig = pylab.figure()
-            ax = [fig.add_subplot(biasx_num, bias_xnum, i+1) for i in range(biasx_num * biasx_num)]
+            ax = [fig.add_subplot(biasx_num, biasx_num, i+1) for i in range(biasx_num * biasx_num)]
             [_a.plot(_d) for _a, _d in zip(ax, d)]
             fig.savefig(figpath + '.speana.%02d.png'%(ch))
             pylab.close(fig)
@@ -690,7 +697,7 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
             sw.ch_set_all(ch)
             time.sleep(0.1)
             
-            for i, _att for enumerate(sweep_data):
+            for i, _att in enumerate(sweep_data):
                 self.stdout.p('LO Att : Set bias %.2f mA. [%d/%d]'%(_att, i, sweep_num))
                 lo_att.bias_set(_att)
                 

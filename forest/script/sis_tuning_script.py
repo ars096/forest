@@ -24,7 +24,7 @@ class sis_tune(base.forest_script_base):
         # ---------------
         args = {'lo_freq': lo_freq}
         argstxt = str(args)        
-        self.operation_start(argstxt, logfile=logpath)
+        self.operation_start(argstxt)
         
         # Print welcome message
         # ---------------------

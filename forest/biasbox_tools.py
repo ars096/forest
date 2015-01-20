@@ -261,7 +261,8 @@ class biasbox_controller(object):
         self.daq.analog_series_set(series_data)
         return
     
-    def bias_series_output_next(self):
+    def bias_series_next(self):
+        print('TESTTEST')
         self.daq.analog_series_output_next()
         return
         
