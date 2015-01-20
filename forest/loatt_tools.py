@@ -19,10 +19,10 @@ class loatt_controller(object):
                (elva100, com1, 5),
                (elva200, com1, 6),
                (elva200, com1, 7),
-               (elva100, com2, 8),
-               (elva100, com2, 9),
-               (elva100, com2, 10),
-               (elva100, com2, 11),]
+               (elva100, com1, 8),
+               (elva100, com1, 9),
+               (elva100, com1, 10),
+               (elva100, com1, 11),]
         
         self.att = []
         for _att, _host, _gpib in att:

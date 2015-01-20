@@ -27,6 +27,15 @@ from loatt_tools import loatt_monitor
 from loatt_tools import loatt_controller
 from loatt_tools import start_loatt_server
 
+# IRR Signal
+# ----------
+from irrsg_tools import irrsg
+
+from irratt_tools import irratt
+from irratt_tools import irratt_monitor
+from irratt_tools import irratt_controller
+from irratt_tools import start_irratt_server
+
 # IF Switches
 # -----------
 from switch_tools import switch
