@@ -1,8 +1,19 @@
 
+# forest_* seriese
+# ================
+
 # Initialize / Finalize
 # ---------------------
 from init_fin import initialize
 from init_fin import finalize
+
+# receiver
+# --------
+from sis_tuning_script import sis_tune
+
+
+# instrument controller seriese
+# =============================
 
 # 1st LO
 # ------
@@ -19,8 +30,9 @@ from slider_script import slider_move_sky
 from slider_script import slider_move_org
 from slider_script import slider_move
 
-# Expeliment
-# ----------
+
+# Expeliment seriese
+# ==================
 from sis_biascurve_script import get_sis_bias_curve
 from sis_biascurve_script import get_sis_bias_curve_with_LO_att_level_sweep
 
