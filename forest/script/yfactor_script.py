@@ -237,7 +237,7 @@ class rsky_with_slider(base.forest_script_base):
 
 class rsky_with_sis_bias_sweep(base.forest_script_base):
     method = 'rsky_with_sis_bias_sweep'
-    ver = '2015.01.17'
+    ver = '2015.01.19'
     
     def run(self, thot):
         # Initialization Section
@@ -289,9 +289,6 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         # =================
         self.stdout.p('R-SKY')
         self.stdout.p('=====')
-        self.stdout.p('start = %f'%(start))
-        self.stdout.p('stop = %f'%(stop))
-        self.stdout.p('step = %f'%(step))
         self.stdout.p('thot = %f K'%(thot))
         self.stdout.nextline()
         
@@ -575,4 +572,245 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         
         return
 
+
+class rsky_with_lo_att_sweep(base.forest_script_base):
+    method = 'rsky_with_lo_att_sweep'
+    ver = '2015.01.20'
+    
+    def run(self, start, stop, step, thot):
+        # Initialization Section
+        # ======================
+        
+        # Check other operation
+        # ---------------------
+        self.check_other_operation()
+        
+        # Generate file path
+        # ------------------
+        fpg = forest.filepath_generator(self.method)
+        savedir = fpg(' ')
+        logpath = fpg('log.%s.txt')
+        logname = os.path.basename(logpath)
+        datapath = fpg('rsky.data.%s')
+        dataname = os.path.basename(datapath)
+        figpath = fpg('rsky.fig.%s')
+        figname = os.path.basename(figpath)
+        ts = os.path.basename(fpg('%s'))
+        
+        # Start operation
+        # ---------------
+        args = {'start': start, 'stop': stop, 'step': step, 'thot': thot}
+        argstxt = str(args)        
+        self.operation_start(argstxt, logfile=logpath)
+        
+        # Print welcome message
+        # ---------------------
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('FOREST : R-SKY with LO Att Sweep ')
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('ver.%s'%(self.ver))
+        self.stdout.nextline()
+        
+        # Open devices
+        # ------------
+        self.stdout.p('Open Devices')
+        self.stdout.p('============')
+        
+        lo_att = self.open_lo_att()
+        sp = self.open_speana()
+        sw = self.open_switch()
+        
+        self.stdout.nextline()
+        
+        
+        # Operation Section
+        # =================
+        self.stdout.p('R-SKY')
+        self.stdout.p('=====')
+        self.stdout.p('start = %f mA'%(start))
+        self.stdout.p('stop = %f mA'%(stop))
+        self.stdout.p('step = %f mA'%(step))
+        self.stdout.p('thot = %f K'%(thot))
+        self.stdout.nextline()
+        
+        self.stdout.p('Device configurations')
+        self.stdout.p('---------------------')
+        self.stdout.p('Speana : Preset.')
+        sp.scpi_reset()
+
+        self.stdout.p('Speana : Set center freq 8 GHz.')
+        sp.frequency_center_set(8, 'GHz')
+        
+        self.stdout.p('Speana : Set span 0 Hz.')
+        sp.frequency_span_set(0, 'Hz')
+        
+        self.stdout.p('Speana : Set Video BW 100 Hz.')
+        sp.video_bw_set(100, 'Hz')
+        
+        self.stdout.p('Speana : Set reference level -55 dBm.')
+        sp.reference_level_set(-55)
+        
+        self.stdout.p('Speana : Set scale 1 dB/div.')
+        sp.scalediv_set(1)
+        
+        self.stdout.p('Speana : Set attenuation 0 dB.')
+        sp.attenuation_set(0)
+        
+        self.stdout.p('Speana : Set sweep time 0.15 sec.')
+        sp.sweep_time_set(0.15)
+        
+        self.stdout.p('Speana : Set average OFF.')
+        sp.average_onoff_set('OFF')
+        
+        self.stdout.p('IF Switch : Set ch 1.')
+        sw.ch_set_all(1)
+        
+        self.stdout.p('LO Att : Set 0 mV.')
+        lo_att.bias_set(0)
+        
+        self.stdout.nextline()
+
+
+        self.stdout.p('Create sweep data.')
+        sweep_data = numpy.arange(start, stop+step, step)
+        sweep_num = len(sweep_data)
+        
+        self.stdout.nextline()
+        
+        
+        self.stdout.p('Get R and SKY')
+        self.stdout.p('-------------')
+        
+        spdata = []
+        rsky_info = []
+        tsys = []
+        
+        for ch in [1,2,3,4]:
+            self.stdout.p('IF Switch : Set ch %d.'%(ch))
+            sw.ch_set_all(ch)
+            time.sleep(0.1)
+            
+            for i, _att for enumerate(sweep_data):
+                self.stdout.p('LO Att : Set bias %.2f mA. [%d/%d]'%(_att, i, sweep_num))
+                lo_att.bias_set(_att)
+                
+                self.stdout.p('Wait 0.15 sec.')
+                time.sleep(0.15)
+                
+                self.stdout.p('Speana : Get spectra.')
+                d = sp.trace_data_query()
+                spdata.append(d[0])
+                spdata.append(d[1])
+                spdata.append(d[2])
+                spdata.append(d[3])
+                
+                self.stdout.p('Calc Tsys ...')
+                _tsys1, _info1 = forest.evaluate_rsky_from_rotating_chopper_data(d[0], thot)
+                _tsys2, _info2 = forest.evaluate_rsky_from_rotating_chopper_data(d[1], thot)
+                _tsys3, _info3 = forest.evaluate_rsky_from_rotating_chopper_data(d[2], thot)
+                _tsys4, _info4 = forest.evaluate_rsky_from_rotating_chopper_data(d[3], thot)
+                tsys.append(_tsys1)
+                tsys.append(_tsys2)
+                tsys.append(_tsys3)
+                tsys.append(_tsys4)
+                rsky_info.append(_info1)
+                rsky_info.append(_info2)
+                rsky_info.append(_info3)
+                rsky_info.append(_info4)
+                continue            
+            continue
+        
+        spdata = numpy.array(spdata)
+        tsys = numpy.array(tsys)
+        rsky_info = numpy.array(rsky_info, dtype=object)
+        
+        self.stdout.p('Save : %s'%(dataname + '.spdata.npy'))
+        numpy.save(datapath + '.spdata.npy', spdata)
+        
+        self.stdout.p('Save : %s'%(dataname + '.loatt.npy'))
+        numpy.save(datapath + '.loatt.npy', sweep_data)
+        
+        self.stdout.p('Save : %s'%(dataname + '.tsys.npy'))
+        numpy.save(datapath + '.tsys.npy', tsys)
+        
+        self.stdout.p('Save : %s'%(dataname + '.info.npy'))
+        numpy.save(datapath + '.info.npy', rsky_info)
+
+        self.stdout.nextline()
+        
+        
+        # 
+        # ---------
+        self.stdout.p('Plot')
+        self.stdout.p('----')
+        
+        pylab.rcParams['image.interpolation'] = 'none'
+        pylab.rcParams['font.size'] = 8
+        
+        # --
+        
+        tshape = (4, sweep_num, 4)
+        tsys_reshape = tsys.reshape(tshape)
+        tsys_swap = numpy.swapaxes(tsys_reshape, 1, 2)
+        tsys_plot = tsys_swap.reshape((16, sweep_num))
+        
+        self.stdout.p('Plot : %s.tsys.png'%(figname))
+        
+        fig = pylab.figure()
+        ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
+        im = [_a.plot(_t) for _a, _t in zip(ax, tsys_plot)]
+        [_a.set_xlabel('LO Att. (mA)') for i, _a in enumerate(ax) if i/4 > 2]
+        [_a.set_ylabel('Tsys* (K)') for i, _a in enumerate(ax) if i%4 == 0]
+        fig.savefig(figpath + '.tsysmap.png')
+        pylab.close(fig)        
+        
+        
+        # --
+        
+        sshape = (4, sweep_num, 4, -1)
+        spdata_reshape = spdata.reshape(sshape)
+        spdata_swap = numpy.swapaxes(spdata_reshape, 0, 1)
+        spdata_plot = spdata_swap.reshape((sweep_num, 16, -1))
+        
+        
+        for ch, d in enumerate(spdata_plot):
+            self.stdout.p('Plot : %s.speana.%02d.png'%(figname, ch))
+            
+            fig = pylab.figure()
+            ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
+            [_a.plot(_d) for _a, _d in zip(ax, d)]
+            fig.savefig(figpath + '.speana.%04d.png'%(ch))
+            pylab.close(fig)
+            continue
+        
+        self.stdout.nextline()
+        
+        
+        # Finalization Section
+        # ====================
+        
+        # Close devices
+        # -------------
+        self.stdout.p('Close Devices')
+        self.stdout.p('=============')
+        
+        # TODO: implement close method.
+        """
+        sis.close()
+        #lo_sg.close()
+        lo_att.close()
+        #irr_sg.close()
+        rxrot.close()
+        slider.close()
+        """
+        
+        self.stdout.p('All devices are closed.')
+        self.stdout.nextline()
+        
+        # Stop operation
+        # --------------
+        self.stdout.p('//// Operation is done. ////')
+        self.operation_done()
+        
+        return
 
