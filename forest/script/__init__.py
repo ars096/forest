@@ -15,6 +15,10 @@ from sis_tuning_script import sis_tune
 # instrument controller seriese
 # =============================
 
+# SIS Bias Box
+# ------------
+from sis_biabox_script import sis_bias_set
+
 # 1st LO
 # ------
 from losg_script import lo_freq_set
