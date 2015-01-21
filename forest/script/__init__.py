@@ -21,6 +21,7 @@ from sis_biabox_script import sis_bias_set
 
 # 1st LO
 # ------
+from losg_script import lo_sg_check
 from losg_script import lo_freq_set
 from losg_script import lo_power_set
 from losg_script import lo_output_off

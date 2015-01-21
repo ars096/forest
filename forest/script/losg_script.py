@@ -3,6 +3,79 @@ import forest
 import base
 
 
+class lo_sg_check(base.forest_script_base):
+    method = 'LO_sg_check'
+    ver = '2015.01.21'
+    
+    def run(self):
+        # Initialization Section
+        # ======================
+        
+        # Check other operation
+        # ---------------------
+        self.check_other_operation()
+        
+        # Start operation
+        # ---------------
+        self.operation_start()
+        
+        # Print welcome message
+        # ---------------------
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('FOREST : Check 1st LO SGs')
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('ver.%s'%(self.ver))
+        self.stdout.nextline()
+        
+        # Open devices
+        # ------------
+        self.stdout.p('Open Devices')
+        self.stdout.p('============')
+        
+        lo_sg = self.open_lo_sg()
+        
+        self.stdout.nextline()
+        
+        
+        # Operation Section
+        # =================
+        self.stdout.p('Check SG Status')
+        self.stdout.p('===============')
+        
+        freq = lo_sg.freq_check()
+        power = lo_sg.power_check()
+        output = lo_sg.output_check()
+        self.stdout.write('1st LO SG1 : %f GHz, %.1f dBm, output %s'%(freq[0]/1e9, power[0], output[0]))
+        self.stdout.write('1st LO SG2 : %f GHz, %.1f dBm, output %s'%(freq[1]/1e9, power[1], output[1]))
+        lo_sg.freq_set(freq, unit)
+        self.stdout.write('ok')
+        self.stdout.nextline()
+        
+        self.stdout.nextline()
+
+        # Finalization Section
+        # ====================
+        
+        # Close devices
+        # -------------
+        self.stdout.p('Close Devices')
+        self.stdout.p('=============')
+        
+        # TODO: implement close method.
+        """
+        lo_sg.close()
+        """
+        
+        self.stdout.p('All devices are closed.')
+        self.stdout.nextline()
+        
+        # Stop operation
+        # --------------
+        self.stdout.p('//// Operation is done. ////')
+        self.operation_done()
+        
+        return
+
 class lo_freq_set(base.forest_script_base):
     method = 'LO_freq_set'
     ver = '2015.01.17'
