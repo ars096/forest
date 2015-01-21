@@ -1,5 +1,5 @@
 
-import functools
+import multiprocessing.dummy
 import pymeasure
 
 
@@ -28,6 +28,7 @@ class speana(object):
     def __init__(self):
         self.sp = [speana1(), speana2(), speana3(), speana4()]
         self.attr = [a for a in dir(self.sp[0]) if a[0]!='_']
+        self._p = multiprocessing.dummy.Pool(4)
         pass
         
     def __getattr__(self, name):
@@ -37,8 +38,12 @@ class speana(object):
         return self.__getattribute__(name)
         
     def _call(self, *args, **kwargs):
-        ret = [s.__getattribute__(self._call_name)(*args, **kwargs) \
-               for s in self.sp]
+        def exec_method(method):
+            return method(*args, **kwargs)
+        
+        func = [s.__getattribute__(self._call_name) for s in self.sp]
+        ret = self._p.map(exec_method, func)
+        
         self._call_name = None
         return ret
         
