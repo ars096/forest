@@ -111,7 +111,7 @@ class loatt_controller(object):
         for t in targets:
             self.att[t].com.use_gpibport()
             self.att[t].output_set(bias)
-            time.sleep(0.1)
+            time.sleep(0.05)
             continue
         return
 

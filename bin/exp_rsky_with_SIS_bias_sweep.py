@@ -14,6 +14,7 @@ description = 'R-SKY with SIS Bias Sweep.'
 # Default parameters
 # ------------------
 
+step = 0.05 # mV
 Thot = 293.0 # K
 
 
@@ -23,11 +24,13 @@ Thot = 293.0 # K
 import argparse
 
 p = argparse.ArgumentParser(description=description)
+p.add_argument('--step', type=float,
+               help='Step of sweep interval in mV. default is %.2f mV.'%(step))
 p.add_argument('--Thot', type=float,
                help='Hot temperature in K. default is %.2f K.'%(Thot))
 
 args = p.parse_args()
-
+if args.step is not None: step = args.step
 if args.Thot is not None: Thot = args.Thot
 
 
@@ -37,6 +40,6 @@ if args.Thot is not None: Thot = args.Thot
 import forest.script
 
 script = forest.script.rsky_with_sis_bias_sweep()
-script.run(Thot)
+script.run(step, Thot)
 
 

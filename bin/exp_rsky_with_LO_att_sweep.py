@@ -27,11 +27,11 @@ import argparse
 
 p = argparse.ArgumentParser(description=description)
 p.add_argument('--start', type=float,
-               help='Sweep start Att level in mA. default is %.2f K.'%(start))
+               help='Sweep start Att level in mA. default is %.2f mA.'%(start))
 p.add_argument('--stop', type=float,
-               help='Sweep stop Att level in mA. default is %.2f K.'%(stop))
+               help='Sweep stop Att level in mA. default is %.2f mA.'%(stop))
 p.add_argument('--step', type=float,
-               help='Step of sweep Att level in mA. default is %.2f K.'%(step))
+               help='Step of sweep Att level in mA. default is %.2f mA.'%(step))
 p.add_argument('--Thot', type=float,
                help='Hot temperature in K. default is %.2f K.'%(Thot))
 

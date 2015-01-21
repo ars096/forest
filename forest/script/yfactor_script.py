@@ -10,7 +10,7 @@ import base
 
 def tsys_plot(freq, dhot, dcold, tsys, save, suptitle):
     speana = ['SP:1', 'SP:2', 'SP:3', 'SP:4'] * 4 
-    switch = ['SW:%d'%_ch for i in range(ax_x) for _ch in [1,2,3,4]]
+    switch = ['SW:%d'%_ch for i in [1,2,3,4] for _ch in [1,2,3,4]]
     label = ['%s, %s'%(_sw, _sp) for _sw, _sp in zip(switch, speana)]
     
     freq_GHz = freq / 1e9
@@ -109,6 +109,9 @@ class rsky_with_slider(base.forest_script_base):
         
         self.stdout.p('Device configurations')
         self.stdout.p('---------------------')
+        self.stdout.p('Speana : Preset.')
+        sp.scpi_reset()
+        
         self.stdout.p('Speana : Set start freq %f GHz.'%(f_start))
         sp.frequency_start_set(f_start, 'GHz')
         
@@ -129,7 +132,7 @@ class rsky_with_slider(base.forest_script_base):
         sw.ch_set_all(1)
         
         freq = sp.sp[0].gen_xaxis()
-        self.stdout.p('Save : %s'(dataname + '.freq.npy'))
+        self.stdout.p('Save : %s'%(dataname + '.freq.npy'))
         numpy.save(datapath + '.freq.npy', freq)
         
         self.stdout.nextline()
@@ -239,7 +242,7 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
     method = 'rsky_with_sis_bias_sweep'
     ver = '2015.01.19'
     
-    def run(self, thot):
+    def run(self, step, thot):
         # Initialization Section
         # ======================
         
@@ -303,6 +306,9 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         self.stdout.p('Speana : Set span 0 Hz.')
         sp.frequency_span_set(0, 'Hz')
         
+        self.stdout.p('Speana : Set res. BW 3 MHz.')
+        sp.resolution_bw_set(3, 'MHz')
+        
         self.stdout.p('Speana : Set Video BW 100 Hz.')
         sp.video_bw_set(100, 'Hz')
         
@@ -315,8 +321,8 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         self.stdout.p('Speana : Set attenuation 0 dB.')
         sp.attenuation_set(0)
         
-        self.stdout.p('Speana : Set sweep time 0.15 sec.')
-        sp.sweep_time_set(0.15)
+        self.stdout.p('Speana : Set sweep time 0.1 sec.')
+        sp.sweep_time_set(0.1)
         
         self.stdout.p('Speana : Set average OFF.')
         sp.average_onoff_set('OFF')
@@ -332,10 +338,12 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
 
         self.stdout.p('Prepare Sweep Bias Set')
         self.stdout.p('----------------------')
-        #bias_3j = [float(_d) for _d in numpy.arange(6.0, 8.01, 0.05)]
-        #bias_4j = [float(_d) for _d in numpy.arange(8.0, 10.01, 0.05)]
-        bias_3j = [float(_d) for _d in numpy.arange(6.0, 8.01, 1)]   # for test 
-        bias_4j = [float(_d) for _d in numpy.arange(8.0, 10.01, 1)]  # for test
+        bias_3j = [float(_d) for _d in numpy.arange(6.0, 8.01, step)]
+        bias_4j = [float(_d) for _d in numpy.arange(8.0, 10.01, step)]
+        #bias_3j = [float(_d) for _d in numpy.arange(6.0, 8.01, 0.2)]
+        #bias_4j = [float(_d) for _d in numpy.arange(8.0, 10.01, 0.2)]
+        #bias_3j = [float(_d) for _d in numpy.arange(6.0, 8.01, 1)]   # for test 
+        #bias_4j = [float(_d) for _d in numpy.arange(8.0, 10.01, 1)]  # for test
         biasx_num = len(bias_3j)
         
         bias_3j1 = [_x for _x in bias_3j for _y in bias_3j] 
@@ -388,32 +396,21 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
             time.sleep(0.1)
             
             for i, (b31, b32, b41, b42) in enumerate(zip(bias_3j1, bias_3j2, bias_4j1, bias_4j2)):
-                #
-                t0 = time.time()
-                #
-                
-                self.stdout.p('SIS Bias : Set bias1 = %.2f (3J), %.2f (4J); bias2 = %.2f (3J), %.2f (4J). [%d/%d]'%(
+                self.stdout.p('SIS Bias : Set 3J = %.2f, %.2f; 4J = %.2f, %.2f. [%d/%d]'%(
                     b31, b32, b41, b42, i, bias_num))
                 sis.bias_series_next()
                 
-                #
-                t1 = time.time() - t0
-                #
+                time.sleep(0.01)
                 
-                self.stdout.p('Wait 0.15 sec.')
-                time.sleep(0.15)
+                self.stdout.p('Speana : Average restart.')                
+                sp.average_restart()
                 
-                #
-                t2 = time.time() - t0
-                #
+                self.stdout.p('Wait 0.1 sec.')
+                time.sleep(0.13)
                 
                 self.stdout.p('SIS Bias : Get biases.')
                 sis_vi = sis.bias_get()
                 bias_ret.append(sis_vi)
-                
-                #
-                t3 = time.time() - t0
-                #
                 
                 self.stdout.p('Speana : Get spectra.')
                 d = sp.trace_data_query()
@@ -421,10 +418,6 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
                 spdata.append(d[1])
                 spdata.append(d[2])
                 spdata.append(d[3])
-                
-                #
-                t4 = time.time() - t0
-                #
                 
                 self.stdout.p('Calc Tsys ...')
                 _tsys1, _info1 = forest.evaluate_rsky_from_rotating_chopper_data(d[0], thot)
@@ -439,23 +432,14 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
                 rsky_info.append(_info2)
                 rsky_info.append(_info3)
                 rsky_info.append(_info4)
-                
-                #
-                t5 = time.time() - t0
-                #
-                
-                #
-                self.stdout.p('<<< DEBUG >>>')
-                self.stdout.p('t1: %.2f'%(t1 * 1000))
-                self.stdout.p('t2: %.2f'%(t2 * 1000))
-                self.stdout.p('t3: %.2f'%(t3 * 1000))
-                self.stdout.p('t4: %.2f'%(t4 * 1000))
-                self.stdout.p('t5: %.2f'%(t5 * 1000))
-                self.stdout.p('<<< ------------ >>>')
-                #
-                
                 continue            
             continue
+        
+        self.stdout.p('IF Switch : Set ch 1.')
+        sw.ch_set_all(1)
+        
+        self.stdout.p('SIS Bias : Set 0 mV.')
+        sis.bias_set(0)
         
         spdata = numpy.array(spdata)
         bias_ret = numpy.array(bias_ret)
@@ -520,7 +504,7 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         
         fig = pylab.figure()
         ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
-        im = [_a.imshow(_t, extent=_ex,  vmin=150, vmax=500) for _a, _t, _ex in zip(ax, tsys_plot, extentions)]
+        im = [_a.imshow(_t, extent=_ex,  vmin=150, vmax=800) for _a, _t, _ex in zip(ax, tsys_plot, extentions)]
         [fig.colorbar(_im, ax=_a, ticks=[]) for i, (_im, _a) in enumerate(zip(im, ax)) if i%4 != 3]
         [fig.colorbar(_im, ax=_a, ticks=cbarticks) for i, (_im, _a) in enumerate(zip(im, ax)) if i%4 == 3]
         [_a.set_xlabel('Bias1 (mV)') for i, _a in enumerate(ax) if i/4 > 2]
@@ -645,11 +629,14 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
         self.stdout.p('Speana : Preset.')
         sp.scpi_reset()
 
-        self.stdout.p('Speana : Set center freq 8 GHz.')
-        sp.frequency_center_set(8, 'GHz')
+        self.stdout.p('Speana : Set center freq 5.5 GHz.')
+        sp.frequency_center_set(5.5, 'GHz')
         
         self.stdout.p('Speana : Set span 0 Hz.')
         sp.frequency_span_set(0, 'Hz')
+        
+        self.stdout.p('Speana : Set res. BW 3 MHz.')
+        sp.resolution_bw_set(3, 'MHz')
         
         self.stdout.p('Speana : Set Video BW 100 Hz.')
         sp.video_bw_set(100, 'Hz')
@@ -663,8 +650,8 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
         self.stdout.p('Speana : Set attenuation 0 dB.')
         sp.attenuation_set(0)
         
-        self.stdout.p('Speana : Set sweep time 0.15 sec.')
-        sp.sweep_time_set(0.15)
+        self.stdout.p('Speana : Set sweep time 0.1 sec.')
+        sp.sweep_time_set(0.1)
         
         self.stdout.p('Speana : Set average OFF.')
         sp.average_onoff_set('OFF')
@@ -701,6 +688,9 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
                 self.stdout.p('LO Att : Set bias %.2f mA. [%d/%d]'%(_att, i, sweep_num))
                 lo_att.bias_set(_att)
                 
+                self.stdout.p('Speana : Average restart.')                
+                sp.average_restart()
+                
                 self.stdout.p('Wait 0.15 sec.')
                 time.sleep(0.15)
                 
@@ -727,6 +717,13 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
                 continue            
             continue
         
+        self.stdout.p('IF Switch : Set ch 1.')
+        sw.ch_set_all(1)
+        
+        self.stdout.p('LO Att : Set 200 mV.')
+        lo_att.bias_set(200)
+        
+
         spdata = numpy.array(spdata)
         tsys = numpy.array(tsys)
         rsky_info = numpy.array(rsky_info, dtype=object)
@@ -765,7 +762,7 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
         
         fig = pylab.figure()
         ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
-        im = [_a.plot(_t) for _a, _t in zip(ax, tsys_plot)]
+        im = [_a.plot(sweep_data, _t) for _a, _t in zip(ax, tsys_plot)]
         [_a.set_xlabel('LO Att. (mA)') for i, _a in enumerate(ax) if i/4 > 2]
         [_a.set_ylabel('Tsys* (K)') for i, _a in enumerate(ax) if i%4 == 0]
         fig.savefig(figpath + '.tsysmap.png')
@@ -786,6 +783,7 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
             fig = pylab.figure()
             ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
             [_a.plot(_d) for _a, _d in zip(ax, d)]
+            fig.suptitle('LO att = %.2f'%(sweep_data[ch]))
             fig.savefig(figpath + '.speana.%04d.png'%(ch))
             pylab.close(fig)
             continue

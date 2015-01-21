@@ -258,11 +258,13 @@ class biasbox_controller(object):
         return vin.sis, iin.sis
         
     def bias_series_set(self, series_data):
-        self.daq.analog_series_set(series_data)
+        series_data = numpy.array(series_data)
+        bias = bias_voltage_output_changer(sis=series_data)
+        print(bias.box)
+        self.daq.analog_series_set(bias.box)
         return
     
     def bias_series_next(self):
-        print('TESTTEST')
         self.daq.analog_series_output_next()
         return
         
