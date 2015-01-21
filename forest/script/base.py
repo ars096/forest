@@ -1,6 +1,7 @@
 
 import sys
 import time
+import threading
 import multiprocessing
 import forest
 
@@ -17,10 +18,12 @@ class forest_script_base(object):
     def detach_process(self, func, args):
         proc = multiprocessing.Process(target=func, args=args)
         proc.start()
-        return
+        return proc
         
     def detach_thread(self, func, args):
-        pass
+        thread = threading.Thread(target=func, args=args)
+        thread.start()
+        return thread
     
     def check_other_operation(self):
         latest = self.log.get_latest_item()
