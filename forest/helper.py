@@ -1,7 +1,9 @@
 
 import os
 import time
+import numpy
 import ConfigParser
+import forest
 
 def mkdirs(path):
     if os.path.exists(path): return False
@@ -70,6 +72,20 @@ def load_sis_config(lo_freq=105, config_file_name='FOREST2014.cnf'):
     return params
 
 
+def is_operating():
+    db = forest.db_writer('operation_log')
+    ret = db.get_latest_item()
+    status = ret[2]
+    if is_observing(): return True
+    if status == 'START': return True
+    return False
+
+def is_observing():
+    db = forest.db_writer('operation_log')
+    ret = db.get_latest_item()
+    status = ret[3]
+    if status == 'observation_mode': return True
+    return False
 
 
 # print methods
@@ -135,4 +151,26 @@ def print_loatt(bias):
 
 def print_rxrot(status):
     print(status)
+    return
+
+def print_slider(status):
+    position, count = status
+    print('%s (%d)'%(position, count))
+    return
+
+def print_switch(status):
+    ch1, ch2, ch3, ch4 = status
+    print('ch1: %d, ch2: %d, ch3: %d, ch4: %d'%(ch1, ch2, ch3, ch4))
+    return
+
+def print_losg(status):
+    freq, power, output = status
+    print('SG1: %f GHz, %.1f dBm, ON/OFF=%d'%(freq[0]/1e9, power[0], output[0]))
+    print('SG2: %f GHz, %.1f dBm, ON/OFF=%d'%(freq[1]/1e9, power[1], output[1]))
+    return
+
+def print_spana(status):
+    av = numpy.average(status, axis=1)
+    print('Sp1: %.1f dBm,  Sp2: %.1f dBm'%(av[0], av[1]))
+    print('Sp3: %.1f dBm,  Sp4: %.1f dBm'%(av[2], av[3]))
     return

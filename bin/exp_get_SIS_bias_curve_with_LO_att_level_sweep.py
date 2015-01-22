@@ -47,9 +47,9 @@ args = p.parse_args()
 if args.start is not None: start = args.start
 if args.stop is not None: stop = args.stop
 if args.step is not None: step = args.step
-if args.sis_start is not None: start = args.sis_start
-if args.sis_stop is not None: stop = args.sis_stop
-if args.sis_step is not None: step = args.sis_step
+if args.sis_start is not None: sis_start = args.sis_start
+if args.sis_stop is not None: sis_stop = args.sis_stop
+if args.sis_step is not None: sis_step = args.sis_step
 
 
 # Run Script

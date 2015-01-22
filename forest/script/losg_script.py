@@ -42,14 +42,11 @@ class lo_sg_check(base.forest_script_base):
         self.stdout.p('Check SG Status')
         self.stdout.p('===============')
         
-        freq = lo_sg.freq_check()
-        power = lo_sg.power_check()
-        output = lo_sg.output_check()
-        self.stdout.write('1st LO SG1 : %f GHz, %.1f dBm, output %s'%(freq[0]/1e9, power[0], output[0]))
-        self.stdout.write('1st LO SG2 : %f GHz, %.1f dBm, output %s'%(freq[1]/1e9, power[1], output[1]))
-        lo_sg.freq_set(freq, unit)
-        self.stdout.write('ok')
-        self.stdout.nextline()
+        freq = lo_sg.freq_query()
+        power = lo_sg.power_query()
+        output = lo_sg.output_query()
+        self.stdout.p('1st LO SG1 : %f GHz, %.1f dBm, output %s'%(freq[0]/1e9, power[0], output[0]))
+        self.stdout.p('1st LO SG2 : %f GHz, %.1f dBm, output %s'%(freq[1]/1e9, power[1], output[1]))
         
         self.stdout.nextline()
 

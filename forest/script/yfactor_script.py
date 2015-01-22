@@ -566,7 +566,7 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
 
 class rsky_with_lo_att_sweep(base.forest_script_base):
     method = 'rsky_with_lo_att_sweep'
-    ver = '2015.01.20'
+    ver = '2015.01.23'
     
     def run(self, start, stop, step, thot):
         # Initialization Section
@@ -687,6 +687,9 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
             for i, _att in enumerate(sweep_data):
                 self.stdout.p('LO Att : Set bias %.2f mA. [%d/%d]'%(_att, i, sweep_num))
                 lo_att.bias_set(_att)
+
+                self.stdout.p('Wait 2 sec...')
+                time.sleep(2)
                 
                 self.stdout.p('Speana : Average restart.')                
                 sp.average_restart()
