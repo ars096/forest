@@ -3,31 +3,34 @@ import os
 import time
 import numpy
 import pylab
+import matplotlib.ticker
 
 import forest
 import base
 
 
-def tsys_plot(freq, dhot, dcold, tsys, save, suptitle):
+def tsys_plot(freq, dhot, dcold, tsys, save, suptitle, smooth=1):
     speana = ['SP:1', 'SP:2', 'SP:3', 'SP:4'] * 4 
     switch = ['SW:%d'%_ch for i in [1,2,3,4] for _ch in [1,2,3,4]]
     label = ['%s, %s'%(_sw, _sp) for _sw, _sp in zip(switch, speana)]
     
     freq_GHz = freq / 1e9
     
-    if numpy.nanmin(tsys) < 200: tsys_max = 300
-    elif numpy.nanmax(tsys) < 400: tsys_max = 500
-    else: tsys_max = 1000
+    if numpy.nanmin(tsys) < 200: tsys_max = 500
+    elif numpy.nanmax(tsys) < 400: tsys_max = 800
+    else: tsys_max = 1300
     dmin = numpy.nanmin(dcold) - 1
     dmax = numpy.nanmax(dhot) + 1
+    
+    c = numpy.ones(smooth) / float(smooth)
     
     fig = pylab.figure()
     fig.suptitle(suptitle, fontsize=11)
     ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
     ax2 = [_a.twinx() for _a in ax]
-    [_a.plot(freq_GHz, _hot, 'r-') for _a, _hot in zip(ax, dhot)]
-    [_a.plot(freq_GHz, _cold, 'b-') for _a, _cold in zip(ax, dcold)]
-    [_a.plot(freq_GHz, _tsys, 'k+') for _a, _tsys in zip(ax2, tsys)]
+    [_a.plot(freq_GHz, numpy.convolve(_hot, c, mode='same'), 'r-') for _a, _hot in zip(ax, dhot)]
+    [_a.plot(freq_GHz, numpy.convolve(_cold, c, mode='same'), 'b-') for _a, _cold in zip(ax, dcold)]
+    [_a.plot(freq_GHz, numpy.convolve(_tsys, c, mode='same'), 'k.', ms=3) for _a, _tsys in zip(ax2, tsys)]
     [_a.text(0.08, 0.84, _l, transform=_a.transAxes) for _a, _l in zip(ax, label)]
     [_a.set_xlim(freq_GHz.min(), freq_GHz.max()) for _a in ax]
     [_a.set_xlim(freq_GHz.min(), freq_GHz.max()) for _a in ax2]
@@ -121,6 +124,9 @@ class rsky_with_slider(base.forest_script_base):
         self.stdout.p('Speana : Set res. BW %f MHz.'%(f_resbw))
         sp.resolution_bw_set(f_resbw, 'MHz')
         
+        self.stdout.p('Speana : Set attenuation 0 dB.')
+        sp.attenuation_set(0)
+        
         self.stdout.p('Speana : Set average %d.'%(f_average))
         sp.average_set(f_average)
         sp.average_onoff_set('ON')
@@ -205,7 +211,7 @@ class rsky_with_slider(base.forest_script_base):
         self.stdout.p('----')
         self.stdout.p('Save : %s'%(figname))
         tsys_plot(freq, dhot.reshape([16,-1]), dcold.reshape([16,-1]),
-                  tsys.reshape([16,-1]), figpath, 'Tsys (%s)'%(ts))
+                  tsys.reshape([16,-1]), figpath, 'Tsys (%s)'%(ts), smooth=11)
         self.stdout.nextline()
         
         
@@ -240,9 +246,9 @@ class rsky_with_slider(base.forest_script_base):
 
 class rsky_with_sis_bias_sweep(base.forest_script_base):
     method = 'rsky_with_sis_bias_sweep'
-    ver = '2015.01.19'
+    ver = '2015.01.23'
     
-    def run(self, step, thot):
+    def run(self, step, thot, plot_tsys_min, plot_tsys_max):
         # Initialization Section
         # ======================
         
@@ -467,6 +473,7 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         self.stdout.p('----')
         
         pylab.rcParams['image.interpolation'] = 'none'
+        pylab.rcParams['image.origin'] = 'lower'
         pylab.rcParams['font.size'] = 8
         
         # --
@@ -504,7 +511,8 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         
         fig = pylab.figure()
         ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
-        im = [_a.imshow(_t, extent=_ex,  vmin=150, vmax=800) for _a, _t, _ex in zip(ax, tsys_plot, extentions)]
+        im = [_a.imshow(_t, extent=_ex,  vmin=plot_tsys_min, vmax=plot_tsys_max) 
+              for _a, _t, _ex in zip(ax, tsys_plot, extentions)]
         [fig.colorbar(_im, ax=_a, ticks=[]) for i, (_im, _a) in enumerate(zip(im, ax)) if i%4 != 3]
         [fig.colorbar(_im, ax=_a, ticks=cbarticks) for i, (_im, _a) in enumerate(zip(im, ax)) if i%4 == 3]
         [_a.set_xlabel('Bias1 (mV)') for i, _a in enumerate(ax) if i/4 > 2]
@@ -525,9 +533,15 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         for ch, d in enumerate(spdata_plot):
             self.stdout.p('Plot : %s.speana.%02d.png'%(figname, ch))
             
+            loc = matplotlib.ticker.MultipleLocator(1)
+            
             fig = pylab.figure()
             ax = [fig.add_subplot(biasx_num, biasx_num, i+1) for i in range(biasx_num * biasx_num)]
             [_a.plot(_d) for _a, _d in zip(ax, d)]
+            [_a.set_xticklabels('') for _a in ax]
+            [_a.set_yticklabels('') for _a in ax]
+            [_a.yaxis.set_major_locator(loc) for _a in ax]
+            [_a.grid(True) for _a in ax]
             fig.savefig(figpath + '.speana.%02d.png'%(ch))
             pylab.close(fig)
             continue
@@ -751,7 +765,6 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
         self.stdout.p('Plot')
         self.stdout.p('----')
         
-        pylab.rcParams['image.interpolation'] = 'none'
         pylab.rcParams['font.size'] = 8
         
         # --
