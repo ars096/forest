@@ -32,9 +32,9 @@ p.add_argument('--step', type=float,
 p.add_argument('--Thot', type=float,
                help='Hot temperature in K. default is %.2f K.'%(Thot))
 p.add_argument('--Tsys_min', type=float,
-               help='Minimum Tsys value in color map. default is %.2f K.'%(Tsys_min))
+               help='Minimum Tsys value in color map. default is %.2f K.'%(tsys_min))
 p.add_argument('--Tsys_max', type=float,
-               help='Maximum Tsys value in color map. default is %.2f K.'%(Tsys_max))
+               help='Maximum Tsys value in color map. default is %.2f K.'%(tsys_max))
 
 args = p.parse_args()
 if args.step is not None: step = args.step

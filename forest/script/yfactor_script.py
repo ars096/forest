@@ -465,12 +465,43 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         numpy.save(datapath + '.info.npy', rsky_info)
 
         self.stdout.nextline()
+
+
+
+        # Finalization Section
+        # ====================
+        
+        # Close devices
+        # -------------
+        self.stdout.p('Close Devices')
+        self.stdout.p('=============')
+        
+        # TODO: implement close method.
+        """
+        sis.close()
+        #lo_sg.close()
+        lo_att.close()
+        #irr_sg.close()
+        rxrot.close()
+        slider.close()
+        """
+        
+        self.stdout.p('All devices are closed.')
+        self.stdout.nextline()
+        
+        # Stop operation
+        # --------------
+        self.stdout.p('//// Operation is done. ////')
+        self.operation_done()
         
         
-        # 
-        # ---------
-        self.stdout.p('Plot')
-        self.stdout.p('----')
+        
+        # Plotting 
+        # --------
+        #self.stdout.p('Plot')
+        #self.stdout.p('----')
+        print('Plot')
+        print('----')
         
         pylab.rcParams['image.interpolation'] = 'none'
         pylab.rcParams['image.origin'] = 'lower'
@@ -507,7 +538,8 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
             
         cbarticks = range(100, 1001, 100)
 
-        self.stdout.p('Plot : %s.tsysmap.png'%(figname))
+        #self.stdout.p('Plot : %s.tsysmap.png'%(figname))
+        print('Plot : %s.tsysmap.png'%(figname))
         
         fig = pylab.figure()
         ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
@@ -531,8 +563,9 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         
         
         for ch, d in enumerate(spdata_plot):
-            self.stdout.p('Plot : %s.speana.%02d.png'%(figname, ch))
-            
+            #self.stdout.p('Plot : %s.speana.%02d.png'%(figname, ch))
+            print('Plot : %s.speana.%02d.png'%(figname, ch))
+
             loc = matplotlib.ticker.MultipleLocator(1)
             
             fig = pylab.figure()
@@ -546,34 +579,10 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
             pylab.close(fig)
             continue
 
-        self.stdout.nextline()
+        #self.stdout.nextline()
+        print('')
         
-        
-        # Finalization Section
-        # ====================
-        
-        # Close devices
-        # -------------
-        self.stdout.p('Close Devices')
-        self.stdout.p('=============')
-        
-        # TODO: implement close method.
-        """
-        sis.close()
-        #lo_sg.close()
-        lo_att.close()
-        #irr_sg.close()
-        rxrot.close()
-        slider.close()
-        """
-        
-        self.stdout.p('All devices are closed.')
-        self.stdout.nextline()
-        
-        # Stop operation
-        # --------------
-        self.stdout.p('//// Operation is done. ////')
-        self.operation_done()
+        print('//// plotting is done. ////')
         
         return
 
@@ -759,54 +768,6 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
 
         self.stdout.nextline()
         
-        
-        # 
-        # ---------
-        self.stdout.p('Plot')
-        self.stdout.p('----')
-        
-        pylab.rcParams['font.size'] = 8
-        
-        # --
-        
-        tshape = (4, sweep_num, 4)
-        tsys_reshape = tsys.reshape(tshape)
-        tsys_swap = numpy.swapaxes(tsys_reshape, 1, 2)
-        tsys_plot = tsys_swap.reshape((16, sweep_num))
-        
-        self.stdout.p('Plot : %s.tsys.png'%(figname))
-        
-        fig = pylab.figure()
-        ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
-        im = [_a.plot(sweep_data, _t) for _a, _t in zip(ax, tsys_plot)]
-        [_a.set_xlabel('LO Att. (mA)') for i, _a in enumerate(ax) if i/4 > 2]
-        [_a.set_ylabel('Tsys* (K)') for i, _a in enumerate(ax) if i%4 == 0]
-        fig.savefig(figpath + '.tsysmap.png')
-        pylab.close(fig)        
-        
-        
-        # --
-        
-        sshape = (4, sweep_num, 4, -1)
-        spdata_reshape = spdata.reshape(sshape)
-        spdata_swap = numpy.swapaxes(spdata_reshape, 0, 1)
-        spdata_plot = spdata_swap.reshape((sweep_num, 16, -1))
-        
-        
-        for ch, d in enumerate(spdata_plot):
-            self.stdout.p('Plot : %s.speana.%02d.png'%(figname, ch))
-            
-            fig = pylab.figure()
-            ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
-            [_a.plot(_d) for _a, _d in zip(ax, d)]
-            fig.suptitle('LO att = %.2f'%(sweep_data[ch]))
-            fig.savefig(figpath + '.speana.%04d.png'%(ch))
-            pylab.close(fig)
-            continue
-        
-        self.stdout.nextline()
-        
-        
         # Finalization Section
         # ====================
         
@@ -832,6 +793,59 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
         # --------------
         self.stdout.p('//// Operation is done. ////')
         self.operation_done()
+        
+        # plotting
+        # ---------
+        #self.stdout.p('Plot')
+        #self.stdout.p('----')
+        print('Plot')
+        print('----')
+        
+        pylab.rcParams['font.size'] = 8
+        
+        # --
+        
+        tshape = (4, sweep_num, 4)
+        tsys_reshape = tsys.reshape(tshape)
+        tsys_swap = numpy.swapaxes(tsys_reshape, 1, 2)
+        tsys_plot = tsys_swap.reshape((16, sweep_num))
+        
+        #self.stdout.p('Plot : %s.tsys.png'%(figname))
+        print('Plot : %s.tsys.png'%(figname))
+        
+        fig = pylab.figure()
+        ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
+        im = [_a.plot(sweep_data, _t) for _a, _t in zip(ax, tsys_plot)]
+        [_a.set_xlabel('LO Att. (mA)') for i, _a in enumerate(ax) if i/4 > 2]
+        [_a.set_ylabel('Tsys* (K)') for i, _a in enumerate(ax) if i%4 == 0]
+        fig.savefig(figpath + '.tsysmap.png')
+        pylab.close(fig)        
+        
+        
+        # --
+        
+        sshape = (4, sweep_num, 4, -1)
+        spdata_reshape = spdata.reshape(sshape)
+        spdata_swap = numpy.swapaxes(spdata_reshape, 0, 1)
+        spdata_plot = spdata_swap.reshape((sweep_num, 16, -1))
+        
+        
+        for ch, d in enumerate(spdata_plot):
+            print('Plot : %s.speana.%02d.png'%(figname, ch))
+            #self.stdout.p('Plot : %s.speana.%02d.png'%(figname, ch))
+            
+            fig = pylab.figure()
+            ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
+            [_a.plot(_d) for _a, _d in zip(ax, d)]
+            fig.suptitle('LO att = %.2f'%(sweep_data[ch]))
+            fig.savefig(figpath + '.speana.%04d.png'%(ch))
+            pylab.close(fig)
+            continue
+        
+        #self.stdout.nextline()
+        print('')
+        print('//// plotting is done ////'')
+        
         
         return
 
