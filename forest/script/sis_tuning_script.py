@@ -75,7 +75,7 @@ class sis_tune(base.forest_script_base):
         
         self.stdout.nextline()
         
-        
+        lo_freq = float(name.split('-')[0])
         lo_sg_freq = lo_freq / 6.
         self.stdout.p('1st LO : Set RF frequency %f GHz.'%(lo_sg_freq))
         lo_sg.freq_set(lo_sg_freq, 'GHz')
@@ -109,6 +109,130 @@ class sis_tune(base.forest_script_base):
         
         self.stdout.p('All devices are closed.')
         self.stdout.nextline()
+        
+        # Stop operation
+        # --------------
+        self.stdout.p('//// Operation is done. ////')
+        self.operation_done()
+        
+        return
+
+
+class sis_tune_show_params(base.forest_script_base):
+    method = 'sis_tune_show_params'
+    ver = '2015.01.26'
+    
+    def run(self, name):
+        # Initialization Section
+        # ======================
+        
+        # Check other operation
+        # ---------------------
+        self.check_other_operation()
+        
+        # Start operation
+        # ---------------
+        args = {'name': name}
+        argstxt = str(args)        
+        self.operation_start(argstxt)
+        
+        # Print welcome message
+        # ---------------------
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('FOREST : Show SIS Tuning Params')
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('ver.%s'%(self.ver))
+        self.stdout.nextline()
+        
+        
+        # Operation Section
+        # =================
+        
+        # Operation part
+        # --------------
+        self.stdout.p('Show Tuning Params')
+        self.stdout.p('==================')        
+        self.stdout.p('name = %s'%(name))
+        self.stdout.nextline()
+        
+        self.stdout.p('Load tuning parameters.')
+        sisp = forest.load_sis_config(name)
+        unitlist = sorted(sisp.keys())
+        
+        for unit in unitlist:
+            self.stdout.p('%s: (bias1) %.2f mV, (bias2) %.2f mV, (LO.Att) %.2f mA'%(unit, _b1, _b2, _att))
+            continue
+        
+        self.stdout.nextline()
+        
+        
+        lo_freq = float(name.split('-')[0])
+        lo_sg_freq = lo_freq / 6.
+        self.stdout.p('1st LO SG frequency : %f GHz.'%(lo_sg_freq))
+        
+        self.stdout.nextline()
+        
+        
+        # Finalization Section
+        # ====================
+        
+        # Stop operation
+        # --------------
+        self.stdout.p('//// Operation is done. ////')
+        self.operation_done()
+        
+        return
+
+
+class sis_tune_show_availables(base.forest_script_base):
+    method = 'sis_tune_show_availables'
+    ver = '2015.01.26'
+    
+    def run(self):
+        # Initialization Section
+        # ======================
+        
+        # Check other operation
+        # ---------------------
+        self.check_other_operation()
+        
+        # Start operation
+        # ---------------
+        self.operation_start()
+        
+        # Print welcome message
+        # ---------------------
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('FOREST : Show Available SIS Tuning Params')
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('ver.%s'%(self.ver))
+        self.stdout.nextline()
+        
+        
+        # Operation Section
+        # =================
+        
+        # Operation part
+        # --------------
+        self.stdout.p('Show Available Tuning Params')
+        self.stdout.p('============================')        
+        self.stdout.p('name = %s'%(name))
+        self.stdout.nextline()
+        
+        self.stdout.p('Load tuning parameters.')
+        sisp = forest.load_tuning_available()
+        unitlist = sorted(sisp.keys())
+        
+        for unit in unitlist:
+            availables = ', '.join(sisp[unit])
+            self.stdout.p('%s: %s'%(unit, availables))
+            continue
+        
+        self.stdout.nextline()
+        
+        
+        # Finalization Section
+        # ====================
         
         # Stop operation
         # --------------

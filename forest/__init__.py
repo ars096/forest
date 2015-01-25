@@ -69,6 +69,7 @@ from mysql_tools import db_writer
 from helper import mkdirs
 from helper import filepath_generator
 from helper import load_sis_config
+from helper import load_tuning_available
 from helper import is_operating
 from helper import is_observing
 from helper import print_timestamp
