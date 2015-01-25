@@ -14,7 +14,7 @@ description = 'Tuning SIS receivers.'
 # Default parameters
 # ------------------
 
-LO_freq = 105 # GHz
+name = '105'
 
 
 # Argument Parser
@@ -23,12 +23,12 @@ LO_freq = 105 # GHz
 import argparse
 
 p = argparse.ArgumentParser(description=description)
-p.add_argument('--LO_freq', type=float,
-               help='LO frequency to tune in GHz. default is %.2f GHz.'%(LO_freq))
+p.add_argument('--name', type=str,
+               help='Name of tuning parameter set. default is %s.'%(name))
 
 args = p.parse_args()
 
-if args.LO_freq is not None: LO_freq = args.LO_freq
+if args.bane is not None: name = args.name
 
 
 # Run Script
@@ -37,6 +37,6 @@ if args.LO_freq is not None: LO_freq = args.LO_freq
 import forest.script
 
 script = forest.script.sis_tune()
-script.run(LO_freq)
+script.run(name)
 
 

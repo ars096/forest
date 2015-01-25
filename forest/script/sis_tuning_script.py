@@ -10,9 +10,9 @@ import pylab
 
 class sis_tune(base.forest_script_base):
     method = 'sis_tune'
-    ver = '2015.01.20'
+    ver = '2015.01.26'
     
-    def run(self, lo_freq):
+    def run(self, name):
         # Initialization Section
         # ======================
         
@@ -22,7 +22,7 @@ class sis_tune(base.forest_script_base):
         
         # Start operation
         # ---------------
-        args = {'lo_freq': lo_freq}
+        args = {'name': name}
         argstxt = str(args)        
         self.operation_start(argstxt)
         
@@ -53,11 +53,11 @@ class sis_tune(base.forest_script_base):
         # --------------
         self.stdout.p('Tuning SIS Mixer')
         self.stdout.p('================')        
-        self.stdout.p('lo_freq = %d'%(lo_freq))
+        self.stdout.p('name = %s'%(name))
         self.stdout.nextline()
         
         self.stdout.p('Load tuning parameters.')
-        sisp = forest.load_sis_config(lo_freq)
+        sisp = forest.load_sis_config(name)
         unitlist = sorted(sisp.keys())
         self.stdout.p('Set tuning parameters...')
         

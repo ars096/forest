@@ -23,7 +23,7 @@ def filepath_generator(name):
     return filepath
 
 
-def load_sis_config(lo_freq=105, config_file_name='FOREST2014.cnf'):
+def load_sis_config(name, config_file_name='FOREST2014.cnf'):
     config_file_dir = '/home/forest/tuning_parameters'
     mixer_data_dir = 'mixer_unit_data'
     confpath = os.path.join(config_file_dir, config_file_name)
@@ -39,22 +39,20 @@ def load_sis_config(lo_freq=105, config_file_name='FOREST2014.cnf'):
         unitconf = ConfigParser.SafeConfigParser()
         unitconf.read(unitconfpath)
         
-        section = '%d GHz'%(lo_freq)
+        section = name
         if not unitconf.has_section(section):
-            print('WARN: %s has no parameters for %d GHz.'%(unitname, lo_freq))
-            print('WARN: Use default parameters.')
-            lo_freq_str = unitconf.get('info', 'default')
-            try:
-                lo_freq = int(lo_freq_str.strip(' GHZghz_-'))
-            except ValueError, e:
-                raise('ERROR: %s.info.default is wrong. (%s)'%(unitname, 
-                                                               lo_freq_str))
-            print('WARN: Default is LO_Freq. = %d GHz.'%(lo_freq))
-            section = '%d GHz'%(lo_freq)
+            print('WARN: %s has no parameters named %s.'%(unitname, name))
+            name = unitconf.get('info', 'default')
+            print('WARN: Use default parameters %s.'%(name))
+            section = name
             if not unitconf.has_section(section):
-                raise('ERROR: %s has no parameters for %d GHz.'%(unitname, lo_freq))
+                raise('ERROR: %s has no parameters named %s.'%(unitname, section))
             pass
-            
+        
+        if not unitconf.has_option(section, 'use'):
+            section = unitconf.get(section, 'use')
+            pass
+        
         bias1 = float(unitconf.get(section, 'bias1'))
         bias2 = float(unitconf.get(section, 'bias2'))
         lo_att = float(unitconf.get(section, 'lo_att'))
@@ -65,8 +63,8 @@ def load_sis_config(lo_freq=105, config_file_name='FOREST2014.cnf'):
         
         print('%s: bias1 = %f,  bias2 = %f,  lo_att = %f'%(unit, bias1, bias2,
                                                            lo_att))
-        params[unit] = {'bias1': bias1, 'bias2': bias2, 'lo_att': lo_att, 'J-type': j_type,
-                        'beam': beam, 'pol': pol.upper()}
+        params[unit] = {'bias1': bias1, 'bias2': bias2, 'lo_att': lo_att,
+                        'J-type': j_type, 'beam': beam, 'pol': pol.upper()}
         continue
         
     return params
