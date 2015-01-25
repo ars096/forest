@@ -31,6 +31,26 @@ def rsky_dB(dhot, dsky, thot):
     tsys = rsky(dhot, dsky, thot)
     return tsys
 
+def evaluate_rsky_from_rotating_chopper_data(d, thot, smooth=3, cut=10, nsig=2):
+    s = numpy.ones(smooth)/float(smooth)
+    sd = numpy.convolve(d, s, mode='same')
+    sdd = sd[1:] - sd[:-1]
+    
+    sig = numpy.var(sdd)
+    iup = numpy.where(sdd > sig*nsig)[0]
+    ibot = numpy.where(sdd < -sig*nsig)[0]
+    
+    mask = numpy.concatenate([iup, ibot])
+    d[mask] = numpy.nan
+    av = numpy.nanmean(d)
+    dup = d[numpy.where(d>av)]
+    dbot = d[numpy.where(d<av)]
+    
+    dhot = numpy.mean(dup)
+    dcold = numpy.mean(dbot)
+    
+    tsys = rsky_dB(dhot, dcold, thot)
+    return tsys, (dhot, dcold, mask)
 
 def yfactor(dhot, dcold, thot, tcold):
     dhot = numpy.array(dhot)

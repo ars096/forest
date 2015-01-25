@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 
-interval = 10.0
+interval = 2.0
 
 
 # ----

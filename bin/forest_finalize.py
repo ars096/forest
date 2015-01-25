@@ -1,71 +1,41 @@
 #! /usr/bin/env python
 
-# configures
-# ==========
+# Configurations
+# ==============
+
+# Script information
+# ------------------
+
+name = 'finalize'
+
+description = 'Finalize FOREST receiver system.'
 
 
+# Default parameters
+# ------------------
 
-# import
-# ======
+#
+# No parameters are available in forest_initialize.
+#
 
-import sys
+
+# Argument Parser
+# ===============
+
 import argparse
-import forest
 
-
-
-# argparse configure
-# ==================
-
-desc = 'Shutdown FOREST receiver.'
-
-p = argparse.ArgumentParser(description=desc)
+p = argparse.ArgumentParser(description=description)
 
 args = p.parse_args()
 
 
-# main
-# ====
+# Run Script
+# ==========
 
-print('~~~~~~~~~~~~~~~~~')
-print('FOREST : Finalize')
-print('~~~~~~~~~~~~~~~~~')
-forest.print_timestamp()
-print('')
+import forest.script
 
-# biasbox
-# -------
-print('SIS Bias Box')
-print('============')
-print('opening ...'),
-sys.stdout.flush()
-biasbox = forest.biasbox()
-print('OK')
-print('set 0 mV ...'),
-sys.stdout.flush()
-biasbox.bias_set(0)
-print('OK')
+script = forest.script.finalize()
+script.run()
 
-print('*** Results ***')
-sisbias = biasbox.bias_get()
-forest.print_bias(sisbias) 
 
-# loatt
-# -----
-print('LO Att')
-print('======')
-print('opening ...'),
-sys.stdout.flush()
-loatt = forest.loatt()
-print('OK')
-print('set 200 ...'),
-sys.stdout.flush()
-loatt.bias_set(200)
-print('OK')
 
-print('*** Results ***')
-loattbias = loatt.bias_get()
-forest.print_loatt(loattbias) 
-
-# 
-# 

@@ -257,6 +257,17 @@ class biasbox_controller(object):
         iin = bias_current_changer(box=iin)
         return vin.sis, iin.sis
         
+    def bias_series_set(self, series_data):
+        series_data = numpy.array(series_data)
+        bias = bias_voltage_output_changer(sis=series_data)
+        print(bias.box)
+        self.daq.analog_series_set(bias.box)
+        return
+    
+    def bias_series_next(self):
+        self.daq.analog_series_output_next()
+        return
+        
     def read_bias(self):
         return self._latest_bias
 
@@ -597,3 +608,22 @@ class biasbox_ch_mapper(object):
             pass
         return
 
+    def sort_sweep_data_by_ch(self, data, beampol):
+        sweep1 = range(16)
+        for _d, _bp in zip(data, beampol):
+            bias1 = _d[0]
+            bias2 = _d[1]
+            beam = _bp[0]
+            pol = _bp[1]
+            ind1 = self.beam_map[beam][pol][1]
+            ind2 = self.beam_map[beam][pol][2]
+            
+            vout_ch1 = self.vout_map[ind1]
+            vout_ch2 = self.vout_map[ind2]
+            
+            sweep1[vout_ch1] = bias1
+            sweep1[vout_ch2] = bias2
+            continue
+        
+        sweep2 = [[s[i] for s in sweep1] for i in range(len(sweep1[0]))]
+        return sweep2

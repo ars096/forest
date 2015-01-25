@@ -6,15 +6,15 @@
 # Script information
 # ------------------
 
-name = 'sis_tune'
+name = 'LO_power_set'
 
-description = 'Tuning SIS receivers.'
+description = 'Set 1st LO SGs output powers.'
 
 
 # Default parameters
 # ------------------
 
-LO_freq = 105 # GHz
+power = -130.0
 
 
 # Argument Parser
@@ -23,12 +23,12 @@ LO_freq = 105 # GHz
 import argparse
 
 p = argparse.ArgumentParser(description=description)
-p.add_argument('--LO_freq', type=float,
-               help='LO frequency to tune in GHz. default is %.2f GHz.'%(LO_freq))
+p.add_argument('--power', type=float,
+               help='Output power to be set. default is %f.'%(power))
 
 args = p.parse_args()
 
-if args.LO_freq is not None: LO_freq = args.LO_freq
+if args.power is not None: power = args.power
 
 
 # Run Script
@@ -36,7 +36,8 @@ if args.LO_freq is not None: LO_freq = args.LO_freq
 
 import forest.script
 
-script = forest.script.sis_tune()
-script.run(LO_freq)
+script = forest.script.lo_power_set()
+script.run(power)
+
 
 

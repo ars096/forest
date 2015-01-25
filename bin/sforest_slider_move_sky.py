@@ -6,15 +6,17 @@
 # Script information
 # ------------------
 
-name = 'sis_tune'
+name = 'slider_move_SKY'
 
-description = 'Tuning SIS receivers.'
+description = 'Move slider to SKY position.'
 
 
 # Default parameters
 # ------------------
 
-LO_freq = 105 # GHz
+#
+# No parameters are available in forest_initialize.
+#
 
 
 # Argument Parser
@@ -23,12 +25,8 @@ LO_freq = 105 # GHz
 import argparse
 
 p = argparse.ArgumentParser(description=description)
-p.add_argument('--LO_freq', type=float,
-               help='LO frequency to tune in GHz. default is %.2f GHz.'%(LO_freq))
 
 args = p.parse_args()
-
-if args.LO_freq is not None: LO_freq = args.LO_freq
 
 
 # Run Script
@@ -36,7 +34,8 @@ if args.LO_freq is not None: LO_freq = args.LO_freq
 
 import forest.script
 
-script = forest.script.sis_tune()
-script.run(LO_freq)
+script = forest.script.slider_move_sky()
+script.run()
+
 
 

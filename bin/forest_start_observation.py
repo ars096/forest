@@ -1,20 +1,23 @@
 #! /usr/bin/env python
 
+
 # Configurations
 # ==============
 
 # Script information
 # ------------------
 
-name = 'sis_tune'
+name = 'start_observation'
 
-description = 'Tuning SIS receivers.'
+description = 'Start COSMOS observation mode.'
 
 
 # Default parameters
 # ------------------
 
-LO_freq = 105 # GHz
+#
+# No parameters are available in forest_initialize.
+#
 
 
 # Argument Parser
@@ -23,12 +26,8 @@ LO_freq = 105 # GHz
 import argparse
 
 p = argparse.ArgumentParser(description=description)
-p.add_argument('--LO_freq', type=float,
-               help='LO frequency to tune in GHz. default is %.2f GHz.'%(LO_freq))
 
 args = p.parse_args()
-
-if args.LO_freq is not None: LO_freq = args.LO_freq
 
 
 # Run Script
@@ -36,7 +35,5 @@ if args.LO_freq is not None: LO_freq = args.LO_freq
 
 import forest.script
 
-script = forest.script.sis_tune()
-script.run(LO_freq)
-
-
+script = forest.script.start_observation()
+script.run()
