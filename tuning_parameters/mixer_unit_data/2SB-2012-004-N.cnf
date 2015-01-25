@@ -6,7 +6,7 @@ R_block_id: 11L
 L_sis_id: I17-Bc-3J-36
 R_sis_id: I17-Cb-3J-33
 
-default: 105 GHz
+default: 105
 
 [105]
 use: 105-U-TSYS
@@ -18,7 +18,7 @@ bias1: 7.2
 bias2: 7.3
 lo_att: 7.0
 
-[108 GHz]
+[108]
 date: 2014/11/07
 report_id: 7
 bias1: 7.2
