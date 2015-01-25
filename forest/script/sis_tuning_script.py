@@ -126,23 +126,13 @@ class sis_tune_show_params(base.forest_script_base):
         # Initialization Section
         # ======================
         
-        # Check other operation
-        # ---------------------
-        self.check_other_operation()
-        
-        # Start operation
-        # ---------------
-        args = {'name': name}
-        argstxt = str(args)        
-        self.operation_start(argstxt)
-        
         # Print welcome message
         # ---------------------
-        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-        self.stdout.p('FOREST : Show SIS Tuning Params')
-        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-        self.stdout.p('ver.%s'%(self.ver))
-        self.stdout.nextline()
+        print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        print('FOREST : Show SIS Tuning Params')
+        print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        print('ver.%s'%(self.ver))
+        print('')
         
         
         # Operation Section
@@ -150,36 +140,36 @@ class sis_tune_show_params(base.forest_script_base):
         
         # Operation part
         # --------------
-        self.stdout.p('Show Tuning Params')
-        self.stdout.p('==================')        
-        self.stdout.p('name = %s'%(name))
-        self.stdout.nextline()
+        print('Show Tuning Params')
+        print('==================')        
+        print('name = %s'%(name))
+        print('')
         
-        self.stdout.p('Load tuning parameters.')
+        print('Load tuning parameters.')
         sisp = forest.load_sis_config(name)
         unitlist = sorted(sisp.keys())
         
         for unit in unitlist:
-            self.stdout.p('%s: (bias1) %.2f mV, (bias2) %.2f mV, (LO.Att) %.2f mA'%(unit, _b1, _b2, _att))
+            _beam = sisp[unit]['beam']
+            _pol = sisp[unit]['pol']
+            _b1 = sisp[unit]['bias1']
+            _b2 = sisp[unit]['bias2']
+            _att = sisp[unit]['lo_att']
+            print('%s: (bias1) %.2f mV, (bias2) %.2f mV, (LO.Att) %.2f mA'%(unit, _b1, _b2, _att))
             continue
         
-        self.stdout.nextline()
+        print('')
         
         
         lo_freq = float(name.split('-')[0])
         lo_sg_freq = lo_freq / 6.
-        self.stdout.p('1st LO SG frequency : %f GHz.'%(lo_sg_freq))
+        print('1st LO SG frequency : %f GHz.'%(lo_sg_freq))
         
-        self.stdout.nextline()
+        print('')
         
         
         # Finalization Section
         # ====================
-        
-        # Stop operation
-        # --------------
-        self.stdout.p('//// Operation is done. ////')
-        self.operation_done()
         
         return
 
@@ -192,21 +182,13 @@ class sis_tune_show_availables(base.forest_script_base):
         # Initialization Section
         # ======================
         
-        # Check other operation
-        # ---------------------
-        self.check_other_operation()
-        
-        # Start operation
-        # ---------------
-        self.operation_start()
-        
         # Print welcome message
         # ---------------------
-        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-        self.stdout.p('FOREST : Show Available SIS Tuning Params')
-        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-        self.stdout.p('ver.%s'%(self.ver))
-        self.stdout.nextline()
+        print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        print('FOREST : Show Available SIS Tuning Params')
+        print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        print('ver.%s'%(self.ver))
+        print('')        
         
         
         # Operation Section
@@ -214,30 +196,24 @@ class sis_tune_show_availables(base.forest_script_base):
         
         # Operation part
         # --------------
-        self.stdout.p('Show Available Tuning Params')
-        self.stdout.p('============================')        
-        self.stdout.p('name = %s'%(name))
-        self.stdout.nextline()
+        print('Show Available Tuning Params')
+        print('============================')        
+        print('')        
         
-        self.stdout.p('Load tuning parameters.')
+        print('Load tuning parameters.')
         sisp = forest.load_tuning_available()
         unitlist = sorted(sisp.keys())
         
         for unit in unitlist:
             availables = ', '.join(sisp[unit])
-            self.stdout.p('%s: %s'%(unit, availables))
+            print('%s: %s'%(unit, availables))
             continue
         
-        self.stdout.nextline()
+        print('')
         
         
         # Finalization Section
         # ====================
-        
-        # Stop operation
-        # --------------
-        self.stdout.p('//// Operation is done. ////')
-        self.operation_done()
         
         return
 

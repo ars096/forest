@@ -23,12 +23,12 @@ name = '105'
 import argparse
 
 p = argparse.ArgumentParser(description=description)
-p.add_argument('--name', type=str,
+p.add_argument('name', type=str,
                help='Name of tuning parameter set. default is %s.'%(name))
 
 args = p.parse_args()
 
-if args.bane is not None: name = args.name
+if args.name is not None: name = args.name
 
 
 # Run Script

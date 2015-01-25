@@ -31,6 +31,8 @@ def load_sis_config(name, config_file_name='FOREST2014.cnf'):
     conf = ConfigParser.SafeConfigParser()
     conf.read(confpath)
     
+    name = name.upper()
+    
     params = {}
     for unit in conf.options('combination'):
         unitname = conf.get('combination', unit)
@@ -49,7 +51,7 @@ def load_sis_config(name, config_file_name='FOREST2014.cnf'):
                 raise('ERROR: %s has no parameters named %s.'%(unitname, section))
             pass
         
-        if not unitconf.has_option(section, 'use'):
+        if unitconf.has_option(section, 'use'):
             section = unitconf.get(section, 'use')
             pass
         
