@@ -6,8 +6,22 @@ R_block_id: 26
 L_sis_id: I16-Dc-3J-34
 R_sis_id: I16-Dc-3J-3A
 
-default: 105 GHz
+default: 105
 
+# LO : 92 GHz
+# -----------
+[92]
+use: 92-L-TSYS
+
+[92-L-TSYS]
+date: 2015/01/24
+report_id: 92G-20150124b
+bias1: 7.3
+bias2: 7.3
+lo_att: 12.0
+
+# LO : 105 GHz
+# ------------
 [105]
 use: 105-U-TSYS
 
@@ -18,7 +32,9 @@ bias1: 7.5
 bias2: 7.3
 lo_att: 8
 
-[108 GHz]
+# LO : 105 GHz
+# ------------
+[108]
 date: 2014/11/12
 report_id: 9
 bias1: 7.1
