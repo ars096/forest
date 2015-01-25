@@ -23,7 +23,54 @@ def filepath_generator(name):
     return filepath
 
 
-def load_sis_config(lo_freq=105, config_file_name='FOREST2014.cnf'):
+def load_sis_config(name, config_file_name='FOREST2014.cnf'):
+    config_file_dir = '/home/forest/tuning_parameters'
+    mixer_data_dir = 'mixer_unit_data'
+    confpath = os.path.join(config_file_dir, config_file_name)
+    
+    conf = ConfigParser.SafeConfigParser()
+    conf.read(confpath)
+    
+    name = name.upper()
+    
+    params = {}
+    for unit in conf.options('combination'):
+        unitname = conf.get('combination', unit)
+        unitconfpath = os.path.join(config_file_dir, mixer_data_dir, 
+                                    unitname+'.cnf')
+        unitconf = ConfigParser.SafeConfigParser()
+        unitconf.read(unitconfpath)
+        
+        section = name
+        if not unitconf.has_section(section):
+            print('WARN: %s has no parameters named %s.'%(unitname, name))
+            name = unitconf.get('info', 'default')
+            print('WARN: Use default parameters %s.'%(name))
+            section = name
+            if not unitconf.has_section(section):
+                raise('ERROR: %s has no parameters named %s.'%(unitname, section))
+            pass
+        
+        if unitconf.has_option(section, 'use'):
+            section = unitconf.get(section, 'use')
+            pass
+        
+        bias1 = float(unitconf.get(section, 'bias1'))
+        bias2 = float(unitconf.get(section, 'bias2'))
+        lo_att = float(unitconf.get(section, 'lo_att'))
+        j_type = unitconf.get('info', 'L_sis_id').split('-')[2]
+        beam = int(unit.strip('Bbeam_HVhvpol'))
+        pol = unit.strip('Bbeam1234_pol')
+                
+        #print('%s: bias1 = %f,  bias2 = %f,  lo_att = %f'%(unit, bias1, bias2,
+        #                                                   lo_att))
+        params[unit] = {'bias1': bias1, 'bias2': bias2, 'lo_att': lo_att,
+                        'J-type': j_type, 'beam': beam, 'pol': pol.upper()}
+        continue
+        
+    return params
+
+def load_tuning_available(config_file_name='FOREST2014.cnf'):
     config_file_dir = '/home/forest/tuning_parameters'
     mixer_data_dir = 'mixer_unit_data'
     confpath = os.path.join(config_file_dir, config_file_name)
@@ -39,37 +86,14 @@ def load_sis_config(lo_freq=105, config_file_name='FOREST2014.cnf'):
         unitconf = ConfigParser.SafeConfigParser()
         unitconf.read(unitconfpath)
         
-        section = '%d GHz'%(lo_freq)
-        if not unitconf.has_section(section):
-            print('WARN: %s has no parameters for %d GHz.'%(unitname, lo_freq))
-            print('WARN: Use default parameters.')
-            lo_freq_str = unitconf.get('info', 'default')
-            try:
-                lo_freq = int(lo_freq_str.strip(' GHZghz_-'))
-            except ValueError, e:
-                raise('ERROR: %s.info.default is wrong. (%s)'%(unitname, 
-                                                               lo_freq_str))
-            print('WARN: Default is LO_Freq. = %d GHz.'%(lo_freq))
-            section = '%d GHz'%(lo_freq)
-            if not unitconf.has_section(section):
-                raise('ERROR: %s has no parameters for %d GHz.'%(unitname, lo_freq))
-            pass
-            
-        bias1 = float(unitconf.get(section, 'bias1'))
-        bias2 = float(unitconf.get(section, 'bias2'))
-        lo_att = float(unitconf.get(section, 'lo_att'))
-        j_type = unitconf.get('info', 'L_sis_id').split('-')[2]
-        beam = int(unit.strip('Bbeam_HVhvpol'))
-        pol = unit.strip('Bbeam1234_pol')
+        sections = unitconf.sections()
+        availables = [_sec for _sec in sections if _sec!='info']
         
-        
-        print('%s: bias1 = %f,  bias2 = %f,  lo_att = %f'%(unit, bias1, bias2,
-                                                           lo_att))
-        params[unit] = {'bias1': bias1, 'bias2': bias2, 'lo_att': lo_att, 'J-type': j_type,
-                        'beam': beam, 'pol': pol.upper()}
+        params[unit] = sorted(availables)
         continue
         
     return params
+
 
 
 def is_operating():

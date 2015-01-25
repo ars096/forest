@@ -844,7 +844,7 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
         
         #self.stdout.nextline()
         print('')
-        print('//// plotting is done ////'')
+        print('//// plotting is done ////')
         
         
         return

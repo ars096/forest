@@ -10,6 +10,8 @@ from init_fin import finalize
 # receiver
 # --------
 from sis_tuning_script import sis_tune
+from sis_tuning_script import sis_tune_show_params
+from sis_tuning_script import sis_tune_show_availables
 
 # observation
 # -----------

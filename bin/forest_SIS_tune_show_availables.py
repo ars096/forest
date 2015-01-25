@@ -6,15 +6,17 @@
 # Script information
 # ------------------
 
-name = 'sis_tune'
+name = 'sis_tune_show_availables'
 
-description = 'Tuning SIS receivers.'
+description = 'Show SIS tuning available configurations.'
 
 
 # Default parameters
 # ------------------
 
-name = '105'
+#
+# No parameters are available in forest_initialize.
+#
 
 
 # Argument Parser
@@ -23,12 +25,9 @@ name = '105'
 import argparse
 
 p = argparse.ArgumentParser(description=description)
-p.add_argument('name', type=str,
-               help='Name of tuning parameter set. default is %s.'%(name))
 
 args = p.parse_args()
 
-if args.name is not None: name = args.name
 
 
 # Run Script
@@ -36,7 +35,7 @@ if args.name is not None: name = args.name
 
 import forest.script
 
-script = forest.script.sis_tune()
-script.run(name)
+script = forest.script.sis_tune_show_availables()
+script.run()
 
 

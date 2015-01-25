@@ -6,9 +6,9 @@
 # Script information
 # ------------------
 
-name = 'sis_tune'
+name = 'sis_tune_show_params'
 
-description = 'Tuning SIS receivers.'
+description = 'Show SIS tuning parameters.'
 
 
 # Default parameters
@@ -36,7 +36,7 @@ if args.name is not None: name = args.name
 
 import forest.script
 
-script = forest.script.sis_tune()
+script = forest.script.sis_tune_show_params()
 script.run(name)
 
 

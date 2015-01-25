@@ -10,9 +10,9 @@ import pylab
 
 class sis_tune(base.forest_script_base):
     method = 'sis_tune'
-    ver = '2015.01.20'
+    ver = '2015.01.26'
     
-    def run(self, lo_freq):
+    def run(self, name):
         # Initialization Section
         # ======================
         
@@ -22,7 +22,7 @@ class sis_tune(base.forest_script_base):
         
         # Start operation
         # ---------------
-        args = {'lo_freq': lo_freq}
+        args = {'name': name}
         argstxt = str(args)        
         self.operation_start(argstxt)
         
@@ -53,11 +53,11 @@ class sis_tune(base.forest_script_base):
         # --------------
         self.stdout.p('Tuning SIS Mixer')
         self.stdout.p('================')        
-        self.stdout.p('lo_freq = %d'%(lo_freq))
+        self.stdout.p('name = %s'%(name))
         self.stdout.nextline()
         
         self.stdout.p('Load tuning parameters.')
-        sisp = forest.load_sis_config(lo_freq)
+        sisp = forest.load_sis_config(name)
         unitlist = sorted(sisp.keys())
         self.stdout.p('Set tuning parameters...')
         
@@ -75,7 +75,7 @@ class sis_tune(base.forest_script_base):
         
         self.stdout.nextline()
         
-        
+        lo_freq = float(name.split('-')[0])
         lo_sg_freq = lo_freq / 6.
         self.stdout.p('1st LO : Set RF frequency %f GHz.'%(lo_sg_freq))
         lo_sg.freq_set(lo_sg_freq, 'GHz')
@@ -114,6 +114,106 @@ class sis_tune(base.forest_script_base):
         # --------------
         self.stdout.p('//// Operation is done. ////')
         self.operation_done()
+        
+        return
+
+
+class sis_tune_show_params(base.forest_script_base):
+    method = 'sis_tune_show_params'
+    ver = '2015.01.26'
+    
+    def run(self, name):
+        # Initialization Section
+        # ======================
+        
+        # Print welcome message
+        # ---------------------
+        print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        print('FOREST : Show SIS Tuning Params')
+        print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        print('ver.%s'%(self.ver))
+        print('')
+        
+        
+        # Operation Section
+        # =================
+        
+        # Operation part
+        # --------------
+        print('Show Tuning Params')
+        print('==================')        
+        print('name = %s'%(name))
+        print('')
+        
+        print('Load tuning parameters.')
+        sisp = forest.load_sis_config(name)
+        unitlist = sorted(sisp.keys())
+        
+        for unit in unitlist:
+            _beam = sisp[unit]['beam']
+            _pol = sisp[unit]['pol']
+            _b1 = sisp[unit]['bias1']
+            _b2 = sisp[unit]['bias2']
+            _att = sisp[unit]['lo_att']
+            print('%s: (bias1) %.2f mV, (bias2) %.2f mV, (LO.Att) %.2f mA'%(unit, _b1, _b2, _att))
+            continue
+        
+        print('')
+        
+        
+        lo_freq = float(name.split('-')[0])
+        lo_sg_freq = lo_freq / 6.
+        print('1st LO SG frequency : %f GHz.'%(lo_sg_freq))
+        
+        print('')
+        
+        
+        # Finalization Section
+        # ====================
+        
+        return
+
+
+class sis_tune_show_availables(base.forest_script_base):
+    method = 'sis_tune_show_availables'
+    ver = '2015.01.26'
+    
+    def run(self):
+        # Initialization Section
+        # ======================
+        
+        # Print welcome message
+        # ---------------------
+        print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        print('FOREST : Show Available SIS Tuning Params')
+        print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        print('ver.%s'%(self.ver))
+        print('')        
+        
+        
+        # Operation Section
+        # =================
+        
+        # Operation part
+        # --------------
+        print('Show Available Tuning Params')
+        print('============================')        
+        print('')        
+        
+        print('Load tuning parameters.')
+        sisp = forest.load_tuning_available()
+        unitlist = sorted(sisp.keys())
+        
+        for unit in unitlist:
+            availables = ', '.join(sisp[unit])
+            print('%s: %s'%(unit, availables))
+            continue
+        
+        print('')
+        
+        
+        # Finalization Section
+        # ====================
         
         return
 
