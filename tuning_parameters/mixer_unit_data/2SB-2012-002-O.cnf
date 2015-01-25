@@ -6,8 +6,22 @@ R_block_id: 3R
 L_sis_id: I17-Ad-3J-33
 R_sis_id: I17-Ad-3J-32
 
-default: 105 GHz
+default: 105
 
+# LO : 92 GHz
+# -----------
+[92]
+use: 92-L-TSYS
+
+[92-L-TSYS]
+date: 2015/01/24
+report_id: 92G-20150124b
+bias1: 7.0
+bias2: 7.1
+lo_att: 20.0
+
+# LO : 105 GHz
+# ------------
 [105]
 use: 105-U-TSYS
 
@@ -18,7 +32,9 @@ bias1: 6.8
 bias2: 6.9
 lo_att: 20.0
 
-[108 GHz]
+# LO : 105 GHz
+# ------------
+[108]
 date: 2014/11/17
 report_id: 5-2
 bias1: 6.9
