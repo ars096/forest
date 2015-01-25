@@ -8,6 +8,20 @@ R_sis_id: I17-Ad-4J-8D
 
 default: 105
 
+# LO : 92 GHz
+# -----------
+[92]
+use: 92-L-TSYS
+
+[92-L-TSYS]
+date: 2015/01/24
+report_id: 92G-20150124b
+bias1: 9.8
+bias2: 9.6
+lo_att: 10.0
+
+# LO : 105 GHz
+# ------------
 [105]
 use: 105-U-TSYS
 
@@ -18,6 +32,8 @@ bias1: 9.7
 bias2: 9.8
 lo_att: 6
 
+# LO : 108 GHz
+# ------------
 [108]
 date: 2014/11/19
 report_id: 2-2
