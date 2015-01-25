@@ -8,12 +8,15 @@ R_sis_id: I17-Cb-3J-33
 
 default: 105 GHz
 
-[105 GHz]
-date: 2015/01/04
-report_id: --
-bias1: 7.69
-bias2: 7.53
-lo_att: 8
+[105]
+use: 105-U-TSYS
+
+[105-U-TSYS]
+date: 2015/01/24
+report_id: 105G-20150124
+bias1: 7.2
+bias2: 7.3
+lo_att: 7.0
 
 [108 GHz]
 date: 2014/11/07

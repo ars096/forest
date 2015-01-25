@@ -6,16 +6,20 @@ R_block_id: 8R
 L_sis_id: I12-Bd-4J-42
 R_sis_id: I12-Bd-4J-43
 
-default: 105 GHz
+default: 105
 
-[105 GHz]
-date: 2015/01/04
-report_id: --
-bias1: 10.03
-bias2: 9.76
-lo_att: 6
 
-[108 GHz]
+[105]
+use: 105-U-TSYS
+
+[105-U-TSYS]
+date: 2015/01/24
+report_id: 105G-20150124
+bias1: 10.0
+bias2: 9.8
+lo_att: 10.0
+
+[108]
 date: 2014/11/10
 report_id: 8
 bias1: 9.8

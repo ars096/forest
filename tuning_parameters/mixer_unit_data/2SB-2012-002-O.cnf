@@ -8,12 +8,15 @@ R_sis_id: I17-Ad-3J-32
 
 default: 105 GHz
 
-[105 GHz]
-date: 2015/01/04
-report_id: --
-bias1: 7.34
-bias2: 7.27
-lo_att: 11
+[105]
+use: 105-U-TSYS
+
+[105-U-TSYS]
+date: 2015/01/24
+report_id: 105G-20150124
+bias1: 6.8
+bias2: 6.9
+lo_att: 20.0
 
 [108 GHz]
 date: 2014/11/17
