@@ -2,6 +2,7 @@
 import forest
 import base
 
+import ConfigParser
 import os
 import time
 import numpy
@@ -76,6 +77,116 @@ class sis_tune(base.forest_script_base):
         self.stdout.nextline()
         
         lo_freq = float(name.split('-')[0])
+        lo_sg_freq = lo_freq / 6.
+        self.stdout.p('1st LO : Set RF frequency %f GHz.'%(lo_sg_freq))
+        lo_sg.freq_set(lo_sg_freq, 'GHz')
+        
+        self.stdout.p('1st LO : Set RF power +18 dBm.')
+        lo_sg.power_set(18, 'dBm')
+        
+        self.stdout.p('1st LO : Set RF output ON.')
+        lo_sg.output_on()
+        
+        self.stdout.nextline()
+        
+        
+        # Finalization Section
+        # ====================
+        
+        # Close devices
+        # -------------
+        self.stdout.p('Close Devices')
+        self.stdout.p('=============')
+        
+        # TODO: implement close method.
+        """
+        sis.close()
+        #lo_sg.close()
+        lo_att.close()
+        #irr_sg.close()
+        rxrot.close()
+        slider.close()
+        """
+        
+        self.stdout.p('All devices are closed.')
+        self.stdout.nextline()
+        
+        # Stop operation
+        # --------------
+        self.stdout.p('//// Operation is done. ////')
+        self.operation_done()
+        
+        return
+
+class sis_tune_temp(base.forest_script_base):
+    method = 'sis_tune_temp'
+    ver = '2015.01.26'
+    
+    def run(self, filepath):
+        # Initialization Section
+        # ======================
+        
+        # Check other operation
+        # ---------------------
+        self.check_other_operation()
+        
+        # Start operation
+        # ---------------
+        args = {'filepath': filepath}
+        argstxt = str(args)        
+        self.operation_start(argstxt)
+        
+        # Print welcome message
+        # ---------------------
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('FOREST : Tuning SIS Mixer in temporary')
+        self.stdout.p('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        self.stdout.p('ver.%s'%(self.ver))
+        self.stdout.nextline()
+        
+        # Open devices
+        # ------------
+        self.stdout.p('Open Devices')
+        self.stdout.p('============')
+        
+        sis = self.open_sis_biasbox()
+        lo_att = self.open_lo_att()
+        lo_sg = self.open_lo_sg()
+        
+        self.stdout.nextline()
+        
+        
+        # Operation Section
+        # =================
+        
+        # Operation part
+        # --------------
+        self.stdout.p('Tuning SIS Mixer')
+        self.stdout.p('================')        
+        self.stdout.p('name = %s'%(name))
+        self.stdout.nextline()
+        
+        self.stdout.p('Load tuning parameters.')
+        sisp = ConfigParser.SafeConfigParser()
+        sisp.read(filepath)
+        unitlist = sorted(sisp.sections())
+        self.stdout.p('Set tuning parameters...')
+        
+        for unit in unitlist if unit != 'LO_SG':
+            _beam = int(unit.strip('beam-hv'))
+            _pol = unit.strip('beam1234-').upper()
+            _b1 = sisp.get(unit, 'bias1')
+            _b2 = sisp.get(unit, 'bias2')
+            _att = sisp.get(unit, 'lo_att')
+            self.stdout.p('%s: (bias1) %.2f mV, (bias2) %.2f mV, (LO.Att) %.2f mA'%(unit, _b1, _b2, _att))
+            sis.bias_set(_b1, beam=_beam, pol=_pol, dsbunit=1)
+            sis.bias_set(_b2, beam=_beam, pol=_pol, dsbunit=2)
+            lo_att.bias_set(_att, beam=_beam, pol=_pol)
+            continue
+        
+        self.stdout.nextline()
+        
+        lo_freq = float(sisp.get('LO_SG', 'freq'))
         lo_sg_freq = lo_freq / 6.
         self.stdout.p('1st LO : Set RF frequency %f GHz.'%(lo_sg_freq))
         lo_sg.freq_set(lo_sg_freq, 'GHz')

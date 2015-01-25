@@ -1,0 +1,44 @@
+[LO_SG]
+freq: 1e9
+
+[beam1-h]
+bias1: 0.0
+bias2: 0.0
+lo_att: 200.0
+
+[beam1-v]
+bias1: 0.0
+bias2: 0.0
+lo_att: 200.0
+
+[beam2-h]
+bias1: 0.0
+bias2: 0.0
+lo_att: 200.0
+
+[beam2-v]
+bias1: 0.0
+bias2: 0.0
+lo_att: 200.0
+
+[beam3-h]
+bias1: 0.0
+bias2: 0.0
+lo_att: 200.0
+
+[beam3-v]
+bias1: 0.0
+bias2: 0.0
+lo_att: 200.0
+
+[beam4-h]
+bias1: 0.0
+bias2: 0.0
+lo_att: 200.0
+
+[beam4-v]
+bias1: 0.0
+bias2: 0.0
+lo_att: 200.0
+
+
