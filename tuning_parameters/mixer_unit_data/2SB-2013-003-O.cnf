@@ -6,9 +6,22 @@ R_block_id: 4R
 L_sis_id: I12-Db-4J-41
 R_sis_id: I12-Dd-4J-41
 
-default: 105 GHz
+default: 105
 
+# LO : 92 GHz
+# -----------
+[92]
+use: 92-L-TSYS
 
+[92-L-TSYS]
+date: 2015/01/24
+report_id: 92G-20150124b
+bias1: 9.6
+bias2: 9.6
+lo_att: 10.0
+
+# LO : 105 GHz
+# ------------
 [105]
 use: 105-U-TSYS
 
@@ -19,7 +32,8 @@ bias1: 9.6
 bias2: 9.5
 lo_att: 7.0
 
-
+# LO : 108 GHz
+# ------------
 [108]
 date: 2014/10/29
 report_id: 4
