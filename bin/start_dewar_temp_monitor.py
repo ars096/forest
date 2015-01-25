@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 
 
-interval = 1.0
+check_interval = 1.0
+update_interval = 600.0
 
 
 # ----
@@ -39,12 +40,12 @@ try:
             keydict['SU%d'%_c] = _s
             continue
         
-        sql.insert(keydict=keydict)
+        sql.update(keydict, update_interval)
         printlog(k)
         
         t1 = time.time()
         dt = t1 - t0
-        if dt < 1: time.sleep(1 - dt)
+        if dt < check_interval: time.sleep(check_interval - dt)
         continue
 
 except KeyboardInterrupt:

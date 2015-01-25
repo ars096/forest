@@ -35,6 +35,34 @@ class db_writer(object):
         self.cursor.execute(sql)
         return
         
+    def update(self, keydict, interval=60):
+        db_latest = self.get_latest_item()
+        db_latest_timestamp = time.mktime(db_latest[1].timetuple())
+        db_latest_items = sorted(db_latest[2:])
+        latest_items = sorted(keydict.values())
+        
+        def check(data1, data2):
+            for d1, d2 in zip(data1, data2):
+                if type(d1) == float:
+                    if abs(d1 - d2) > 0.0001:
+                        #print(d1, d2)
+                        return False
+                    pass
+                if d1 != d2:
+                    #print(d1, d2)
+                    return False
+                continue
+            return True
+        
+        now = time.time()
+        if check(db_latest_items, latest_items):
+            if (now - db_latest_timestamp) < interval: return
+            pass
+        
+        now = time.time()
+        self.insert(keydict=keydict)
+        return
+        
     def desc(self, table=None):
         if table is None: table = self.table
         self.cursor.execute('DESC %s'%(table))

@@ -1,7 +1,9 @@
 #! /usr/bin/env python
 
 
-interval = 2.0
+
+check_interval = 1.0
+update_interval = 600.0
 
 
 # ----
@@ -42,7 +44,7 @@ try:
         keydict['SOFTLIMIT1_FLAG'] = status['softlimit1_flag']
         keydict['SOFTLIMIT2_FLAG'] = status['softlimit2_flag']
         keydict['COSMOS_FLAG'] = status['cosmos_flag']
-        sql_status.insert(keydict=keydict)        
+        sql_status.update(keydict, update_interval)        
         printlog(status)
         
         errors = rxrot_monitor.read_error()
@@ -50,7 +52,7 @@ try:
             for e in errors:
                 keydict = {}
                 keydict['ERROR'] = e
-                sql_error.insert(keydict=keydict)
+                sql_error.update(keydict, update_interval)
                 print('ERROR: %s'%(e))
                 continue
             pass
@@ -60,14 +62,14 @@ try:
             keydict = {}
             keydict['RECV_MSG'] = cosmos[0]
             keydict['SEND_MSG'] = cosmos[1]
-            sql_cosmos.insert(keydict=keydict)
+            sql_cosmos.update(keydict, update_interval)
             print('COSMOS:RECV: %s'%(repr(cosmos[0])))
             print('COSMOS:SEND: %s'%(repr(cosmos[1])))
             pass
         
         t1 = time.time()
         dt = t1 - t0
-        if dt < interval: time.sleep(interval - dt)
+        if dt < check_interval: time.sleep(check_interval - dt)
         continue
 
 except KeyboardInterrupt:

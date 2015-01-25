@@ -294,6 +294,8 @@ class rx_rotator_controller(object):
                 pass
                 
             
+            if self.tracking_count > 9999: self.tracking_count = 9999
+            
             time.sleep(self.tracking_interval)
             continue
         return
