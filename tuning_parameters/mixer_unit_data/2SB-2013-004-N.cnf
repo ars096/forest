@@ -8,12 +8,16 @@ R_sis_id: I16-Bc-3J-33
 
 default: 105 GHz
 
-[105 GHz]
-date: 2015/01/04
-report_id: --
-bias1: 7.85
-bias2: 7.79
-lo_att: 10
+
+[105]
+use: 105-U-TSYS
+
+[105-U-TSYS]
+date: 2015/01/24
+report_id: 105G-20150124
+bias1: 7.5
+bias2: 7.5
+lo_att: 13.0
 
 [108 GHz]
 date: 2014/11/27
