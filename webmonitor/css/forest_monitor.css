@@ -1,0 +1,254 @@
+
+#monitor {
+    width: 1100px;
+    height: 900px;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+}
+
+#header {
+    height: 60px;
+}
+
+#header-title {
+    width: 400px;
+    height: 100%;
+    float: left;
+}
+
+#header-title h1 {
+    margin-top: 15px;
+    margin-left: 20px;
+    font-size: 33px;
+}
+
+#header-status {
+    width: 550px;
+    height: 100%;
+    float: left;
+    text-align: center;
+}
+
+#header-status p {
+    margin: 2% 0;
+    padding: 5px 0;
+    width: 400px;
+    height: 70%;
+    font-size: 20px;
+    font-weight: 600;      
+}
+
+#header-timestamp {
+    height: 100%;
+    text-align: center;
+}
+
+#header-timestamp-date {
+    padding: 5px 0 0 0;
+    font-size: 15px;
+    font-weight: 700;      
+}
+
+#header-timestamp-time {
+    margin: -14px 0 0 0;
+    padding: 0;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+#status {
+    width: 100%;
+    height: 600px;
+/*background-color: #ffebee;*/
+}
+
+#status-rx {
+    padding: 5px 0 0 20px;
+    width: 550px;
+    height: 100%;
+    float: left;
+/*background-color: #ffebee;*/
+}
+
+#status-rx h2{
+    margin: 0 0 5px 0;
+    border-bottom: 1px solid #00BCD4;
+    padding: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0097A7;
+}
+
+.status-rx-beam {
+    margin: 5px;
+    width: 48%;
+    float: left;
+}
+
+.status-rx-beam .panel-heading {
+    padding: 2px 0 2px 10px;
+    font-size: 17px;
+    font-weight: 500;
+    color: #455A64;
+}
+
+.status-rx-beam .panel-body {
+    padding: 0 10px;
+}
+
+.status-rx-beam .panel-body p {
+    margin: 5px 0;
+    padding: 0 0 0 15px;
+}
+
+.status-rx-beam .panel-body p span {
+    padding: 0 0 0 20px;
+}
+
+.status-rx-beam .panel-body table {
+    margin: 0 0 8px 0;
+    text-align: center;
+}
+
+.status-rx-beam .panel-body table td {
+    padding: 3px;
+    font-weight: 400;
+}
+
+.status-rx-beam .panel-body table th {
+    padding: 3px;
+    font-weight: 400;
+    text-align: center;
+}
+
+.status-rx-beam .panel-body table .table-pol {
+    font-weight: 600;
+}
+
+.rxstatus-table-hpol .table-pol {
+    color: #5D4037;
+}
+
+.rxstatus-table-hpol th {
+    background-color: #EFEBE9;
+}
+
+.rxstatus-table-vpol .table-pol {
+    color: #455A64;
+}
+
+.rxstatus-table-vpol th {
+    background-color: #ECEFF1;
+}
+
+#status-motor {
+    padding: 5px 0 0 20px;
+    width: 520px;
+    float: left;
+/*background-color: #ffebee;*/
+}
+
+#status-motor h2{
+    margin: 0 0 5px 0;
+    border-bottom: 1px solid #FB8C00;
+    padding: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #EF6C00;
+}
+
+#status-motor-table h3 {
+    margin: 3px 0 5px 0;
+    padding: 0;
+    font-size: 17px;
+    font-weight: 500;
+    color: #455A64;
+}
+
+#status-motor-rxrot-gauge {
+    width: 200px;
+    height: 200px;
+    float: left;
+    background-color: #EEEEEE;
+}
+
+#status-motor-table {
+    margin: 0 0 0 20px;
+    width: 280px;
+    float: left;
+}
+
+#status-motor-table table td {
+    padding: 5px;
+}
+
+#status-motor-table table th {
+    padding: 5px;
+}      
+
+#status-others {
+    padding: 5px 0 0 20px;
+    width: 520px;
+    float: left;
+/*background-color: #ffebee;*/
+}
+
+#status-others h2{
+    margin: 0 0 5px 0;
+    border-bottom: 1px solid #81C784;
+    padding: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #4CAF50;
+}
+
+#status-sg-table {
+    width: 290px;
+    float: left;
+}
+
+#status-others h3 {
+    margin: 3px 0 5px 0;
+    padding: 0;
+    font-size: 17px;
+    font-weight: 500;
+    color: #455A64;
+}
+
+#status-others table {
+    margin: 0 0 5px 0;
+}
+
+#status-others table td {
+    padding: 5px;
+}
+
+#status-others table th {
+    padding: 5px;
+}      
+
+#status-switch-table {
+    margin: 0 0 0 15px;
+    width: 190px;
+    float: left;
+}
+
+#status-spana-table {
+    width: 520px;
+    float: left;
+}
+
+.spana-qlook {
+    margin: 0 5px 0 0;
+    width: 125px;
+    height: 100px;
+    float: left;
+    background-color: #EEEEEE;
+}
+
+#graph {
+    width: 100%;
+    height: 200px;
+    background-color: #F9FBE7;
+}
+
