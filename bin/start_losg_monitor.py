@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
 
-interval = 10.0
-
+check_interval = 1.0
+update_interval = 600.0
 
 # ----
 
@@ -45,13 +45,13 @@ try:
             keydict['OUTPUT2'] = output[1]
 
             
-            sql_status.insert(keydict=keydict)
+            sql_status.update(keydict, update_interval)
             printlog([freq, power, output])
             pass
             
         t1 = time.time()
         dt = t1 - t0
-        if dt < interval: time.sleep(interval - dt)
+        if dt < check_interval: time.sleep(check_interval - dt)
         continue
 
 except KeyboardInterrupt:

@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
 
-interval = 60.0
-
+check_interval = 1.0
+update_interval = 600.0
 
 # ----
 
@@ -34,12 +34,12 @@ try:
             keydict['BIAS_V%02d'%_ch] = _b
             continue
         
-        sql.insert(keydict=keydict)
+        sql.update(keydict, update_interval)
         printlog(bias)
         
         t1 = time.time()
         dt = t1 - t0
-        if dt < interval: time.sleep(interval - dt)
+        if dt < check_interval: time.sleep(check_interval - dt)
         continue
 
 except KeyboardInterrupt:
