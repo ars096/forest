@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Atsushi Nishimura">
+
+    <link href="/css/forest_monitor.css" rel="stylesheet">
+    <link href="/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <title>FOREST Monitor</title>
+    
+    <style>
+      * {margin: 0; padding: 0;}
+      html {height: 100%;}
+      body {height: 100%; background-color: #CFD8DC;}
+    </style>
+  </head>
+  
+  <body>
+    <div id="monitor">
+      <div id="header" class="container-fluid">
+	<div id="header-title">
+	  <h1>FOREST Monitor</h1>
+	</div>
+	<div id="header-status">
+	  <p id="status-operation" class="alert alert-info">----</p>
+	</div>
+	<div id="header-timestamp">
+	  <p id="header-timestamp-date">0000/00/00</p>
+	  <p id="header-timestamp-time">00:00:00</p>
+	</div>
+      </div>
+      
+      <div id="status">
+	<div id="status-rx">
+	  <h2>Receiver Status</h2>
+	  <div id="beam1" class="status-rx-beam panel panel-default">
+	    <div class="panel-heading">Beam 1</div>
+	    <div class="panel-body">
+	      <p>Unit Temp. : <span id="status-temp-1">000.00 K</span></p>
+	      <table class="rxstatus-table-hpol table table-bordered">
+		<tr>
+		  <th class="table-pol">H-pol.</th>
+		  <th>LO Att.</th><td id="status-loatt-1">00.0 mA</td>
+		</tr>
+		<tr>
+		  <th>Unit1</th>
+		  <td id="status-sis-v1">00.00 mV</td>
+		  <td id="status-sis-i1">000.0 uA</td>
+		</tr>
+		<tr><th>Unit2</th>
+		  <td id="status-sis-v2">00.00 mV</td>
+		  <td id="status-sis-i2">000.0 uA</td>
+		</tr>
+	      </table>
+	      <table class="rxstatus-table-vpol table table-bordered">
+		<tr>
+		  <th class="table-pol">V-pol.</th>
+		  <th>LO Att.</th><td id="status-loatt-2">00.0 mA</td>
+		</tr>
+		<tr>
+		  <th>Unit1</th>
+		  <td id="status-sis-v3">00.00 mV</td>
+		  <td id="status-sis-i3">000.0 uA</td>
+		</tr>
+		<tr><th>Unit2</th>
+		  <td id="status-sis-v4">00.00 mV</td>
+		  <td id="status-sis-i4">000.0 uA</td>
+		</tr>
+	      </table>
+	    </div>
+	  </div>
+	  <div id="beam2" class="status-rx-beam panel panel-default">
+	    <div class="panel-heading">Beam 2</div>
+	    <div class="panel-body">
+	      <p>Unit Temp. : <span id="status-temp-2">000.00 K</span></p>
+	      <table class="rxstatus-table-hpol table table-bordered">
+		<tr>
+		  <th class="table-pol">H-pol.</th>
+		  <th>LO Att.</th><td id="status-loatt-3">00.0 mA</td></tr>
+		<tr>
+		  <th>Unit1</th>
+		  <td id="status-sis-v5">00.00 mV</td>
+		  <td id="status-sis-i5">000.0 uA</td>
+		</tr>
+		<tr><th>Unit2</th>
+		  <td id="status-sis-v6">00.00 mV</td>
+		  <td id="status-sis-i6">000.0 uA</td>
+		</tr>
+	      </table>
+	      <table class="rxstatus-table-vpol table table-bordered">
+		<tr>
+		  <th class="table-pol">V-pol.</th>
+		  <th>LO Att.</th><td id="status-loatt-4">00.0 mA</td>
+		</tr>
+		<tr>
+		  <th>Unit1</th>
+		  <td id="status-sis-v7">00.00 mV</td>
+		  <td id="status-sis-i7">000.0 uA</td>
+		</tr>
+		<tr><th>Unit2</th>
+		  <td id="status-sis-v8">00.00 mV</td>
+		  <td id="status-sis-i8">000.0 uA</td>
+		</tr>
+	      </table>
+	    </div>
+	  </div>
+	  <div id="beam3" class="status-rx-beam panel panel-default">
+	    <div class="panel-heading">Beam 3</div>
+	    <div class="panel-body">
+	      <p>Unit Temp. : <span id="status-temp-3">000.00 K</span></p>
+	      <table class="rxstatus-table-hpol table table-bordered">
+		<tr>
+		  <th class="table-pol">H-pol.</th>
+		  <th>LO Att.</th><td id="status-loatt-5">00.0 mA</td>
+		</tr>
+		<tr>
+		  <th>Unit1</th>
+		  <td id="status-sis-v9">00.00 mV</td>
+		  <td id="status-sis-i9">000.0 uA</td>
+		</tr>
+		<tr><th>Unit2</th>
+		  <td id="status-sis-v10">00.00 mV</td>
+		  <td id="status-sis-i10">000.0 uA</td>
+		</tr>
+	      </table>
+	      <table class="rxstatus-table-vpol table table-bordered">
+		<tr>
+		  <th class="table-pol">V-pol.</th>
+		  <th>LO Att.</th><td id="status-loatt-6">00.0 mA</td>
+		</tr>
+		<tr>
+		  <th>Unit1</th>
+		  <td id="status-sis-v11">00.00 mV</td>
+		  <td id="status-sis-i11">000.0 uA</td>
+		</tr>
+		<tr><th>Unit2</th>
+		  <td id="status-sis-v12">00.00 mV</td>
+		  <td id="status-sis-i12">000.0 uA</td>
+		</tr>
+	      </table>
+	    </div>
+	  </div>
+	  <div id="beam4" class="status-rx-beam panel panel-default">
+	    <div class="panel-heading">Beam 4</div>
+	    <div class="panel-body">
+	      <p>Unit Temp. : <span id="status-temp-4">000.00 K</span></p>
+	      <table class="rxstatus-table-hpol table table-bordered">
+		<tr>
+		  <th class="table-pol">H-pol.</th>
+		  <th>LO Att.</th><td id="status-loatt-7">00.0 mA</td>
+		</tr>
+		<tr>
+		  <th>Unit1</th>
+		  <td id="status-sis-v13">00.00 mV</td>
+		  <td id="status-sis-i13">000.0 uA</td>
+		</tr>
+		<tr><th>Unit2</th>
+		  <td id="status-sis-v14">00.00 mV</td>
+		  <td id="status-sis-i14">000.0 uA</td>
+		</tr>
+	      </table>
+	      <table class="rxstatus-table-vpol table table-bordered">
+		<tr>
+		  <th class="table-pol">V-pol.</th>
+		  <th>LO Att.</th><td id="status-loatt-8">00.0 mA</td>
+		</tr>
+		<tr>
+		  <th>Unit1</th>
+		  <td id="status-sis-v15">00.00 mV</td>
+		  <td id="status-sis-i15">000.0 uA</td>
+		</tr>
+		<tr><th>Unit2</th>
+		  <td id="status-sis-v16">00.00 mV</td>
+		  <td id="status-sis-i16">000.0 uA</td>
+		</tr>
+	      </table>
+	    </div>
+	  </div>
+	</div>
+
+	<div id="status-motor">
+	  <h2>Motor Status</h2>
+	  <div id="status-motor-rxrot-gauge"> </div>
+	  <div id="status-motor-table">
+	    <h3>Rx Rotator</h3>
+	    <table class="table table-striped">
+	      <tr><th>Real</th><th>Prog.</th><th>COSMOS</th></tr>
+	      <tr>
+		<td><span id="status-rxrot-real">-000.0</span> deg</td>
+		<td><span id="status-rxrot-prog">-000.0</span> deg</td>
+		<td><span id="status-rxrot-cosmos">-000.0</span> deg</td>
+	      </tr>
+	    </table>
+	    <h3>Sliding Chopper</h3>
+	    <table class="table table-striped">
+	      <tr><th>Position</th><th>Count</th></tr>
+	      <tr>
+		<td id="status-slider-position">--</td>
+		<td id="status-slider-count">0000</td>
+	      </tr>
+	    </table>
+	  </div>
+	</div>
+	
+	<div id="status-others">
+	  <h2>RF/IF Status</h2>
+	  <div id="status-sg-table">
+	    <h3>Signal Generators</h3>
+	    <table id="table-sg" class="table table-striped">
+	      <tr>
+		<th>1st SG 1</th>
+		<td id="status-losg1-freq">0.000000 GHz</td>
+		<td id="status-losg1-power">0 dBm</td>
+		<td id="status-losg1-output">--</td>
+	      </tr>
+	      <tr>
+		<th>1st SG 2</th>
+		<td id="status-losg2-freq">0.000000 GHz</td>
+		<td id="status-losg2-power">0 dBm</td>
+		<td id="status-losg2-output">--</td>
+	      </tr>
+	      <tr>
+		<th>IRR SG</th>
+		<td id="status-irrsg-freq">0.000000 GHz</td>
+		<td id="status-irrsg-power">0 dBm</td>
+		<td id="status-irrsg-output">--</td>
+	      </tr>
+	    </table>
+	  </div>
+	  <div id="status-switch-table">
+	    <h3>IF Switches</h3>
+	    <table id="table-sw" class="table table-striped">
+	      <tr>
+		<th>SW1</th>
+		<td id="status-switch-1">ch 0</td>
+		<th>SW2</th>
+		<td id="status-switch-2">ch 0</td>
+	      </tr>
+	      <tr>
+		<th>SW3</th>
+		<td id="status-switch-3">ch 0</td>
+		<th>SW4</th>
+		<td id="status-switch-4">ch 0</td>
+
+	      </tr>
+	    </table>
+	  </div>
+	  <div id="status-spana-table">
+	    <h3>Spectrum Analyzers</h3>
+	    <div id="status-spana-1" class="spana-qlook"> </div>
+	    <div id="status-spana-2" class="spana-qlook"> </div>
+	    <div id="status-spana-3" class="spana-qlook"> </div>
+	    <div id="status-spana-4" class="spana-qlook"> </div>
+	  </div>
+	</div>
+      </div>
+
+      <div id="graph">
+      </div>
+      
+    </div>
+    
+    <script src="/dist/js/echarts-all.js"></script>
+    <script src="/js/monitor_gauge.js"></script>
+    <script src="/js/monitor_spana.js"></script>
+    <script src="/js/monitor.js"></script>
+  </body>
+</html>
