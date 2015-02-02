@@ -23,7 +23,7 @@ def filepath_generator(name):
     return filepath
 
 
-def load_sis_config(name, config_file_name='FOREST2014.cnf'):
+def load_sis_config(name='', config_file_name='FOREST2014.cnf'):
     config_file_dir = '/home/forest/tuning_parameters'
     mixer_data_dir = 'mixer_unit_data'
     confpath = os.path.join(config_file_dir, config_file_name)
@@ -42,6 +42,12 @@ def load_sis_config(name, config_file_name='FOREST2014.cnf'):
         unitconf.read(unitconfpath)
         
         section = name
+        
+        if name == '':
+            name = unitconf.get('info', 'default')
+            section = name
+            pass
+        
         if not unitconf.has_section(section):
             print('WARN: %s has no parameters named %s.'%(unitname, name))
             name = unitconf.get('info', 'default')
