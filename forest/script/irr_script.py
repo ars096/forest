@@ -75,7 +75,7 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         # Start operation
         # ---------------
         args = {'if_start': if_start, 'if_stop': if_stop, 'if_step': if_step,
-                'lo_freq' lo_freq, 'thot': thot}
+                'lo_freq': lo_freq, 'thot': thot}
         argstxt = str(args)
         self.operation_start(argstxt, logfile=logpath)
         
