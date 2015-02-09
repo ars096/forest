@@ -1,5 +1,5 @@
-[LO_SG]
-freq: 1e9
+[LO_Freq]
+freq(GHz): 105
 
 [beam1-h]
 bias1: 0.0

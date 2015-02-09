@@ -187,7 +187,7 @@ class sis_tune_temp(base.forest_script_base):
         
         self.stdout.nextline()
         
-        lo_freq = float(sisp.get('LO_SG', 'freq'))
+        lo_freq = float(sisp.get('LO_Freq', 'freq(GHz)'))
         lo_sg_freq = lo_freq / 6.
         self.stdout.p('1st LO : Set RF frequency %f GHz.'%(lo_sg_freq))
         lo_sg.freq_set(lo_sg_freq, 'GHz')
