@@ -176,9 +176,9 @@ class sis_tune_temp(base.forest_script_base):
             if unit == 'LO_SG': continue
             _beam = int(unit.strip('beam-hv'))
             _pol = unit.strip('beam1234-').upper()
-            _b1 = sisp.get(unit, 'bias1')
-            _b2 = sisp.get(unit, 'bias2')
-            _att = sisp.get(unit, 'lo_att')
+            _b1 = float(sisp.get(unit, 'bias1'))
+            _b2 = float(sisp.get(unit, 'bias2'))
+            _att = float(sisp.get(unit, 'lo_att'))
             self.stdout.p('%s: (bias1) %.2f mV, (bias2) %.2f mV, (LO.Att) %.2f mA'%(unit, _b1, _b2, _att))
             sis.bias_set(_b1, beam=_beam, pol=_pol, dsbunit=1)
             sis.bias_set(_b2, beam=_beam, pol=_pol, dsbunit=2)
