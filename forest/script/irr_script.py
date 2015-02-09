@@ -9,43 +9,63 @@ import forest
 import base
 
 
-def tsys_plot(freq, dhot, dcold, tsys, save, suptitle, smooth=1):
-    speana = ['SP:1', 'SP:2', 'SP:3', 'SP:4'] * 4 
-    switch = ['SW:%d'%_ch for i in [1,2,3,4] for _ch in [1,2,3,4]]
-    label = ['%s, %s'%(_sw, _sp) for _sw, _sp in zip(switch, speana)]
+pylab.rcParams['font.size'] = 6
+
+
+def irr_spec_plot(x, dcold, dhot, dsig_u, dsig_l, irr, savepath):
+    name = os.path.basename(savepath)
     
-    freq_GHz = freq / 1e9
+    dmin = numpy.min([dcold, dhot, dsig_u, dsig_l]) - 2
+    dmax = numpy.max([dcold, dhot, dsig_u, dsig_l]) + 5
     
-    if numpy.nanmin(tsys) < 200: tsys_max = 500
-    elif numpy.nanmax(tsys) < 400: tsys_max = 800
-    else: tsys_max = 1300
-    dmin = numpy.nanmin(dcold) - 1
-    dmax = numpy.nanmax(dhot) + 1
+    fig1 = pylab.figure()
+    ax1 = [fig1.add_subplot(4, 4, i+1) for i in range(16)]
+    [_a.plot(x, _d, '-b') for _a, _d in zip(ax1, dcold.reshape((-1,461)))]
+    [_a.plot(x, _d, '-r') for _a, _d in zip(ax1, dhot.reshape((-1,461)))]
+    [_a.plot(x, _d, '-g') for _a, _d in zip(ax1, dsig_u.reshape((-1,461)))]
+    [_a.plot(x, _d, '--g') for _a, _d in zip(ax1, dsig_l.reshape((-1,461)))]
+    [_a.set_xlim(x[0], x[-1]) for _a in ax1]
+    [_a.set_ylim(dmin, dmax) for _a in ax1]
+    [_a.grid(True) for _a in ax1]
+    [_a.set_xlabel('IF Freq. (MHz)', size=8) for i,_a in enumerate(ax1) if i/4>2]    
+    [_a.set_ylabel('Power (dBm)', size=8) for i,_a in enumerate(ax1) if i%4==0]    
+    fig1.suptitle(name, fontsize=10)
+    fig1.savefig(savepath+'.raw.png')
+    pylab.close(fig1)
     
-    c = numpy.ones(smooth) / float(smooth)
+    irrmin = None
+    irrmax = None
+    fig2 = pylab.figure()
+    ax2 = [fig2.add_subplot(4, 4, i+1) for i in range(16)]
+    [_a.plot(x, _d, '-k') for _a, _d in zip(ax2, irr.reshape((-1,461)))]
+    [_a.set_xlim(x[0], x[-1]) for _a in ax2]
+    [_a.set_ylim(irrmin, irrmax) for _a in ax2]
+    [_a.grid(True) for _a in ax2]
+    [_a.set_xlabel('IF Freq. (MHz)', size=8) for i,_a in enumerate(ax2) if i/4>2]    
+    [_a.set_ylabel('IRR (dB)', size=8) for i,_a in enumerate(ax2) if i%4==0]    
+    fig2.suptitle(name, fontsize=10)
+    fig2.savefig(savepath+'.irr_spec.png')
+    pylab.close(fig2)
+    return
+
+def irr_summary_plot(x, irr, savepath):
+    name = os.path.basename(savepath)
+    
+    irrmin = None
+    irrmax = None
     
     fig = pylab.figure()
-    fig.suptitle(suptitle, fontsize=11)
     ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
-    ax2 = [_a.twinx() for _a in ax]
-    [_a.plot(freq_GHz, numpy.convolve(_hot, c, mode='same'), 'r-') for _a, _hot in zip(ax, dhot)]
-    [_a.plot(freq_GHz, numpy.convolve(_cold, c, mode='same'), 'b-') for _a, _cold in zip(ax, dcold)]
-    [_a.plot(freq_GHz, numpy.convolve(_tsys, c, mode='same'), 'k.', ms=3) for _a, _tsys in zip(ax2, tsys)]
-    [_a.text(0.08, 0.84, _l, transform=_a.transAxes) for _a, _l in zip(ax, label)]
-    [_a.set_xlim(freq_GHz.min(), freq_GHz.max()) for _a in ax]
-    [_a.set_xlim(freq_GHz.min(), freq_GHz.max()) for _a in ax2]
-    [_a.set_ylim(dmin, dmax) for _a in ax]
-    [_a.set_ylim(0, tsys_max) for _a in ax2]
-    [_a.set_xlabel('Frequency (GHz)') for i, _a in enumerate(ax) if i/4>=3]
-    [_a.set_ylabel('Power (dBm)') for i, _a in enumerate(ax) if i%4==0]
-    [_a.set_yticklabels('') for i, _a in enumerate(ax) if i%4!=0]
-    [_a.set_ylabel('Tsys (K)') for i, _a in enumerate(ax2) if i%4==3]
-    [_a.set_yticklabels('') for i, _a in enumerate(ax2) if i%4!=3]
+    [_a.plot(_d, 'k-o') for _a, _d in zip(ax, irr.reshape((-1,16)).T)]
+    [_a.set_ylim(irrmin, irrmax) for _a in ax]
     [_a.grid(True) for _a in ax]
-    fig.savefig(save)
-    
+    [_a.set_xlabel('IF Freq. (--)', size=8) for i,_a in enumerate(ax) if i/4>2]    
+    [_a.set_ylabel('IRR (dB)', size=8) for i,_a in enumerate(ax) if i%4==0]    
+    fig.suptitle(name, fontsize=10)
+    fig.savefig(savepath)
     pylab.close(fig)
     return
+
 
 
 class irr_with_if_freq_sweep(base.forest_script_base):
@@ -68,7 +88,7 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         logname = os.path.basename(logpath)
         datapath = fpg('irr.data.%s')
         dataname = os.path.basename(datapath)
-        figpath = fpg('irr.fig.%s.png')
+        figpath = fpg('irr.fig.%s')
         figname = os.path.basename(figpath)
         ts = os.path.basename(fpg('%s'))
         
@@ -159,6 +179,7 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         freq = sp.sp[0].gen_xaxis()
         self.stdout.p('Save : %s'%(dataname + '.freq.npy'))
         numpy.save(datapath + '.freq.npy', freq)
+        x = (freq - numpy.average(freq)) / 1e6
         
         self.stdout.nextline()
         
@@ -295,19 +316,63 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         
         self.stdout.nextline()
         
-        """
-        self.stdout.p('Calc Tsys')
-        self.stdout.p('---------')
-        tsys = forest.rsky_dB(dhot, dcold, thot)
-        self.stdout.p('Save : %s'%(dataname + '.Tsys.npy'))
-        numpy.save(datapath + '.Tsys.npy', tsys)
+        
+        self.stdout.p('Calc IRR')
+        self.stdout.p('--------')
+        dcold = dcold.reshape((-1, 4, 4, 461))
+        dhot = dhot.reshape((-1, 4, 4, 461))
+        dsig_l = dsig_l.reshape((-1, 4, 4, 461))
+        dsig_u = dsig_u.reshape((-1, 4, 4, 461))
+        
+        dc_u = dcold[:,0::2,:,:]
+        dh_u = dhot[:,0::2,:,:]
+        dl_u = dsig_l[:,0::2,:,:]
+        du_u = dsig_u[:,0::2,:,:]
+        
+        dc_l = dcold[:,1::2,:,:]
+        dh_l = dhot[:,1::2,:,:]
+        dl_l = dsig_l[:,1::2,:,:]
+        du_l = dsig_u[:,1::2,:,:]
+        
+        
+        M_u = du_u / du_l
+        M_l = dl_l / dl_u
+        
+        dP_u = numpy.average(dh_u - dc_u, axis=-1)
+        dP_l = numpy.average(dh_l - dc_l, axis=-1)
+        
+        M_dsb = (dP_u / dP_l)[:,:,:,None]
+        
+        R_u = M_u * (M_l * M_dsb - 1.) / (M_u - M_dsb)
+        R_l = M_l * (M_u - M_dsb) / (M_l * M_dsb - 1.)
+        
+        IRR_u = 10 * numpy.log10(R_u)
+        IRR_l = 10 * numpy.log10(R_l)
+        
+        IRR = numpy.concatenate([IRR_u, IRR_l], axis=1)
+        temp = IRR[:,1,:,:].copy()
+        IRR[:,1,:,:] = IRR[:,2,:,:]
+        IRR[:,2,:,:] = temp
+
+        self.stdout.p('Save : %s'%(dataname + '.IRR_spec.npy'))
+        numpy.save(datapath + '.IRR_spec.npy', IRR)
+        
+        IRRmax = IRR[:,:,:,230]
+        self.stdout.p('Save : %s'%(dataname + '.IRR.npy'))
+        numpy.save(datapath + '.IRR.npy', IRRmax)
+        
         self.stdout.nextline()
+        
         
         self.stdout.p('Plot')
         self.stdout.p('----')
         self.stdout.p('Save : %s'%(figname))
-        tsys_plot(freq, dhot.reshape([16,-1]), dcold.reshape([16,-1]),
-                  tsys.reshape([16,-1]), figpath, 'Tsys (%s)'%(ts), smooth=11)
+        [irr_spec_plot(x, _c, _h, _u, _l, _i, '%s.IF%02dGHz'%(figpath, freq))
+         for i, (_c, _h, _u, _l, _i, freq) 
+         in enumerate(zip(dcold, dhot, dsig_u, dsig_l, IRR, if_list))]
+        
+        irr_summary_plot(if_list, IRRmax, '%s.IRR.png'%(figpath))
+        
         self.stdout.nextline()
         """
         
