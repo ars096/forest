@@ -163,7 +163,7 @@ class sis_tune_temp(base.forest_script_base):
         # --------------
         self.stdout.p('Tuning SIS Mixer')
         self.stdout.p('================')        
-        self.stdout.p('name = %s'%(name))
+        self.stdout.p('path = %s'%(filepath))
         self.stdout.nextline()
         
         self.stdout.p('Load tuning parameters.')
