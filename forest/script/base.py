@@ -82,9 +82,8 @@ class forest_script_base(object):
     
     def open_irr_sg(self):
         self.stdout.write('Opening IRR Signal SG ... ')
-        #irr_sg = forest.irrsg()
-        irr_sg = None
-        self.stdout.write('NG')
+        irr_sg = forest.irrsg()
+        self.stdout.write('ok')
         self.stdout.nextline()
         return irr_sg
     
