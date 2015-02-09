@@ -173,7 +173,7 @@ class sis_tune_temp(base.forest_script_base):
         self.stdout.p('Set tuning parameters...')
         
         for unit in unitlist:
-            if unit == 'LO_SG': continue
+            if unit == 'LO_Freq': continue
             _beam = int(unit.strip('beam-hv'))
             _pol = unit.strip('beam1234-').upper()
             _b1 = float(sisp.get(unit, 'bias1'))
