@@ -58,6 +58,7 @@ from yfactor_script import rsky_with_slider
 from yfactor_script import rsky_with_sis_bias_sweep
 from yfactor_script import rsky_with_lo_att_sweep
 
+from irr_script import irr_with_if_freq_sweep
 
 # debug
 # =====
