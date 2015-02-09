@@ -280,7 +280,7 @@ class irr_with_if_freq_sweep(base.forest_script_base):
             
             self.stdout.p('INFO : (Lower Side Band)')
             self.stdout.p('IRR Ref SG : Set %f GHz.'%((lo_freq-if_freq)/6.))
-            ref_sg.freq_set((lo_freq+if_freq)/6., 'GHz')            
+            ref_sg.freq_set((lo_freq-if_freq)/6., 'GHz')            
             
             for ch in [1,2,3,4]:
                 self.stdout.p('IF Switch : Set ch %d.'%(ch))
@@ -324,15 +324,15 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         dsig_l = dsig_l.reshape((-1, 4, 4, 461))
         dsig_u = dsig_u.reshape((-1, 4, 4, 461))
         
-        dc_u = dcold[:,0::2,:,:]
-        dh_u = dhot[:,0::2,:,:]
-        dl_u = dsig_l[:,0::2,:,:]
-        du_u = dsig_u[:,0::2,:,:]
+        dc_u = dcold[:,:2,:,:]
+        dh_u = dhot[:,:2,:,:]
+        dl_u = dsig_l[:,:2,:,:]
+        du_u = dsig_u[:,:2,:,:]
         
-        dc_l = dcold[:,1::2,:,:]
-        dh_l = dhot[:,1::2,:,:]
-        dl_l = dsig_l[:,1::2,:,:]
-        du_l = dsig_u[:,1::2,:,:]
+        dc_l = dcold[:,2:,:,:]
+        dh_l = dhot[:,2:,:,:]
+        dl_l = dsig_l[:,2:,:,:]
+        du_l = dsig_u[:,2:,:,:]
         
         
         M_u = du_u / du_l
@@ -350,9 +350,6 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         IRR_l = 10 * numpy.log10(R_l)
         
         IRR = numpy.concatenate([IRR_u, IRR_l], axis=1)
-        temp = IRR[:,1,:,:].copy()
-        IRR[:,1,:,:] = IRR[:,2,:,:]
-        IRR[:,2,:,:] = temp
 
         self.stdout.p('Save : %s'%(dataname + '.IRR_spec.npy'))
         numpy.save(datapath + '.IRR_spec.npy', IRR)
