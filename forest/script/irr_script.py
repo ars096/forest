@@ -57,19 +57,31 @@ def irr_spec_plot(x, dcold, dhot, dsig_u, dsig_l, irr, savepath):
     pylab.close(fig2)
     return
 
-def irr_summary_plot(x, irr, savepath):
+def irr_summary_plot(x, irr, dcold, dhot, thot, savepath):
     name = os.path.basename(savepath)
     
     irrmin = 0
     irrmax = 30
     
+    tsysmin = 0
+    tsysmax = 800
+
+    avcold = numpy.average(10**(dcold/10.), axis=-1)
+    avhot = numpy.average(10**(dhot/10.), axis=-1)
+    tsys = forest.rsky(avhot, avcold, thot)
+    
     fig = pylab.figure()
     ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
+    ax2 = [_a.twinx() for _a in ax]
     [_a.plot(x, _d, 'k-o') for _a, _d in zip(ax, irr.reshape((-1,16)).T)]
     [_a.set_ylim(irrmin, irrmax) for _a in ax]
     [_a.grid(True) for _a in ax]
     [_a.set_xlabel('IF Freq. (GHz)', size=8) for i,_a in enumerate(ax) if i/4>2]    
-    [_a.set_ylabel('IRR (dB)', size=8) for i,_a in enumerate(ax) if i%4==0]    
+    [_a.set_ylabel('o IRR (dB)', size=8) for i,_a in enumerate(ax) if i%4==0]
+    [_a.plot(x, _d, 'b-') for _a, _d in zip(ax2, tsys.reshape((-1,16)).T)]
+    [_a.set_ylim(tsysmin, tsysmax) for _a in ax2]
+    [_a.set_ylabel('- Tsys (K)', size=8) for i,_a in enumerate(ax2) if i%4==3]
+    
     fig.suptitle(name, fontsize=10)
     fig.savefig(savepath)
     pylab.close(fig)
@@ -389,7 +401,7 @@ class irr_with_if_freq_sweep(base.forest_script_base):
          for i, (_c, _h, _u, _l, _i, freq) 
          in enumerate(zip(dcold_db, dhot_db, dsig_u_db, dsig_l_db, IRR, if_list))]
         
-        irr_summary_plot(if_list, p_IRR, '%s.IRR.png'%(figpath))
+        irr_summary_plot(if_list, p_IRR, dcold_db, dhot_db, thot, '%s.IRR.png'%(figpath))
         
         self.stdout.nextline()
         
