@@ -60,15 +60,15 @@ def irr_spec_plot(x, dcold, dhot, dsig_u, dsig_l, irr, savepath):
 def irr_summary_plot(x, irr, savepath):
     name = os.path.basename(savepath)
     
-    irrmin = None
-    irrmax = None
+    irrmin = 0
+    irrmax = 30
     
     fig = pylab.figure()
     ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
-    [_a.plot(_d, 'k-o') for _a, _d in zip(ax, irr.reshape((-1,16)).T)]
+    [_a.plot(x, _d, 'k-o') for _a, _d in zip(ax, irr.reshape((-1,16)).T)]
     [_a.set_ylim(irrmin, irrmax) for _a in ax]
     [_a.grid(True) for _a in ax]
-    [_a.set_xlabel('IF Freq. (--)', size=8) for i,_a in enumerate(ax) if i/4>2]    
+    [_a.set_xlabel('IF Freq. (GHz)', size=8) for i,_a in enumerate(ax) if i/4>2]    
     [_a.set_ylabel('IRR (dB)', size=8) for i,_a in enumerate(ax) if i%4==0]    
     fig.suptitle(name, fontsize=10)
     fig.savefig(savepath)
@@ -79,7 +79,7 @@ def irr_summary_plot(x, irr, savepath):
 
 class irr_with_if_freq_sweep(base.forest_script_base):
     method = 'irr_with_if_freq_sweep'
-    ver = '2015.02.09'
+    ver = '2015.02.10'
     
     def run(self, lo_freq, if_start, if_stop, if_step, thot):
         # Initialization Section
@@ -333,10 +333,10 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         dsig_l_db = dsig_l.reshape((-1, 4, 4, 461))
         dsig_u_db = dsig_u.reshape((-1, 4, 4, 461))
 
-        dcold_db = 10**(dcold_db/10.)
-        dhot_db = 10**(dhot_db/10.)
-        dsig_l_db = 10**(dsig_l_db/10.)
-        dsig_u_db = 10**(dsig_u_db/10.)
+        dcold = 10**(dcold_db/10.)
+        dhot = 10**(dhot_db/10.)
+        dsig_l = 10**(dsig_l_db/10.)
+        dsig_u = 10**(dsig_u_db/10.)
         
         dc_u = dcold[:,:2,:,:]
         dh_u = dhot[:,:2,:,:]
@@ -387,7 +387,7 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         self.stdout.p('Save : %s'%(figname))
         [irr_spec_plot(x, _c, _h, _u, _l, _i, '%s.IF%02dGHz'%(figpath, freq))
          for i, (_c, _h, _u, _l, _i, freq) 
-         in enumerate(zip(dcold, dhot, dsig_u, dsig_l, IRR, if_list))]
+         in enumerate(zip(dcold_db, dhot_db, dsig_u_db, dsig_l_db, IRR, if_list))]
         
         irr_summary_plot(if_list, p_IRR, '%s.IRR.png'%(figpath))
         
