@@ -18,6 +18,14 @@ def irr_spec_plot(x, dcold, dhot, dsig_u, dsig_l, irr, savepath):
     dmin = numpy.min([dcold, dhot, dsig_u, dsig_l]) - 2
     dmax = numpy.max([dcold, dhot, dsig_u, dsig_l]) + 5
     
+    avcold = numpy.average(10**(dcold/10.), axis=-1)
+    avhot = numpy.average(10**(dhot/10.), axis=-1)
+    avcolddb = 10 * numpy.log10(avcold)
+    avhotdb = 10 * numpy.log10(avhot)
+    avy = 10 * numpy.log10(avcold / avhot)
+    label = ['cold: %.1f dBm\nhot: %.1f dBm\nny: %.1f dB'%(_c, _h, _y)
+             for _c, _h, _y in zip(avcolddb.ravel(), avhotdb.ravel(), avy.ravel())]
+    
     fig1 = pylab.figure()
     ax1 = [fig1.add_subplot(4, 4, i+1) for i in range(16)]
     [_a.plot(x, _d, '-b') for _a, _d in zip(ax1, dcold.reshape((-1,461)))]
@@ -27,6 +35,7 @@ def irr_spec_plot(x, dcold, dhot, dsig_u, dsig_l, irr, savepath):
     [_a.set_xlim(x[0], x[-1]) for _a in ax1]
     [_a.set_ylim(dmin, dmax) for _a in ax1]
     [_a.grid(True) for _a in ax1]
+    [_a.text(0.1, 0.65, _l, transform=_a.transAxes) for _a, _l in zip(ax1, label)]
     [_a.set_xlabel('IF Freq. (MHz)', size=8) for i,_a in enumerate(ax1) if i/4>2]    
     [_a.set_ylabel('Power (dBm)', size=8) for i,_a in enumerate(ax1) if i%4==0]    
     fig1.suptitle(name, fontsize=10)
@@ -154,8 +163,8 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         self.stdout.p('Speana : Preset.')
         sp.scpi_reset()
         
-        self.stdout.p('Speana : Set freq span 10 MHz.')
-        sp.frequency_span_set(10, 'MHz')
+        self.stdout.p('Speana : Set freq span 1 MHz.')
+        sp.frequency_span_set(1, 'MHz')
         
         self.stdout.p('Speana : Set center freq %f GHz.'%(if_start))
         sp.frequency_center_set(if_start, 'GHz')
@@ -170,7 +179,7 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         sp.average_set(5)
         sp.average_onoff_set('ON')
         sweeptime = sp.sweep_time_query()[0]
-        acquiretime = sweeptime * 5
+        acquiretime = (sweeptime+0.07) * 5
         self.stdout.p('Speana : acquiretime = %.3f sec.'%(acquiretime))
         
         self.stdout.p('IF Switch : Set ch 1.')
@@ -319,10 +328,15 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         
         self.stdout.p('Calc IRR')
         self.stdout.p('--------')
-        dcold = dcold.reshape((-1, 4, 4, 461))
-        dhot = dhot.reshape((-1, 4, 4, 461))
-        dsig_l = dsig_l.reshape((-1, 4, 4, 461))
-        dsig_u = dsig_u.reshape((-1, 4, 4, 461))
+        dcold_db = dcold.reshape((-1, 4, 4, 461))
+        dhot_db = dhot.reshape((-1, 4, 4, 461))
+        dsig_l_db = dsig_l.reshape((-1, 4, 4, 461))
+        dsig_u_db = dsig_u.reshape((-1, 4, 4, 461))
+
+        dcold_db = 10**(dcold_db/10.)
+        dhot_db = 10**(dhot_db/10.)
+        dsig_l_db = 10**(dsig_l_db/10.)
+        dsig_u_db = 10**(dsig_u_db/10.)
         
         dc_u = dcold[:,:2,:,:]
         dh_u = dhot[:,:2,:,:]
@@ -354,9 +368,16 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         self.stdout.p('Save : %s'%(dataname + '.IRR_spec.npy'))
         numpy.save(datapath + '.IRR_spec.npy', IRR)
         
-        IRRmax = IRR[:,:,:,230]
+        
+        ind_sig_u = numpy.nanargmax(du_u, axis=-1)
+        ind_sig_l = numpy.nanargmax(dl_l, axis=-1)
+        x1, x2, x3 = numpy.indices(ind_sig_u.shape)
+        p_IRR_u = IRR_u[x1, x2, x3, ind_sig_u]
+        p_IRR_l = IRR_u[x1, x2, x3, ind_sig_l]
+        p_IRR = numpy.concatenate([p_IRR_u, p_IRR_l], axis=1)
+        
         self.stdout.p('Save : %s'%(dataname + '.IRR.npy'))
-        numpy.save(datapath + '.IRR.npy', IRRmax)
+        numpy.save(datapath + '.IRR.npy', p_IRR)
         
         self.stdout.nextline()
         
@@ -368,7 +389,7 @@ class irr_with_if_freq_sweep(base.forest_script_base):
          for i, (_c, _h, _u, _l, _i, freq) 
          in enumerate(zip(dcold, dhot, dsig_u, dsig_l, IRR, if_list))]
         
-        irr_summary_plot(if_list, IRRmax, '%s.IRR.png'%(figpath))
+        irr_summary_plot(if_list, p_IRR, '%s.IRR.png'%(figpath))
         
         self.stdout.nextline()
         
