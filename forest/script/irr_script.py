@@ -60,15 +60,15 @@ def irr_spec_plot(x, dcold, dhot, dsig_u, dsig_l, irr, savepath):
 def irr_summary_plot(x, irr, savepath):
     name = os.path.basename(savepath)
     
-    irrmin = None
-    irrmax = None
+    irrmin = 0
+    irrmax = 30
     
     fig = pylab.figure()
     ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
-    [_a.plot(_d, 'k-o') for _a, _d in zip(ax, irr.reshape((-1,16)).T)]
+    [_a.plot(x, _d, 'k-o') for _a, _d in zip(ax, irr.reshape((-1,16)).T)]
     [_a.set_ylim(irrmin, irrmax) for _a in ax]
     [_a.grid(True) for _a in ax]
-    [_a.set_xlabel('IF Freq. (--)', size=8) for i,_a in enumerate(ax) if i/4>2]    
+    [_a.set_xlabel('IF Freq. (GHz)', size=8) for i,_a in enumerate(ax) if i/4>2]    
     [_a.set_ylabel('IRR (dB)', size=8) for i,_a in enumerate(ax) if i%4==0]    
     fig.suptitle(name, fontsize=10)
     fig.savefig(savepath)
@@ -79,7 +79,7 @@ def irr_summary_plot(x, irr, savepath):
 
 class irr_with_if_freq_sweep(base.forest_script_base):
     method = 'irr_with_if_freq_sweep'
-    ver = '2015.02.09'
+    ver = '2015.02.10'
     
     def run(self, lo_freq, if_start, if_stop, if_step, thot):
         # Initialization Section
