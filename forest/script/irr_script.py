@@ -385,7 +385,7 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         self.stdout.p('Plot')
         self.stdout.p('----')
         self.stdout.p('Save : %s'%(figname))
-        [irr_spec_plot(x, _c, _h, _u, _l, _i, '%s.IF%02dGHz'%(figpath, freq))
+        [irr_spec_plot(x, _c, _h, _u, _l, _i, '%s.IF%.1fGHz'%(figpath, freq))
          for i, (_c, _h, _u, _l, _i, freq) 
          in enumerate(zip(dcold_db, dhot_db, dsig_u_db, dsig_l_db, IRR, if_list))]
         
