@@ -333,10 +333,10 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         dsig_l_db = dsig_l.reshape((-1, 4, 4, 461))
         dsig_u_db = dsig_u.reshape((-1, 4, 4, 461))
 
-        dcold_db = 10**(dcold_db/10.)
-        dhot_db = 10**(dhot_db/10.)
-        dsig_l_db = 10**(dsig_l_db/10.)
-        dsig_u_db = 10**(dsig_u_db/10.)
+        dcold = 10**(dcold_db/10.)
+        dhot = 10**(dhot_db/10.)
+        dsig_l = 10**(dsig_l_db/10.)
+        dsig_u = 10**(dsig_u_db/10.)
         
         dc_u = dcold[:,:2,:,:]
         dh_u = dhot[:,:2,:,:]
