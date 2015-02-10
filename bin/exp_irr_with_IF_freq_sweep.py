@@ -27,7 +27,7 @@ Thot = 293.0 # K
 import argparse
 
 p = argparse.ArgumentParser(description=description)
-p.add_argument('--lo_freq', type=str,
+p.add_argument('--lo_freq', type=float,
                help='LO freq in GHz. default is %.1f GHz.'%(lo_freq))
 p.add_argument('--start', type=float,
                help='Start IF freq in GHz. default is %.2f GHz.'%(start))
