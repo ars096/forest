@@ -78,11 +78,11 @@ def irr_summary_plot(x, irr, dcold, dhot, thot, savepath):
     [_a.grid(True) for _a in ax]
     [_a.set_xlabel('IF Freq. (GHz)', size=8) for i,_a in enumerate(ax) if i/4>2]    
     [_a.set_ylabel('IRR (dB)', size=8) for i,_a in enumerate(ax) if i%4==0]
-    [_a.set_ytick_labels('') for i,_a in enumerate(ax) if i%4!=0]
+    [_a.set_yticklabels('') for i,_a in enumerate(ax) if i%4!=0]
     [_a.plot(x, _d, 'b-') for _a, _d in zip(ax2, tsys.reshape((-1,16)).T)]
     [_a.set_ylim(tsysmin, tsysmax) for _a in ax2]
     [_a.set_ylabel('Blue: Tsys (K)', size=8) for i,_a in enumerate(ax2) if i%4==3]
-    [_a.set_ytick_labels('') for i,_a in enumerate(ax2) if i%4!=3]
+    [_a.set_yticklabels('') for i,_a in enumerate(ax2) if i%4!=3]
     
     fig.suptitle(name, fontsize=10)
     fig.savefig(savepath)
