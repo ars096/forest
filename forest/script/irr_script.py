@@ -371,7 +371,7 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         irr_summary_plot(if_list, IRRmax, '%s.IRR.png'%(figpath))
         
         self.stdout.nextline()
-        """
+        
         
         # Finalization Section
         # ====================
@@ -400,5 +400,5 @@ class irr_with_if_freq_sweep(base.forest_script_base):
         self.operation_done()
         
         return
-
+        
 
