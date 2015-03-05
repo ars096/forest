@@ -5,7 +5,7 @@ import base
 
 class initialize(base.forest_script_base):
     method = 'initialize'
-    ver = '2015.01.16'
+    ver = '2015.03.05'
     
     def run(self):
         # Initialization Section
@@ -74,7 +74,12 @@ class initialize(base.forest_script_base):
         self.stdout.nextline()
         
         self.stdout.write('IRR SG : Set output off ... ')
-        #irr_sg.output_off()
+        irr_sg.output_off()
+        self.stdout.write('ok')
+        self.stdout.nextline()
+        
+        self.stdout.write('IRR SG : Use external reference source ... ')
+        irr_sg.use_external_reference_source()
         self.stdout.write('ok')
         self.stdout.nextline()
         
@@ -146,7 +151,7 @@ class initialize(base.forest_script_base):
 
 class finalize(base.forest_script_base):
     method = 'finalize'
-    ver = '2015.01.17'
+    ver = '2015.03.05'
     
     def run(self):
         # Initialization Section
@@ -217,7 +222,7 @@ class finalize(base.forest_script_base):
         self.stdout.nextline()
         
         self.stdout.write('IRR SG : Set output off ... ')
-        #irr_sg.output_off()
+        irr_sg.output_off()
         self.stdout.write('ok')
         self.stdout.nextline()
         
