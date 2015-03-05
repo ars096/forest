@@ -246,9 +246,9 @@ class rsky_with_slider(base.forest_script_base):
 
 class rsky_with_sis_bias_sweep(base.forest_script_base):
     method = 'rsky_with_sis_bias_sweep'
-    ver = '2015.01.23'
+    ver = '2015.03.05'
     
-    def run(self, step, thot, plot_tsys_min, plot_tsys_max):
+    def run(self, step, thot, plot_tsys_min, plot_tsys_max, if_freq=8):
         # Initialization Section
         # ======================
         
@@ -306,8 +306,8 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
         self.stdout.p('Speana : Preset.')
         sp.scpi_reset()
 
-        self.stdout.p('Speana : Set center freq 8 GHz.')
-        sp.frequency_center_set(8, 'GHz')
+        self.stdout.p('Speana : Set center freq %f GHz.'%(if_freq))
+        sp.frequency_center_set(if_freq, 'GHz')
         
         self.stdout.p('Speana : Set span 0 Hz.')
         sp.frequency_span_set(0, 'Hz')
@@ -589,9 +589,9 @@ class rsky_with_sis_bias_sweep(base.forest_script_base):
 
 class rsky_with_lo_att_sweep(base.forest_script_base):
     method = 'rsky_with_lo_att_sweep'
-    ver = '2015.01.23'
+    ver = '2015.03.05'
     
-    def run(self, start, stop, step, thot):
+    def run(self, start, stop, step, thot, if_freq=8):
         # Initialization Section
         # ======================
         
@@ -652,8 +652,8 @@ class rsky_with_lo_att_sweep(base.forest_script_base):
         self.stdout.p('Speana : Preset.')
         sp.scpi_reset()
 
-        self.stdout.p('Speana : Set center freq 5.5 GHz.')
-        sp.frequency_center_set(5.5, 'GHz')
+        self.stdout.p('Speana : Set center freq %f GHz.'%(if_freq))
+        sp.frequency_center_set(if_freq, 'GHz')
         
         self.stdout.p('Speana : Set span 0 Hz.')
         sp.frequency_span_set(0, 'Hz')
