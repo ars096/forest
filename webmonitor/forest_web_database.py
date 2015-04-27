@@ -144,4 +144,19 @@ class database(object):
         db_fmt = self.format(db_ret, fmt, table=table)
         return db_fmt
         
+    @cherrypy.expose
+    def by_time(self, table, time, around=5, fmt='table'):
+        self._verify_table(table)
+        try:
+            time = datetime.datetime.strptime(time, '%Y-%m-%d_%H:%M:%S')
+        except ValueError:
+            raise ValueError('time format is %Y-%m-%d_%H:%M:%S (ex. 2015-01-23_19:20:12).')
+        delta = datetime.timedelta(minutes=around)
+        start = (time - delta).strftim('%Y-%m-%d %H:%M:%S')
+        end = (time + delta).strftime('%Y-%m-%d %H:%M:%S')
+        sql = 'SELECT * FROM %s WHERE timestamp BETWEEN "%s" AND "%s"'%(table, start, end)
+        db_ret = self.execute(sql)
+        db_fmt = self.format(db_ret, fmt, table=table)
+        return db_fmt
+        
     
