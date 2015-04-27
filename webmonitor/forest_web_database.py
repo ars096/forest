@@ -151,7 +151,7 @@ class database(object):
             time = datetime.datetime.strptime(time, '%Y-%m-%d_%H:%M:%S')
         except ValueError:
             raise ValueError('time format is %Y-%m-%d_%H:%M:%S (ex. 2015-01-23_19:20:12).')
-        delta = datetime.timedelta(minutes=around)
+        delta = datetime.timedelta(minutes=float(around))
         start = (time - delta).strftim('%Y-%m-%d %H:%M:%S')
         end = (time + delta).strftime('%Y-%m-%d %H:%M:%S')
         sql = 'SELECT * FROM %s WHERE timestamp BETWEEN "%s" AND "%s"'%(table, start, end)
